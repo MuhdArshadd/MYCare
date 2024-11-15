@@ -54,10 +54,19 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/
+
+  fonts:
+    - family: CustomFontName  # You can name it anything
+      fonts:
+        - asset: assets/fonts/ADLaMDisplay-Regular.ttf  # Path to your font file
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,6 +1,7 @@
-// main.dart
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/dbConnection/dbConnection.dart';
+import 'package:workshop2dev/view/loginPage.dart'; // Import login page
+import 'package:workshop2dev/view/SignInPage.dart'; // Import sign-up page
+import 'package:workshop2dev/view/homePage.dart';  // Import home page after successful login
 
 void main() {
   runApp(const MyApp());
@@ -12,66 +13,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Database Connection',
+      title: 'Smart Energy Monitoring',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Database Connection Example'),
+      home: SignInPage(), // Start with the Sign Up page
+      routes: {
+        '/login': (context) => LoginPage(), // Route to login page
+        '/home': (context) => HomePage(),   // Route to home page after successful login
+      },
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String connectionStatus = "Connecting to database...";
-  final DatabaseConnection dbConnection = DatabaseConnection();
-
-  @override
-  void initState() {
-    super.initState();
-    connectToDatabase();
-  }
-
-  Future<void> connectToDatabase() async {
-    String status = await dbConnection.connectToDatabase();
-    setState(() {
-      connectionStatus = status;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              connectionStatus,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    dbConnection.closeConnection();
-    super.dispose();
   }
 }
