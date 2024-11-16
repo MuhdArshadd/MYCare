@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/dbConnection/dbConnection.dart';
-import 'package:workshop2dev/view/SignInPage.dart';
-import 'homePage.dart';  // Navigate to HomePage on successful login
+import 'package:workshop2dev/controller/SignInController.dart';
+import 'SignInPage.dart';
+import 'homePage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,56 +11,34 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthController _authController = AuthController();
 
-  // Function to log in user
+  // Function to handle user login
   void _login() async {
     final email = _emailController.text;
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      // Show error if fields are empty
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill all fields')),
       );
       return;
     }
 
-    // Connect to the database and validate user credentials
-    final dbConnection = DatabaseConnection();
-    await dbConnection.connectToDatabase();
+    // Call the login method from AuthController
+    String response = await _authController.login(email, password);
 
-    try {
-      // Query the database to validate the user credentials
-      String query =
-          'SELECT * FROM register WHERE email = @email AND password = @password';
-      final results = await dbConnection.connection.query(
-        query,
-        substitutionValues: {
-          'email': email,
-          'password': password,  // Note: Hash password comparison in production
-        },
+    if (response == "Login successful") {
+      // Navigate to the HomePage on successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
-
-      // Check if there is a valid user
-      if (results.isNotEmpty) {
-        // Navigate to HomePage if login is successful
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        // Show error if login fails
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid email or password')),
-        );
-      }
-    } catch (e) {
-      // Handle any errors
+    } else {
+      // Show an error message if login fails
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error logging in: $e')),
+        SnackBar(content: Text(response)),
       );
-    } finally {
-      dbConnection.closeConnection();
     }
   }
 

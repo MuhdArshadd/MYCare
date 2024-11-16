@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/dbConnection/dbConnection.dart';
-import 'loginPage.dart';  // Navigate to login page after successful sign up
+import 'package:workshop2dev/controller/SignInController.dart';
+import 'package:workshop2dev/view/loginPage.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -11,39 +11,23 @@ class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthController _authController = AuthController();
 
-  // Function to sign up user
   void _signUp() async {
     final email = _emailController.text;
     final username = _usernameController.text;
     final password = _passwordController.text;
 
     if (email.isEmpty || username.isEmpty || password.isEmpty) {
-      // Show error if fields are empty
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill all fields')),
       );
       return;
     }
 
-    // Connect to database and insert new user data
-    final dbConnection = DatabaseConnection();
-    await dbConnection.connectToDatabase();
+    String response = await _authController.signUp(email, username, password);
 
-    try {
-      // Insert new user into the 'register' table
-      String insertQuery =
-          'INSERT INTO register (email, username, password) VALUES (@email, @username, @password)';
-      await dbConnection.connection.query(
-        insertQuery,
-        substitutionValues: {
-          'email': email,
-          'username': username,
-          'password': password,  // In production, hash the password
-        },
-      );
-
-      // Show success dialog
+    if (response == "Sign up successful") {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -53,7 +37,6 @@ class _SignInPageState extends State<SignInPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  // Navigate to the Login Page after successful sign up
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),
@@ -65,13 +48,10 @@ class _SignInPageState extends State<SignInPage> {
           );
         },
       );
-    } catch (e) {
-      // Handle errors like duplicate entries
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error signing up: $e')),
+        SnackBar(content: Text(response)),
       );
-    } finally {
-      dbConnection.closeConnection();
     }
   }
 
