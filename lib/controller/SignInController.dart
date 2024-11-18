@@ -26,17 +26,17 @@ class AuthController {
     }
   }
 
-  Future<String> login(String email, String password) async {
+  Future<String> login(String username, String password) async {
     await dbConnection.connectToDatabase();
 
     try {
       // Validate the user credentials
       String query =
-          'SELECT * FROM register WHERE email = @email AND password = @password';
+          'SELECT * FROM register WHERE username = @username AND password = @password';
       final results = await dbConnection.connection.query(
         query,
         substitutionValues: {
-          'email': email,
+          'username': username,
           'password': password, // Hash password comparison in production
         },
       );
