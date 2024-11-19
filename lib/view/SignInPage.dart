@@ -77,7 +77,7 @@ class _SignInPageState extends State<SignInPage> {
             top: 0,
             left: 0,
             right: 0,
-            height: 590.0, // Set custom height for the background image
+            height: 610.0, // Set custom height for the background image
             child: Image.asset(
               'assets/background.png',
               fit: BoxFit.cover,
@@ -87,14 +87,14 @@ class _SignInPageState extends State<SignInPage> {
             top: 0,
             left: 0,
             right: 0,
-            height: 230.0, // Set custom height for the background image
+            height: 250.0, // Set custom height for the background image
             child: Image.asset(
-              'assets/myCare.png',
+              'assets/myCareWhite.png',
             ),
           ),
           Positioned(
             top: 200.0, // Adjust vertical position to avoid overlap with logo
-            left: 20,
+            left: 9,
             right: 10,
             child: Center(
               child: Text(
@@ -102,7 +102,7 @@ class _SignInPageState extends State<SignInPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black, // Adjust color if needed
+                  color: Colors.white, // Adjust color if needed
                 ),
               ),
             ),

@@ -89,9 +89,9 @@ class _LoginPageState extends State<LoginPage> {
             top: 0,
             left: 0,
             right: 0,
-            height: 230.0,
+            height: 250.0,
             child: Image.asset(
-              'assets/myCare.png',
+              'assets/myCareWhite.png',
             ),
           ),
           // "My Care" Title
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ),

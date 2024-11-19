@@ -44,14 +44,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.blue,
       ),
       body: _pages[_currentIndex],
+
       bottomNavigationBar: Container(
-        color: Colors.grey[8000],
-        height: 70, // Set a height to ensure the shape is visible
+        height: 80, // Adjust height to fit the design
         decoration: BoxDecoration(
-          color: Colors.grey[800], // Dark grey background
+          //color: Colors.grey[800], // Background color for the container
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(60), // Curves the top-left corner
-            topRight: Radius.circular(60), // Curves the top-right corner
+            topLeft: Radius.circular(60),
+            topRight: Radius.circular(60),
+            bottomLeft: Radius.circular(60),
+            bottomRight: Radius.circular(60),
           ),
           boxShadow: [
             BoxShadow(
@@ -61,42 +63,53 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.grey[600], // Set the background to transparent
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          selectedItemColor: Colors.blue, // Color for selected items
-          unselectedItemColor: Colors.grey[500], // Color for unselected items
-          showUnselectedLabels: true, // Show labels for unselected items
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.public),
-              label: 'Global',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.help_outline),
-              label: 'FAQs',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
+
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(60),
+            topRight: Radius.circular(60),
+            bottomRight: Radius.circular(60),
+            bottomLeft: Radius.circular(60),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed, // Prevent shifting behavior
+            backgroundColor: Colors.grey[350], // Matches container background
+
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            selectedItemColor: Colors.blue, // Color for selected items
+            unselectedItemColor: Colors.black, // Color for unselected items
+            showUnselectedLabels: true, // Show labels for unselected items
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.public),
+                label: 'Global',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.help_outline),
+                label: 'FAQs',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class HomeContent extends StatelessWidget {
+  class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -219,11 +232,29 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
             ),
             TextButton(
               onPressed: widget.onSeeMore,
-              child: Row(
-                children: [
-                  Text('See more', style: TextStyle(fontSize: 16)),
-                  Icon(Icons.arrow_forward, size: 16),
-                ],
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero, // Removes default padding
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Adjust padding
+                decoration: BoxDecoration(
+                  color: Colors.blue, // Background color
+                  borderRadius: BorderRadius.circular(8), // Rounded rectangle
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'See more',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white, // Text color
+                      ),
+                    ),
+                    SizedBox(width: 4), // Space between text and icon
+                    Icon(Icons.arrow_forward, size: 16, color: Colors.white),
+                  ],
+                ),
               ),
             ),
           ],
