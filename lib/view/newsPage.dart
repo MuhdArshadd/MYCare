@@ -1,32 +1,18 @@
 import 'package:flutter/material.dart';
 import 'newsPage.dart';
+import 'homePage.dart'; // Import the HomePage for navigation
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class NewsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MyCare App',
-      home: HomePage(),
-    );
-  }
+  _NewsPageState createState() => _NewsPageState();
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+class _NewsPageState extends State<NewsPage> {
+  int _currentIndex = 1;  // Set the initial index to 1 as News is at index 1 in the bottom navigation bar
 
   final List<Widget> _pages = [
     HomeContent(),
-    Center(child: Text('News', style: TextStyle(fontSize: 24))),
+    NewsPageContent(),
     Center(child: Text('Forum', style: TextStyle(fontSize: 24))),
     Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
   ];
@@ -35,21 +21,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Icon(Icons.menu,color: Colors.white),
-            SizedBox(width: 10),
-            Text('MyCare', style: TextStyle(fontSize: 20, color: Colors.white)),
-          ],
-        ),
+        title: Text('News', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
       ),
-      body: _pages[_currentIndex],
+      body: _pages[_currentIndex],  // Show the page based on the selected tab
 
       bottomNavigationBar: Container(
         height: 80, // Adjust height to fit the design
         decoration: BoxDecoration(
-          //color: Colors.grey[800], // Background color for the container
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(60),
             topRight: Radius.circular(60),
@@ -64,7 +43,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-
         child: ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(60),
@@ -73,25 +51,24 @@ class _HomePageState extends State<HomePage> {
             bottomLeft: Radius.circular(60),
           ),
           child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed, // Prevent shifting behavior
+            type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.grey[400], // Matches container background
-
             currentIndex: _currentIndex,
             onTap: (index) {
               setState(() {
-                if (index == 1) { // Assuming 'News' is at index 1
+                if (index == 0) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NewsPage()),
+                    MaterialPageRoute(builder: (context) => HomePage()),
                   );
                 } else {
                   _currentIndex = index; // Update the current index only for other tabs
                 }
               });
             },
-            selectedItemColor: Colors.blue, // Color for selected items
-            unselectedItemColor: Colors.black, // Color for unselected items
-            showUnselectedLabels: true, // Show labels for unselected items
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.black,
+            showUnselectedLabels: true,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
@@ -117,7 +94,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-  class HomeContent extends StatelessWidget {
+class NewsPageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -127,7 +104,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwipableSectionWidget(
-              title: 'News',
+              title: 'Latest News',
               items: [
                 SectionItem(
                   imageUrl: 'https://via.placeholder.com/400x200',
@@ -143,45 +120,26 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               onSeeMore: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewsPage()),
-                );
+                // Implement logic to load more news if necessary
+                print('See more news');
               },
             ),
-
+            SizedBox(height: 20),
             SwipableSectionWidget(
-              title: 'Support service',
+              title: 'Announcements',
               items: [
                 SectionItem(
                   imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Food Aid Foundation, Kuala Lumpur',
+                  description: 'Updates on student grants for 2024',
                 ),
                 SectionItem(
                   imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Volunteer opportunities in Malaysia',
+                  description: 'New scholarship opportunities in Malaysia',
                 ),
               ],
               onSeeMore: () {
-                // Navigate to the support services page
-                print('See more support services');
-              },
-            ),
-            SwipableSectionWidget(
-              title: 'Forum',
-              items: [
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Community discussions and tips',
-                ),
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Healthy eating tips for students',
-                ),
-              ],
-              onSeeMore: () {
-                // Navigate to the forum page
-                print('See more forum');
+                // Implement logic for announcements
+                print('See more announcements');
               },
             ),
           ],
