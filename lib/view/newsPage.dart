@@ -79,11 +79,11 @@ class _NewsPageState extends State<NewsPage> {
                 label: 'News',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.help_outline),
+                icon: Icon(Icons.support),
                 label: 'Forum',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.chat),
                 label: 'Profile',
               ),
             ],

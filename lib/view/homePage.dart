@@ -37,19 +37,62 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.menu,color: Colors.white),
-            SizedBox(width: 10),
             Text('MyCare', style: TextStyle(fontSize: 20, color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.blue,
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.menu, color: Colors.white),
+            onSelected: (value) {
+              if (value == 'Notifications') {
+                print('Notifications selected');
+              } else if (value == 'Settings') {
+                print('Settings selected');
+              } else if (value == 'Help') {
+                print('Help selected');
+              }
+            },
+            offset: Offset(-100, 50), // Adjust this to control popup position
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'Notifications',
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications, color: Colors.blue),
+                    SizedBox(width: 10),
+                    Text('Notifications'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'Settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, color: Colors.blue),
+                    SizedBox(width: 10),
+                    Text('Settings'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'Help',
+                child: Row(
+                  children: [
+                    Icon(Icons.help, color: Colors.blue),
+                    SizedBox(width: 10),
+                    Text('Help'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: _pages[_currentIndex],
-
       bottomNavigationBar: Container(
-        height: 80, // Adjust height to fit the design
+        height: 80,
         decoration: BoxDecoration(
-          //color: Colors.grey[800], // Background color for the container
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(60),
             topRight: Radius.circular(60),
@@ -64,7 +107,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-
         child: ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(60),
@@ -73,25 +115,24 @@ class _HomePageState extends State<HomePage> {
             bottomLeft: Radius.circular(60),
           ),
           child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed, // Prevent shifting behavior
-            backgroundColor: Colors.grey[400], // Matches container background
-
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.grey[400],
             currentIndex: _currentIndex,
             onTap: (index) {
               setState(() {
-                if (index == 1) { // Assuming 'News' is at index 1
+                if (index == 1) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => NewsPage()),
                   );
                 } else {
-                  _currentIndex = index; // Update the current index only for other tabs
+                  _currentIndex = index;
                 }
               });
             },
-            selectedItemColor: Colors.blue, // Color for selected items
-            unselectedItemColor: Colors.black, // Color for unselected items
-            showUnselectedLabels: true, // Show labels for unselected items
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.black,
+            showUnselectedLabels: true,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
@@ -102,12 +143,12 @@ class _HomePageState extends State<HomePage> {
                 label: 'News',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.help_outline),
-                label: 'Forum',
+                icon: Icon(Icons.support),
+                label: 'Support Service',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
+                icon: Icon(Icons.chat),
+                label: 'Forum',
               ),
             ],
           ),
@@ -117,7 +158,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-  class HomeContent extends StatelessWidget {
+class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -144,12 +185,11 @@ class _HomePageState extends State<HomePage> {
               ],
               onSeeMore: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewsPage()),
+                  context,
+                  MaterialPageRoute(builder: (context) => NewsPage()),
                 );
               },
             ),
-
             SwipableSectionWidget(
               title: 'Support service',
               items: [
@@ -163,7 +203,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               onSeeMore: () {
-                // Navigate to the support services page
                 print('See more support services');
               },
             ),
@@ -180,7 +219,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               onSeeMore: () {
-                // Navigate to the forum page
                 print('See more forum');
               },
             ),
@@ -244,13 +282,13 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
             TextButton(
               onPressed: widget.onSeeMore,
               style: TextButton.styleFrom(
-                padding: EdgeInsets.zero, // Removes default padding
+                padding: EdgeInsets.zero,
               ),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Adjust padding
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.blue, // Background color
-                  borderRadius: BorderRadius.circular(8), // Rounded rectangle
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -259,10 +297,10 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                       'See more',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white, // Text color
+                        color: Colors.white,
                       ),
                     ),
-                    SizedBox(width: 4), // Space between text and icon
+                    SizedBox(width: 4),
                     Icon(Icons.arrow_forward, size: 16, color: Colors.white),
                   ],
                 ),
@@ -272,7 +310,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
         ),
         SizedBox(height: 10),
         Container(
-          height: 250, // Adjust height as needed
+          height: 250,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.items.length,
@@ -307,24 +345,6 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                 ),
               );
             },
-          ),
-        ),
-        SizedBox(height: 10),
-        // Page indicators
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            widget.items.length,
-                (index) => AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              margin: EdgeInsets.symmetric(horizontal: 4),
-              width: _currentPage == index ? 12 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: _currentPage == index ? Colors.blue : Colors.grey,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
           ),
         ),
         SizedBox(height: 20),

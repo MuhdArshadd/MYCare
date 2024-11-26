@@ -14,6 +14,7 @@ class _SignInPageState extends State<SignInPage> {
   final _nophoneController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
   final AuthController _authController = AuthController();
+  bool _acceptTerm = false;
 
   void _signUp() async {
     final email = _emailController.text;
@@ -94,8 +95,8 @@ class _SignInPageState extends State<SignInPage> {
           ),
           Positioned(
             top: 200.0, // Adjust vertical position to avoid overlap with logo
-            left: 9,
-            right: 10,
+            left: 0,
+            right: 0,
             child: Center(
               child: Text(
                 'My Care',
@@ -109,11 +110,11 @@ class _SignInPageState extends State<SignInPage> {
           ),
           // Content slightly below the top
           Positioned(
-            top: 270.0, //
+            top: 270.0, // Adjust vertical position to avoid overlap with the logo
             left: 0,
             right: 0,
+            bottom: 0,
             child: SingleChildScrollView(
-
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
@@ -183,7 +184,21 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 5.0),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _acceptTerm,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _acceptTerm = value ?? false;
+                            });
+                          },
+                        ),
+                        Text('Accept Terms & Conditions'),
+                      ],
+                    ),
+                    SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: _signUp,
                       style: ElevatedButton.styleFrom(
@@ -206,11 +221,22 @@ class _SignInPageState extends State<SignInPage> {
                           MaterialPageRoute(builder: (context) => LoginPage()),
                         );
                       },
-                      child: Text(
-                        'Already have an account? Log in',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Already have an account? ',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 14.0,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Login',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
