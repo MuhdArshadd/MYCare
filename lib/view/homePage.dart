@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:workshop2dev/view/appBar.dart';
 import 'newsPage.dart'; // Assuming you have a NewsPage class defined
+import 'homePage.dart'; // Import the HomePage for navigation
+import 'bottomNavigationBar.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,126 +37,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text('MyCare', style: TextStyle(fontSize: 20, color: Colors.white)),
-          ],
-        ),
-        backgroundColor: Colors.blue,
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.menu, color: Colors.white),
-            onSelected: (value) {
-              if (value == 'Notifications') {
-                print('Notifications selected');
-              } else if (value == 'Settings') {
-                print('Settings selected');
-              } else if (value == 'Help') {
-                print('Help selected');
-              }
-            },
-            offset: Offset(-100, 50),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'Notifications',
-                child: Row(
-                  children: [
-                    Icon(Icons.notifications, color: Colors.blue),
-                    SizedBox(width: 10),
-                    Text('Notifications'),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                value: 'Settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings, color: Colors.blue),
-                    SizedBox(width: 10),
-                    Text('Settings'),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                value: 'Help',
-                child: Row(
-                  children: [
-                    Icon(Icons.help, color: Colors.blue),
-                    SizedBox(width: 10),
-                    Text('Help'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(),
       body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(60),
-            topRight: Radius.circular(60),
-            bottomLeft: Radius.circular(60),
-            bottomRight: Radius.circular(60),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black45,
-              offset: Offset(0, -2),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(60),
-            topRight: Radius.circular(60),
-            bottomRight: Radius.circular(60),
-            bottomLeft: Radius.circular(60),
-          ),
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.grey[400],
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                if (index == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewsPage()),
-                  );
-                } else {
-                  _currentIndex = index;
-                }
-              });
-            },
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.black,
-            showUnselectedLabels: true,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.public),
-                label: 'News',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.support),
-                label: 'Support Service',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.chat),
-                label: 'Forum',
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 0),
     );
   }
 }
