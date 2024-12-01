@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'newsPage.dart';
+import 'newsPage.dart'; // Assuming you have a NewsPage class defined
 
 void main() {
   runApp(MyApp());
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                 print('Help selected');
               }
             },
-            offset: Offset(-100, 50), // Adjust this to control popup position
+            offset: Offset(-100, 50),
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'Notifications',
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
-        height: 80,
+        height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(60),
@@ -251,7 +251,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.9);
+    _pageController = PageController(viewportFraction: 0.85);
     _currentPage = 0;
 
     _pageController.addListener(() {
@@ -267,6 +267,18 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
     super.dispose();
   }
 
+  Widget _buildIndicator(int index) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 3),
+      width: _currentPage == index ? 12 : 8,
+      height: _currentPage == index ? 12 : 8,
+      decoration: BoxDecoration(
+        color: _currentPage == index ? Colors.blue : Colors.grey,
+        borderRadius: BorderRadius.circular(6),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -277,7 +289,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
           children: [
             Text(
               widget.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             TextButton(
               onPressed: widget.onSeeMore,
@@ -310,7 +322,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
         ),
         SizedBox(height: 10),
         Container(
-          height: 250,
+          height: 280,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.items.length,
@@ -345,6 +357,14 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                 ),
               );
             },
+          ),
+        ),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            widget.items.length,
+                (index) => _buildIndicator(index),
           ),
         ),
         SizedBox(height: 20),
