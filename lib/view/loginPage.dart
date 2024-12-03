@@ -4,13 +4,15 @@ import 'SignInPage.dart';
 import 'homePage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Login Page',
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -58,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       if (response == "Login successful") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else {
         _showSnackBar(response);
@@ -96,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           // "My Care" Title
-          Positioned(
+          const Positioned(
             top: 200.0,
             left: 0,
             right: 0,
@@ -121,39 +125,39 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Welcome back !',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                     // Username Field
                     TextField(
                       controller: _usernameController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                         hintText: 'Username',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     // Password Field
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         hintText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     // Remember Me and Forgot Password Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                             ),
-                            Text('Remember Me'),
+                            const Text('Remember Me'),
                           ],
                         ),
                         GestureDetector(
@@ -176,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                             // Handle Forgot Password action
                             _showSnackBar('Forgot Password clicked');
                           },
-                          child: Text(
+                          child: const Text(
                             'Forgot Password?',
                             style: TextStyle(
                               color: Colors.blue,
@@ -186,30 +190,30 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                     ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
-                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: _isLoading
-                          ? CircularProgressIndicator(color: Colors.white)
-                          : Text(
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
                         'Log In',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     // Sign Up Navigation
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => SignInPage()), // Navigates to SignUp page
+                          MaterialPageRoute(builder: (context) => const SignInPage()), // Navigates to SignUp page
                         );
                       },
                       child: RichText(
@@ -222,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                                 decoration: TextDecoration.underline,
                               ),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: 'Sign Up',
                               style: TextStyle(
                                 color: Colors.blue,

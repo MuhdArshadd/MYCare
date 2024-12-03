@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'SignInPage.dart';
-import 'homePage.dart';
-import 'resetPage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Reset Password',
       debugShowCheckedModeBanner: false,
       home: ResetPage(), // Set the ResetPage as the starting page
@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ResetPage extends StatefulWidget {
+  const ResetPage({super.key});
+
   @override
   _ResetPageState createState() => _ResetPageState();
 }
@@ -31,7 +33,7 @@ class _ResetPageState extends State<ResetPage> {
 
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter an email address')),
+        const SnackBar(content: Text('Please enter an email address')),
       );
       return;
     }
@@ -44,7 +46,7 @@ class _ResetPageState extends State<ResetPage> {
     // Optionally, navigate to SignInPage after reset
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignInPage()),
+      MaterialPageRoute(builder: (context) => const SignInPage()),
     );
   }
 
@@ -76,7 +78,7 @@ class _ResetPageState extends State<ResetPage> {
             ),
           ),
           // "My Care" Title
-          Positioned(
+          const Positioned(
             top: 200.0,
             left: 0,
             right: 0,
@@ -101,42 +103,42 @@ class _ResetPageState extends State<ResetPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Reset Password',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                     // Email Field
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         hintText: 'Email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 100.0),
+                    const SizedBox(height: 100.0),
                     // Send Code Button
                     ElevatedButton(
                       onPressed: _resetPassword,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
-                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Send Code',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                   ],
                 ),
               ),

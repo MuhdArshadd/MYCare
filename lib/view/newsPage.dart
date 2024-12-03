@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // Add this import
+//import 'package:url_launcher/url_launcher.dart'; // Add this import
 import 'package:workshop2dev/view/appBar.dart';
 import 'bottomNavigationBar.dart';
 
@@ -18,6 +18,8 @@ class NewsArticle {
 }
 
 class NewsPage extends StatefulWidget {
+  const NewsPage({super.key});
+
   @override
   _NewsPageState createState() => _NewsPageState();
 }
@@ -56,7 +58,7 @@ class _NewsPageState extends State<NewsPage> {
     }).toList();
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -76,17 +78,17 @@ class _NewsPageState extends State<NewsPage> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   DropdownButton<String>(
                     value: _selectedFilter,
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         value: "latest",
                         child: Text("Latest"),
@@ -101,11 +103,11 @@ class _NewsPageState extends State<NewsPage> {
                         _selectedFilter = value; // Update filter selection
                       });
                     },
-                    hint: Text("Filter by"),
+                    hint: const Text("Filter by"),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Category Chips
               Wrap(
                 spacing: 8.0,
@@ -115,7 +117,7 @@ class _NewsPageState extends State<NewsPage> {
                   _buildCategoryChip("financial", Colors.orange),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // News Cards
               for (var article in filteredArticles) // Use filtered articles here
                 _buildNewsCard(article),
@@ -123,7 +125,7 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 1),
+      bottomNavigationBar: const BottomNavWrapper(currentIndex: 1),
     );
   }
 
@@ -131,7 +133,7 @@ class _NewsPageState extends State<NewsPage> {
     return Chip(
       label: Text(
         label,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
       backgroundColor: color,
     );
@@ -145,7 +147,7 @@ class _NewsPageState extends State<NewsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
             ),
@@ -158,19 +160,15 @@ class _NewsPageState extends State<NewsPage> {
               children: [
                 Text(
                   article.title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () async {
                     // Open the link
-                    if (await canLaunch(article.link)) {
-                      await launch(article.link);
-                    } else {
-                      throw 'Could not launch ${article.link}';
-                    }
+
                   },
-                  child: Text(
+                  child: const Text(
                     'View More',
                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                   ),

@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'loginPage.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
+
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Row(
+      title: const Row(
         children: [
-          Text('MyCare', style: TextStyle(fontSize: 20, color: Colors.white)),
+          Text('MyCare', style: TextStyle(fontSize: 24, color: Colors.white)),
         ],
       ),
       backgroundColor: Colors.blue,
       actions: [
         PopupMenuButton<String>(
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onSelected: (value) {
             if (value == 'Notifications') {
               print('Notifications selected');
@@ -23,11 +26,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               print('Settings selected');
             } else if (value == 'Help') {
               print('Help selected');
+            } else if (value == 'Logout') {
+              // Navigate to Login Page on Logout
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
             }
           },
-          offset: Offset(-100, 50),
+          offset: const Offset(-100, 50),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'Notifications',
               child: Row(
                 children: [
@@ -37,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'Settings',
               child: Row(
                 children: [
@@ -47,13 +56,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'Help',
               child: Row(
                 children: [
                   Icon(Icons.help, color: Colors.blue),
                   SizedBox(width: 10),
                   Text('Help'),
+                ],
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout, color: Colors.blue),
+                  SizedBox(width: 10),
+                  Text('Logout'),
                 ],
               ),
             ),

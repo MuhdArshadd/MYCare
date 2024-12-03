@@ -3,6 +3,8 @@ import 'package:workshop2dev/controller/SignInController.dart';
 import 'package:workshop2dev/view/loginPage.dart';
 
 class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -25,14 +27,14 @@ class _SignInPageState extends State<SignInPage> {
 
     if (email.isEmpty || username.isEmpty || password.isEmpty || nophone.isEmpty || confirmpassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all fields')),
+        const SnackBar(content: Text('Please fill all fields')),
       );
       return;
     }
 
     if (password != confirmpassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match')),
+        const SnackBar(content: Text('Passwords do not match')),
       );
       return;
     }
@@ -44,17 +46,17 @@ class _SignInPageState extends State<SignInPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Sign Up Successful'),
-            content: Text('You have successfully signed up!'),
+            title: const Text('Sign Up Successful'),
+            content: const Text('You have successfully signed up!'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
                 },
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
             ],
           );
@@ -93,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
               'assets/myCareWhite.png',
             ),
           ),
-          Positioned(
+          const Positioned(
             top: 200.0, // Adjust vertical position to avoid overlap with logo
             left: 0,
             right: 0,
@@ -120,71 +122,71 @@ class _SignInPageState extends State<SignInPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Sign Up',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 32.0),
+                    const SizedBox(height: 32.0),
                     TextField(
                       controller: _usernameController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                         hintText: 'Username',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         hintText: 'Email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextField(
                       controller: _nophoneController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.phone),
+                        prefixIcon: const Icon(Icons.phone),
                         hintText: 'No.Phone',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         hintText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextField(
                       controller: _confirmpasswordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         hintText: 'Confirm Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Row(
                       children: [
                         Checkbox(
@@ -195,30 +197,30 @@ class _SignInPageState extends State<SignInPage> {
                             });
                           },
                         ),
-                        Text('Accept Terms & Conditions'),
+                        const Text('Accept Terms & Conditions'),
                       ],
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: _signUp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
-                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Sign Up',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
                         );
                       },
                       child: RichText(
@@ -228,7 +230,7 @@ class _SignInPageState extends State<SignInPage> {
                             color: Colors.grey[500],
                             fontSize: 14.0,
                           ),
-                          children: [
+                          children: const [
                             TextSpan(
                               text: 'Login',
                               style: TextStyle(

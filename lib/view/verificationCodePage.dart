@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Verification Code',
       debugShowCheckedModeBanner: false,
       home: VerificationCodePage(),
@@ -17,26 +19,28 @@ class MyApp extends StatelessWidget {
 }
 
 class VerificationCodePage extends StatefulWidget {
+  const VerificationCodePage({super.key});
+
   @override
   _VerificationCodePageState createState() => _VerificationCodePageState();
 }
 
 class _VerificationCodePageState extends State<VerificationCodePage> {
   // Controllers for each digit input
-  TextEditingController _controller1 = TextEditingController();
-  TextEditingController _controller2 = TextEditingController();
-  TextEditingController _controller3 = TextEditingController();
-  TextEditingController _controller4 = TextEditingController();
-  TextEditingController _controller5 = TextEditingController();
-  TextEditingController _controller6 = TextEditingController();
+  final TextEditingController _controller1 = TextEditingController();
+  final TextEditingController _controller2 = TextEditingController();
+  final TextEditingController _controller3 = TextEditingController();
+  final TextEditingController _controller4 = TextEditingController();
+  final TextEditingController _controller5 = TextEditingController();
+  final TextEditingController _controller6 = TextEditingController();
 
   // FocusNodes to control focus for each text field
-  FocusNode _focusNode1 = FocusNode();
-  FocusNode _focusNode2 = FocusNode();
-  FocusNode _focusNode3 = FocusNode();
-  FocusNode _focusNode4 = FocusNode();
-  FocusNode _focusNode5 = FocusNode();
-  FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
 
   void _resetPassword() {
 
@@ -91,7 +95,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
             ),
           ),
           // "My Care" Title
-          Positioned(
+          const Positioned(
             top: 200.0,
             left: 0,
             right: 0,
@@ -107,7 +111,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
             ),
           ),
           // "Verification Code" Title
-          Positioned(
+          const Positioned(
             top: 260.0,
             left: 0,
             right: 0,
@@ -154,48 +158,48 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         buildVerificationDigitField(_controller1, _focusNode1, _focusNode2),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         buildVerificationDigitField(_controller2, _focusNode2, _focusNode3),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         buildVerificationDigitField(_controller3, _focusNode3, _focusNode4),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         buildVerificationDigitField(_controller4, _focusNode4, _focusNode5),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         buildVerificationDigitField(_controller5, _focusNode5, _focusNode6),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         buildVerificationDigitField(_controller6, _focusNode6, _focusNode6),
                       ],
                     ),
                   ),
-                  SizedBox(height: 50.0),
+                  const SizedBox(height: 50.0),
                   ElevatedButton(
                     onPressed: _resetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Confirm',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);  // Action for the Back button
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 10.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Colors.blue),
+                        side: const BorderSide(color: Colors.blue),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Back',
                       style: TextStyle(fontSize: 18, color: Colors.blue),
                     ),
@@ -232,7 +236,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
           // Move focus to the next field after editing is complete
           FocusScope.of(context).requestFocus(nextFocus);
         },
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           counterText: "", // Hide the counter that shows the number of characters
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),

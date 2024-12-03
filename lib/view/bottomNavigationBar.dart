@@ -6,7 +6,7 @@ import 'supportServicePage.dart';
 class BottomNavWrapper extends StatefulWidget {
   final int currentIndex;
 
-  const BottomNavWrapper({Key? key, required this.currentIndex}) : super(key: key);
+  const BottomNavWrapper({super.key, required this.currentIndex});
 
   @override
   _BottomNavWrapperState createState() => _BottomNavWrapperState();
@@ -28,13 +28,14 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
         break;
       case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NewsPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NewsPage()));
         break;
       case 2:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SupportServicePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage()));
+        break;
       default:
         break;
     }
@@ -44,7 +45,7 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(60),
           topRight: Radius.circular(60),
@@ -59,7 +60,7 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(60),
           topRight: Radius.circular(60),
           bottomLeft: Radius.circular(60),
@@ -73,7 +74,7 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
           unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
           onTap: _onTabSelected,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',

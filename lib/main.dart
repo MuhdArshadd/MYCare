@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:workshop2dev/view/loginPage.dart'; // Import login page
-import 'package:workshop2dev/view/SignInPage.dart'; // Import sign-up page
-import 'package:workshop2dev/view/homePage.dart';
+// Import login page
+// Import sign-up page
 import 'package:workshop2dev/view/splash_screen.dart';  // Import home page after successful login
 
 void main() {
@@ -17,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
 
       home: MySplashScreen(), // Start with the Sign Up page
       routes: {

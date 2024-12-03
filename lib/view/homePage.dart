@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/view/appBar.dart';
-import 'newsPage.dart'; // Assuming you have a NewsPage class defined
-import 'homePage.dart'; // Import the HomePage for navigation
+import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MyCare App',
       home: HomePage(),
@@ -20,31 +21,35 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    HomeContent(),
-    Center(child: Text('News', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Forum', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
+    const HomeContent(),
+    const Center(child: Text('News', style: TextStyle(fontSize: 24))),
+    const Center(child: Text('Forum', style: TextStyle(fontSize: 24))),
+    const Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 0),
+      bottomNavigationBar: const BottomNavWrapper(currentIndex: 0),
     );
   }
 }
 
 class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -72,7 +77,7 @@ class HomeContent extends StatelessWidget {
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewsPage()),
+                  MaterialPageRoute(builder: (context) => const NewsPage()),
                 );
               },
             ),
@@ -120,7 +125,7 @@ class SwipableSectionWidget extends StatefulWidget {
   final List<SectionItem> items;
   final VoidCallback onSeeMore;
 
-  const SwipableSectionWidget({
+  const SwipableSectionWidget({super.key, 
     required this.title,
     required this.items,
     required this.onSeeMore,
@@ -155,7 +160,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
 
   Widget _buildIndicator(int index) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 3),
+      margin: const EdgeInsets.symmetric(horizontal: 3),
       width: _currentPage == index ? 12 : 8,
       height: _currentPage == index ? 12 : 8,
       decoration: BoxDecoration(
@@ -175,7 +180,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
           children: [
             Text(
               widget.title,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             TextButton(
               onPressed: widget.onSeeMore,
@@ -183,12 +188,12 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                 padding: EdgeInsets.zero,
               ),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
@@ -206,8 +211,8 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
             ),
           ],
         ),
-        SizedBox(height: 10),
-        Container(
+        const SizedBox(height: 10),
+        SizedBox(
           height: 280,
           child: PageView.builder(
             controller: _pageController,
@@ -234,7 +239,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           widget.items[index].description,
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -245,7 +250,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
             },
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
@@ -253,7 +258,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                 (index) => _buildIndicator(index),
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
