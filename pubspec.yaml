@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   postgres: ^2.4.0
   animated_splash_screen: ^1.2.0
-  google_maps_flutter: ^2.2.0
+
 
 
 dev_dependencies:
@@ -67,6 +67,7 @@ flutter:
 
   assets:
     - assets/
+    - assets/logo.png
 
   fonts:
     - family: CustomFontName  # You can name it anything

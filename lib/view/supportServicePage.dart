@@ -75,7 +75,23 @@ class ServiceCard extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const FoodbankPage()),
           );
-        } else {
+        }
+        else if (title =='Medical service')
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FoodbankPage()),
+          );
+        }
+        else if (title == 'Skill Building Programme' )
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FoodbankPage()),
+          );
+        }
+        else
+        {
           print('$title tapped');
         }
       },

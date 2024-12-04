@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
+import 'foodbankDetail.dart';
+
+void main() {
+  runApp(const MaterialApp(home: FoodbankPage()));
+}
 
 class FoodbankPage extends StatelessWidget {
   const FoodbankPage({Key? key}) : super(key: key);
@@ -68,18 +72,8 @@ class FoodbankPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.grey[300],
               ),
-              child: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(2.2008, 102.2405), // Example coordinates
-                  zoom: 11.0,
-                ),
-                markers: {
-                  const Marker(
-                    markerId: MarkerId('1'),
-                    position: LatLng(2.2008, 102.2405),
-                  ),
-                },
-              ),
+              // Replace with actual map widget if needed
+              child: const Center(child: Text("Map Placeholder")),
             ),
           ),
           // Nearby Foodbanks Section
@@ -99,11 +93,13 @@ class FoodbankPage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               children: [
                 _buildFoodbankCard(
+                  context,
                   imagePath: 'assets/images/petronas.jpg',
                   name: 'Petronas Durian Tunggal',
                   category: 'Makanan Kering',
                 ),
                 _buildFoodbankCard(
+                  context,
                   imagePath: 'assets/images/cuitcekup.jpg',
                   name: 'Cuit Cekup Mini Mart & Bakery',
                   category: 'Makanan Kering',
@@ -113,17 +109,18 @@ class FoodbankPage extends StatelessWidget {
           ),
           // See All Button
           Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: TextButton(
-              onPressed: () {
-                // Add navigation to "See All" page
-              },
-              child: const Text(
-                'see all',
-                style: TextStyle(color: Colors.blue,),
-
-              ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: TextButton(
+                onPressed: () {
+                  // Add navigation to "See All" page
+                },
+                child: const Text(
+                  'see all',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
               ),
             ),
           ),
@@ -133,11 +130,12 @@ class FoodbankPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFoodbankCard({
-    required String imagePath,
-    required String name,
-    required String category,
-  }) {
+  Widget _buildFoodbankCard(
+      BuildContext context, {
+        required String imagePath,
+        required String name,
+        required String category,
+      }) {
     return Container(
       width: 200.0,
       margin: const EdgeInsets.all(8.0),
@@ -189,11 +187,21 @@ class FoodbankPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4.0),
-                const Text(
-                  'Open',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FoodbankDetailPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Open',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'homePage.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
+import 'forumPage.dart';
 
 class BottomNavWrapper extends StatefulWidget {
   final int currentIndex;
@@ -35,6 +36,9 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
         break;
       case 2:
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage()));
+        break;
+      case 3:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage()));
         break;
       default:
         break;
