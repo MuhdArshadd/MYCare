@@ -17,31 +17,34 @@ class FoodbankPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back and Search Row
+          // Title Row
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                    ),
-                  ),
+                const Icon(Icons.arrow_back, size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Foodbank',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8.0),
           // Location Filter Chips
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -72,7 +75,6 @@ class FoodbankPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.grey[300],
               ),
-              // Replace with actual map widget if needed
               child: const Center(child: Text("Map Placeholder")),
             ),
           ),
@@ -80,7 +82,7 @@ class FoodbankPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: const Text(
-              'Nearby Foodbank',
+              'Nearby Foodbanks',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -113,10 +115,14 @@ class FoodbankPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: TextButton(
                 onPressed: () {
-                  // Add navigation to "See All" page
+                  // Navigate to "See All" Page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FoodbankDetailPage()),
+                  );
                 },
                 child: const Text(
-                  'see all',
+                  'See All',
                   style: TextStyle(
                     color: Colors.blue,
                   ),
@@ -192,7 +198,7 @@ class FoodbankPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FoodbankDetailPage(),
+                        builder: (context) => const FoodbankDetailPage(),
                       ),
                     );
                   },

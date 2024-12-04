@@ -13,15 +13,15 @@ class SupportServicePage extends StatelessWidget {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding:  EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.arrow_back, size: 20),
-                  const SizedBox(width: 8),
-                  const Text(
+                  Icon(Icons.arrow_back, size: 20),
+                   SizedBox(width: 8),
+                   Text(
                     'Support service',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
