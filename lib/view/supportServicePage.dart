@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankPage.dart';
+import 'skillBuildingPage.dart';
 
 class SupportServicePage extends StatelessWidget {
   const SupportServicePage({super.key});
@@ -87,7 +88,7 @@ class ServiceCard extends StatelessWidget {
         {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const FoodbankPage()),
+            MaterialPageRoute(builder: (context) => SkillBuildingPage()),
           );
         }
         else
