@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : const Text(
-                        'Log In',
+                        'Login',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
