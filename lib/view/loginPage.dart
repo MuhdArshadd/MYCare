@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workshop2dev/controller/SignInController.dart';
 import 'SignInPage.dart';
 import 'homePage.dart';
+import 'resetPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -177,8 +178,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Handle Forgot Password action
-                            _showSnackBar('Forgot Password clicked');
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ResetPage()), // Navigates to SignUp page
+                            );
                           },
                           child: const Text(
                             'Forgot Password?',

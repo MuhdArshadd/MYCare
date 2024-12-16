@@ -3,7 +3,7 @@ import 'package:workshop2dev/dbConnection/dbConnection.dart';
 class AuthController {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  Future<String> signUp(String email, String username, String password, String age,String noIc) async {
+  Future<String> signUp(String email, String username, String password, String age,String noIc ,String address,) async {
     await dbConnection.connectToDatabase();
 
     try {

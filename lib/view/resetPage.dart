@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'SignInPage.dart';
+import 'loginPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,9 +28,11 @@ class ResetPage extends StatefulWidget {
 
 class _ResetPageState extends State<ResetPage> {
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _newPassController = TextEditingController();
 
   void _resetPassword() {
     final email = _emailController.text;
+    final newPass =_newPassController.text;
 
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -46,7 +49,7 @@ class _ResetPageState extends State<ResetPage> {
     // Optionally, navigate to SignInPage after reset
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const SignInPage()),
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
 
@@ -122,6 +125,18 @@ class _ResetPageState extends State<ResetPage> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 20.0),
+                    // Email Field
+                    TextField(
+                      controller: _newPassController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        hintText: 'New Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 100.0),
                     // Send Code Button
                     ElevatedButton(
@@ -146,7 +161,7 @@ class _ResetPageState extends State<ResetPage> {
           ),
           // Information Text
           Positioned(
-            top: 450.0,
+            top: 550.0,
             left: 0,
             right: 0,
             child: Center(

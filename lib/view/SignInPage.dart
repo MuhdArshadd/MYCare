@@ -18,6 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   final AuthController _authController = AuthController();
   final _noIcController = TextEditingController();
   final _ageController = TextEditingController();
+  final _addressController=TextEditingController();
   bool _acceptTerm = false;
 
   void _signUp() async {
@@ -28,6 +29,7 @@ class _SignInPageState extends State<SignInPage> {
     final confirmpassword = _confirmpasswordController.text;
     final noIc = _noIcController.text;
     final age = _ageController.text;
+    final address= _addressController.text;
 
     if (email.isEmpty || username.isEmpty || password.isEmpty || nophone.isEmpty || confirmpassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -43,7 +45,7 @@ class _SignInPageState extends State<SignInPage> {
       return;
     }
 
-    String response = await _authController.signUp(email, username, password,age,noIc,);
+    String response = await _authController.signUp(email, username, password,age,noIc, address);
 
     if (response == "Sign Up successful") {
       showDialog(
@@ -161,6 +163,17 @@ class _SignInPageState extends State<SignInPage> {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.person),
                         hintText: 'Age ',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: _addressController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.home),
+                        hintText: 'Address',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
