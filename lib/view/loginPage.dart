@@ -29,7 +29,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
+  final _noIcController = TextEditingController();
   final _passwordController = TextEditingController();
   final AuthController _authController = AuthController();
   bool _isLoading = false;
@@ -43,10 +43,10 @@ class _LoginPageState extends State<LoginPage> {
 
   // Function to handle user login
   void _login() async {
-    final username = _usernameController.text;
+    final noIc = _noIcController.text;
     final password = _passwordController.text;
 
-    if (username.isEmpty || password.isEmpty) {
+    if (noIc.isEmpty || password.isEmpty) {
       _showSnackBar('Please fill all fields');
       return;
     }
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      String response = await _authController.login(username, password);
+      String response = await _authController.login(noIc, password);
       if (response == "Login successful") {
         Navigator.pushReplacement(
           context,
@@ -136,10 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 40.0),
                     // Username Field
                     TextField(
-                      controller: _usernameController,
+                      controller: _noIcController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.person),
-                        hintText: 'Username',
+                        hintText: 'No IC',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),

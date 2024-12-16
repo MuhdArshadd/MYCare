@@ -3,20 +3,29 @@ import 'package:workshop2dev/dbConnection/dbConnection.dart';
 class AuthController {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  Future<String> signUp(String email, String username, String password, String age,String noIc ,String address,) async {
+  Future<String> signUp(String noIc, String fullname, String age,String email,String phoneNumber,String address
+      ,String userCategory,String incomeRange,String marriageStatus,String password,String confirmPass) async {
     await dbConnection.connectToDatabase();
 
     try {
       // Insert new user into the 'register' table
       String query =
-          'INSERT INTO register (email, username, password) VALUES (@email, @username, @password)';
+          'INSERT INTO users (user_ic,fullname,age,email,phonenumber,'
+          'address,user_category,income_range,marriage_status,password,confirmpass) VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password,@confirmpass)';
       await dbConnection.connection.query(
         query,
         substitutionValues: {
+          'user_ic': noIc,
+          'fullname': fullname,
+          'age': age,
           'email': email,
-          'username': username,
-          'password': password, // Hash password in production
-
+          'phonenumber': phoneNumber,
+          'address': address,
+          'user_category': userCategory ?? 'general',
+          'income_range': incomeRange ?? 0.0,
+          'marriage_status': marriageStatus ?? 'unknown',
+          'password':password,
+          'confirmpass':confirmPass
         },
       );
       return "Sign up successful";
@@ -27,17 +36,17 @@ class AuthController {
     }
   }
 
-  Future<String> login(String username, String password) async {
+  Future<String> login(String noIc, String password) async {
     await dbConnection.connectToDatabase();
 
     try {
       // Validate the user credentials
       String query =
-          'SELECT * FROM register WHERE username = @username AND password = @password';
+          'SELECT * FROM users WHERE user_ic = @user_ic AND password = @password';
       final results = await dbConnection.connection.query(
         query,
         substitutionValues: {
-          'username': username,
+          'user_ic': noIc,
           'password': password, // Hash password comparison in production
         },
       );

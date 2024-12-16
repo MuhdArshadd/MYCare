@@ -10,44 +10,57 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _noIcController = TextEditingController();
+  final _fullnameController = TextEditingController();
+  final _ageController = TextEditingController();
   final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _nophoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _positionController = TextEditingController();
+  final _incomeController = TextEditingController();
+  final _marriageStatusController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
   final AuthController _authController = AuthController();
-  final _noIcController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _addressController=TextEditingController();
   bool _acceptTerm = false;
 
   void _signUp() async {
-    final email = _emailController.text;
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    final nophone = _nophoneController.text;
-    final confirmpassword = _confirmpasswordController.text;
     final noIc = _noIcController.text;
+    final fullname = _fullnameController.text;
     final age = _ageController.text;
-    final address= _addressController.text;
+    final email = _emailController.text;
+    final phoneNumber = _nophoneController.text;
+    final address = _addressController.text;
+    final userCategory = _positionController.text;
+    final incomeRange = _incomeController.text;
+    final marriageStatus = _marriageStatusController.text;
+    final password = _passwordController.text;
+    final confirmPass = _confirmpasswordController.text;
 
-    if (email.isEmpty || username.isEmpty || password.isEmpty || nophone.isEmpty || confirmpassword.isEmpty) {
+    if (noIc.isEmpty || fullname.isEmpty || age.isEmpty || email.isEmpty ||
+        phoneNumber.isEmpty || address.isEmpty || userCategory.isEmpty ||
+        incomeRange.isEmpty || marriageStatus.isEmpty || password.isEmpty ||
+        confirmPass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all fields')),
       );
       return;
     }
 
-    if (password != confirmpassword) {
+    if (password != confirmPass) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Passwords do not match')),
       );
       return;
     }
 
-    String response = await _authController.signUp(email, username, password,age,noIc, address);
+    String response = await _authController.signUp(
+      noIc, fullname, age, email, phoneNumber, address,
+      userCategory, incomeRange, marriageStatus, password, confirmPass,
+    );
 
-    if (response == "Sign Up successful") {
+
+    if (response == "Sign up successful") {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -57,10 +70,14 @@ class _SignInPageState extends State<SignInPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
+                  Navigator.pop(context); // Close the dialog
+                  // Navigate after closing the dialog
+                  if (mounted) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
+                  }
                 },
                 child: const Text('Login'),
               ),
@@ -70,7 +87,7 @@ class _SignInPageState extends State<SignInPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response)),
+        SnackBar(content: Text('Sign Up failed: $response')),
       );
     }
   }
@@ -135,20 +152,9 @@ class _SignInPageState extends State<SignInPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 32.0),
-                    TextField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person),
-                        hintText: 'Username',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _emailController,
+                      controller: _noIcController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.card_membership),
                         hintText: 'No IC ',
@@ -159,10 +165,10 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _emailController,
+                      controller: _fullnameController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.person),
-                        hintText: 'Age ',
+                        hintText: 'Fullname ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -170,10 +176,10 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _addressController,
+                      controller: _ageController,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.home),
-                        hintText: 'Address',
+                        prefixIcon: const Icon(Icons.confirmation_number),
+                        hintText: 'Age ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -196,6 +202,50 @@ class _SignInPageState extends State<SignInPage> {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.phone),
                         hintText: 'No.Phone',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: _addressController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.home),
+                        hintText: 'Address',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: _positionController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.category),
+                        hintText: 'Position',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: _incomeController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.money),
+                        hintText: 'Salary',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: _marriageStatusController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.manage_accounts_rounded),
+                        hintText: 'Marriage Status',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
