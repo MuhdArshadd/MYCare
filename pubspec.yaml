@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   postgres: ^2.4.0
   animated_splash_screen: ^1.2.0
+  mailer: ^6.2.0
+
 
 
 

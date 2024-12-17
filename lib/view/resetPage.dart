@@ -1,23 +1,7 @@
 import 'package:flutter/material.dart';
-import 'SignInPage.dart';
+import 'package:workshop2dev/view/verificationCodePage.dart';
+import 'signUpPage.dart';
 import 'loginPage.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Reset Password',
-      debugShowCheckedModeBanner: false,
-      home: ResetPage(), // Set the ResetPage as the starting page
-    );
-  }
-}
 
 class ResetPage extends StatefulWidget {
   const ResetPage({super.key});
@@ -32,8 +16,9 @@ class _ResetPageState extends State<ResetPage> {
 
   void _resetPassword() {
     final email = _emailController.text;
-    final newPass =_newPassController.text;
+    final newPass = _newPassController.text;
 
+    // Check if the email field is empty
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter an email address')),
@@ -41,17 +26,23 @@ class _ResetPageState extends State<ResetPage> {
       return;
     }
 
-    // Simulate reset password logic (in a real-world scenario, you would call an API here)
+    // Simulate password reset logic and display a success message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Password reset email sent to $email')),
     );
 
-    // Optionally, navigate to SignInPage after reset
+    // Navigate to the verification code page after resetting
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
+      MaterialPageRoute(
+        builder: (context) => VerificationCodePage(
+          email: email,       // Pass the email
+          newPass: newPass,   // Pass the new password
+        ),
+      ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
