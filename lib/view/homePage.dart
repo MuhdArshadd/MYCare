@@ -3,23 +3,6 @@ import 'package:workshop2dev/view/appBar.dart';
 import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MyCare App',
-      home: HomePage(),
-    );
-  }
-}
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -28,30 +11,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final int _currentIndex = 0;
+  int _currentIndex = 0; // Mutable index to track the current page
 
   final List<Widget> _pages = [
-    const HomeContent(),
-    const Center(child: Text('News', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Forum', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
+    Center(child: Text('Home Content', style: TextStyle(fontSize: 24))), // Placeholder for Home content
+    Center(child: Text('News', style: TextStyle(fontSize: 24))), // Placeholder for News content
+    Center(child: Text('Forum', style: TextStyle(fontSize: 24))), // Placeholder for Forum content
+    Center(child: Text('Profile', style: TextStyle(fontSize: 24))), // Placeholder for Profile content
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: const BottomNavWrapper(currentIndex: 0),
+      body: _currentIndex == 0
+          ? _buildHomeContent() // Show home content if index is 0
+          : _pages[_currentIndex], // Show other pages based on the current index
+     bottomNavigationBar: BottomNavWrapper(currentIndex: 0),
     );
   }
-}
 
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildHomeContent() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,7 +62,7 @@ class HomeContent extends StatelessWidget {
               },
             ),
             SwipableSectionWidget(
-              title: 'Support service',
+              title: 'Support Services',
               items: [
                 SectionItem(
                   imageUrl: 'https://via.placeholder.com/400x200',
@@ -125,7 +105,8 @@ class SwipableSectionWidget extends StatefulWidget {
   final List<SectionItem> items;
   final VoidCallback onSeeMore;
 
-  const SwipableSectionWidget({super.key, 
+  const SwipableSectionWidget({
+    super.key,
     required this.title,
     required this.items,
     required this.onSeeMore,
