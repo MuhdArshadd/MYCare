@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwipableSectionWidget(
-              title: 'News',
+              title: 'News ',
               items: [
                 SectionItem(
                   imageUrl: 'https://via.placeholder.com/400x200',
