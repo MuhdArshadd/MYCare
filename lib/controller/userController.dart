@@ -61,4 +61,29 @@ class UserController {
       dbConnection.closeConnection();
     }
   }
+
+  Future<String> resetPass(String email, String newPassword) async {
+    await dbConnection.connectToDatabase();
+
+    try {
+      // SQL query to update password
+      String query = "UPDATE users SET password = @password WHERE email = @email";
+
+      // Execute query with email and newPassword as substitution values
+      await dbConnection.connection.query(
+        query,
+        substitutionValues: {
+          'email': email,       // Use the passed email
+          'password': newPassword,  // Use the passed new password
+        },
+      );
+
+      return "Password update successful";
+    } catch (e) {
+      return "Error updating password: $e";
+    } finally {
+      dbConnection.closeConnection();
+    }
+  }
+
 }

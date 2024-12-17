@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:workshop2dev/controller/userController.dart';
 import 'package:workshop2dev/view/resetPage.dart';
 import '../controller/resetpasswordController.dart';
 import 'loginPage.dart';
@@ -57,6 +58,10 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
             _controller4.text + _controller5.text + _controller6.text;
 
     if (enteredCode == _sentCode.toString()) {
+      //update the password
+      final UserController _userController = UserController();
+      _userController.resetPass(widget.email, widget.newPass);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Verification successful!')),
       );
