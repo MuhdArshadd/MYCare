@@ -16,15 +16,16 @@ class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _nophoneController = TextEditingController();
   final _addressController = TextEditingController();
-  final _positionController = TextEditingController();
-  final _incomeController = TextEditingController();
-  final _marriageStatusController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
   final UserController _userController = UserController();
-  bool _acceptTerm = false;
 
-  //function to Register
+  bool _acceptTerm = false;
+  String? _selectedPosition;
+  String? _selectedIncomeRange;
+  String? _selectedMarriedStatus;
+
+  // Function to Register
   void _signUp() async {
     final noIc = _noIcController.text;
     final fullname = _fullnameController.text;
@@ -32,9 +33,9 @@ class _SignUpPageState extends State<SignUpPage> {
     final email = _emailController.text;
     final phoneNumber = _nophoneController.text;
     final address = _addressController.text;
-    final userCategory = _positionController.text;
-    final incomeRange = _incomeController.text;
-    final marriageStatus = _marriageStatusController.text;
+    final userCategory = _selectedPosition ?? '';
+    final incomeRange = _selectedIncomeRange ?? '';
+    final marriageStatus = _selectedMarriedStatus ?? '';
     final password = _passwordController.text;
     final confirmPass = _confirmpasswordController.text;
 
@@ -56,7 +57,6 @@ class _SignUpPageState extends State<SignUpPage> {
     }
 
     String response = await _userController.signUp(noIc, fullname, age, email, phoneNumber, address, userCategory, incomeRange, marriageStatus, password);
-
 
     if (response == "Sign up successful") {
       showDialog(
@@ -97,6 +97,22 @@ class _SignUpPageState extends State<SignUpPage> {
       body: Stack(
         children: [
           // Background image
+          Container(
+            alignment: Alignment.topLeft,
+            margin: const EdgeInsets.only(top: 500.0, bottom: 200.0),
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text(
+                'Back to Login',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
           Positioned(
             top: 0,
             left: 0,
@@ -106,6 +122,8 @@ class _SignUpPageState extends State<SignUpPage> {
               'assets/background.png',
               fit: BoxFit.cover,
             ),
+
+            // Sign Up Form Fields
           ),
           Positioned(
             top: 0,
@@ -143,14 +161,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
+                    // Back Button at the top
+
+                    // Sign Up Form Fields
                     TextField(
                       controller: _noIcController,
                       decoration: InputDecoration(
@@ -217,37 +230,69 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _positionController,
+                    DropdownButtonFormField<String>(
+                      value: _selectedPosition,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.category),
-                        hintText: 'Position',
+                        hintText: 'Select Position',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
+                      items: const [
+                        DropdownMenuItem(value: 'Student', child: Text('Student')),
+                        DropdownMenuItem(value: 'Employee', child: Text('Employee')),
+                        DropdownMenuItem(value: 'Self-employed', child: Text('Self-employed')),
+                        DropdownMenuItem(value: 'Unemployed', child: Text('Unemployed')),
+                        DropdownMenuItem(value: 'Other', child: Text('Other')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedPosition = value;
+                        });
+                      },
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _incomeController,
+                    DropdownButtonFormField<String>(
+                      value: _selectedIncomeRange,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.money),
-                        hintText: 'Salary',
+                        hintText: 'Select Salary ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
+                      items: const [
+                        DropdownMenuItem(value: 'RM0-RM1500', child: Text('RM0-RM1500')),
+                        DropdownMenuItem(value: 'RM1500-RM3000', child: Text('RM1500-RM3000')),
+                        DropdownMenuItem(value: 'RM3000-RM5000', child: Text('RM3000-RM5000')),
+                        DropdownMenuItem(value: '>RM5000', child: Text('>RM5000')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedIncomeRange = value;
+                        });
+                      },
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _marriageStatusController,
+                    DropdownButtonFormField<String>(
+                      value: _selectedMarriedStatus,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.manage_accounts_rounded),
-                        hintText: 'Marriage Status',
+                        hintText: 'Marital Status',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
+                      items: const [
+                        DropdownMenuItem(value: 'Single', child: Text('Single')),
+                        DropdownMenuItem(value: 'Married', child: Text('Married')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedMarriedStatus = value;
+                        });
+                      },
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
@@ -273,20 +318,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5.0),
-                    // Row(
-                    //   children: [
-                    //     Checkbox(
-                    //       value: _acceptTerm,
-                    //       onChanged: (bool? value) {
-                    //         setState(() {
-                    //           _acceptTerm = value ?? false;
-                    //         });
-                    //       },
-                    //     ),
-                    //     const Text('Accept Terms & Conditions'),
-                    //   ],
-                    // ),
                     const SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: _signUp,
@@ -302,7 +333,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacement(
@@ -315,7 +346,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           text: 'Already have an account? ',
                           style: TextStyle(
                             color: Colors.grey[500],
-                            fontSize: 14.0,
+                            fontSize: 17.0,
                           ),
                           children: const [
                             TextSpan(
