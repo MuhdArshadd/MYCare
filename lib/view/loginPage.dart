@@ -1,25 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/controller/SignInController.dart';
-import 'SignInPage.dart';
+import 'package:workshop2dev/controller/userController.dart';
+import 'signUpPage.dart';
 import 'homePage.dart';
 import 'resetPage.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Login Page',
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
-  }
-}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,7 +14,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _noIcController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthController _authController = AuthController();
+  final UserController _userController = UserController();
   bool _isLoading = false;
   bool _rememberMe = false;
 
@@ -51,15 +34,15 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (password.length < 6) {
-      _showSnackBar('Password must be at least 6 characters');
-      return;
-    }
+    // if (password.length < 6) {
+    //   _showSnackBar('Password must be at least 6 characters');
+    //   return;
+    // }
 
     setState(() => _isLoading = true);
 
     try {
-      String response = await _authController.login(noIc, password);
+      String response = await _userController.login(noIc, password);
       if (response == "Login successful") {
         Navigator.pushReplacement(
           context,
@@ -163,19 +146,19 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _rememberMe,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _rememberMe = value ?? false;
-                                });
-                              },
-                            ),
-                            const Text('Remember Me'),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Checkbox(
+                        //       value: _rememberMe,
+                        //       onChanged: (bool? value) {
+                        //         setState(() {
+                        //           _rememberMe = value ?? false;
+                        //         });
+                        //       },
+                        //     ),
+                        //     const Text('Remember Me'),
+                        //   ],
+                        // ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
@@ -216,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignInPage()), // Navigates to SignUp page
+                          MaterialPageRoute(builder: (context) => const SignUpPage()), // Navigates to SignUp page
                         );
                       },
                       child: RichText(

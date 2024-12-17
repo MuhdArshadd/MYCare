@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/controller/SignInController.dart';
+import 'package:workshop2dev/controller/userController.dart';
 import 'package:workshop2dev/view/loginPage.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _noIcController = TextEditingController();
   final _fullnameController = TextEditingController();
   final _ageController = TextEditingController();
@@ -21,9 +21,10 @@ class _SignInPageState extends State<SignInPage> {
   final _marriageStatusController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
-  final AuthController _authController = AuthController();
+  final UserController _userController = UserController();
   bool _acceptTerm = false;
 
+  //function to Register
   void _signUp() async {
     final noIc = _noIcController.text;
     final fullname = _fullnameController.text;
@@ -54,10 +55,7 @@ class _SignInPageState extends State<SignInPage> {
       return;
     }
 
-    String response = await _authController.signUp(
-      noIc, fullname, age, email, phoneNumber, address,
-      userCategory, incomeRange, marriageStatus, password, confirmPass,
-    );
+    String response = await _userController.signUp(noIc, fullname, age, email, phoneNumber, address, userCategory, incomeRange, marriageStatus, password);
 
 
     if (response == "Sign up successful") {
@@ -276,19 +274,19 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     const SizedBox(height: 5.0),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _acceptTerm,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _acceptTerm = value ?? false;
-                            });
-                          },
-                        ),
-                        const Text('Accept Terms & Conditions'),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Checkbox(
+                    //       value: _acceptTerm,
+                    //       onChanged: (bool? value) {
+                    //         setState(() {
+                    //           _acceptTerm = value ?? false;
+                    //         });
+                    //       },
+                    //     ),
+                    //     const Text('Accept Terms & Conditions'),
+                    //   ],
+                    // ),
                     const SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: _signUp,

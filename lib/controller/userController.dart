@@ -1,17 +1,17 @@
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
 
-class AuthController {
+class UserController {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  Future<String> signUp(String noIc, String fullname, String age,String email,String phoneNumber,String address
-      ,String userCategory,String incomeRange,String marriageStatus,String password,String confirmPass) async {
+  Future<String> signUp(String noIc, String fullname, String age,String email,String phoneNumber,String address,String userCategory,String incomeRange,String marriageStatus,String password) async {
     await dbConnection.connectToDatabase();
 
     try {
       // Insert new user into the 'register' table
       String query =
-          'INSERT INTO users (user_ic,fullname,age,email,phonenumber,'
-          'address,user_category,income_range,marriage_status,password,confirmpass) VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password,@confirmpass)';
+          'INSERT INTO users (user_ic,fullname,age,email,phonenumber, address,user_category,income_range,marriage_status,password) '
+          'VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password)';
+
       await dbConnection.connection.query(
         query,
         substitutionValues: {
@@ -24,8 +24,7 @@ class AuthController {
           'user_category': userCategory ?? 'general',
           'income_range': incomeRange ?? 0.0,
           'marriage_status': marriageStatus ?? 'unknown',
-          'password':password,
-          'confirmpass':confirmPass
+          'password':password
         },
       );
       return "Sign up successful";
