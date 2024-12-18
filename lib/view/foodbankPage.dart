@@ -1,13 +1,11 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import '../controller/foodbankController.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankDetail.dart';
-
-void main() {
-  runApp(const MaterialApp(home: FoodbankPage()));
-}
 
 class FoodbankPage extends StatefulWidget {
   const FoodbankPage({Key? key}) : super(key: key);
@@ -17,58 +15,118 @@ class FoodbankPage extends StatefulWidget {
 }
 
 class _FoodbankPageState extends State<FoodbankPage> {
-  Location _locationController = Location();
+  //loading for page
+  bool isLoading = true; // Loading state
+
+  // For displaying map
+  final Location _locationController = Location();
   LatLng? currentLocation;
   late GoogleMapController _mapController;
 
-  //Request location permission and get the current location
+  // Fetching nearby foodbanks
+  final FoodBank foodbankController = FoodBank();
+  late Future<List<Map<String, dynamic>>> nearbyFoodbank;
+  // For markers
+  Set<Marker> _foodbankMarkers = {}; // Set to store markers
+
+  // Request location permission and get the current location
   Future<void> _getCurrentLocation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
 
-    // Check if location service is enabled
     _serviceEnabled = await _locationController.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await _locationController.requestService();
-      if (!_serviceEnabled) {
-        print('Location service is not enabled.');
-        return;
-      }
+      if (!_serviceEnabled) return;
     }
 
-    // Request permission
     _permissionGranted = await _locationController.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await _locationController.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        print('Location permission denied');
-        return;
-      }
+      if (_permissionGranted != PermissionStatus.granted) return;
     }
 
-    // Get the current location
     try {
       final locationData = await _locationController.getLocation();
       setState(() {
-        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
+        currentLocation =
+            LatLng(locationData.latitude!, locationData.longitude!);
       });
-      print('Current Location in: Latitude: ${currentLocation!.latitude}, Longitude: ${currentLocation!.longitude}');
     } catch (e) {
       print('Error getting location: $e');
     }
   }
 
+  // Add markers to the map
+  void _addMarkers(List<Map<String, dynamic>> foodbanks) {
+    Set<Marker> newMarkers = {};
+    for (var foodbank in foodbanks) {
+      String placeId = foodbank['foodbank_ID']; // Replace with the actual place ID
+      String placeName = foodbank['foodbankName']; // Replace with actual foodbank name
+      double latitude = foodbank['latitude']; // Replace with actual latitude
+      double longitude = foodbank['longitude']; // Replace with actual longitude
+
+      newMarkers.add(
+        Marker(
+          markerId: MarkerId(placeId),
+          position: LatLng(latitude, longitude),
+          infoWindow: InfoWindow(
+            title: placeName,
+            snippet: 'Lat: $latitude, Lng: $longitude',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FoodbankDetailPage(), // Navigate to a details page
+                ),
+              );
+            },
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+      );
+    }
+    setState(() {
+      _foodbankMarkers = newMarkers; // Update the markers set
+    });
+  }
+
+
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation(); // Fetch the location as soon as the page is initialized
+    _getCurrentLocation().then((_) {
+      if (currentLocation != null) {
+        // Ensure nearbyFoodbank is assigned a proper Future
+        nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(currentLocation!.latitude, currentLocation!.longitude).then((value) {
+          setState(() {
+            isLoading = false; // Stop loading once the data is fetched
+            _addMarkers(value); // Add markers to the map
+          });
+          return value; // Return the fetched data
+        }).catchError((error) {
+          // Handle potential errors here and return an empty list
+          print('Error fetching foodbanks: $error');
+          return <Map<String, dynamic>>[];
+        });
+      } else {
+        // Assign a default empty list if location is null
+        nearbyFoodbank = Future.value(<Map<String, dynamic>>[]);
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: Column(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator()) // Display loading animation
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title Row
@@ -108,7 +166,8 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.grey[300],
               ),
-              child: currentLocation == null ? const Center(child: CircularProgressIndicator()) // Loading until location is fetched
+              child: currentLocation == null
+                  ? const Center(child: CircularProgressIndicator())
                   : GoogleMap(
                 initialCameraPosition: CameraPosition(
                   target: currentLocation!,
@@ -116,6 +175,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 ),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
+                markers: _foodbankMarkers, // Display the markers
                 onMapCreated: (GoogleMapController controller) {
                   _mapController = controller;
                 },
@@ -135,56 +195,83 @@ class _FoodbankPageState extends State<FoodbankPage> {
           ),
           Expanded(
             flex: 3,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildFoodbankCard(
-                  context,
-                  imagePath: 'assets/images/petronas.jpg',
-                  name: 'Petronas Durian Tunggal',
-                  category: 'Makanan Kering',
-                ),
-                _buildFoodbankCard(
-                  context,
-                  imagePath: 'assets/images/cuitcekup.jpg',
-                  name: 'Cuit Cekup Mini Mart & Bakery',
-                  category: 'Makanan Kering',
-                ),
-              ],
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: nearbyFoodbank,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                      child: Text('No nearby foodbanks found.'));
+                } else {
+                  final foodbanks = snapshot.data!;
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Two cards per row
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 0.75, // Adjust the aspect ratio to control card height
+                    ),
+                    itemCount: foodbanks.length,
+                    itemBuilder: (context, index) {
+                      final foodbank = foodbanks[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FoodbankDetailPage() // Pass the foodbank data,
+                            ),
+                          );
+                        },
+                      child: _buildFoodbankCard(
+                        context,
+                        imagePath: foodbank['imagePlace'],
+                        name: foodbank['foodbankName'],
+                        category: foodbank['typeofFood'],
+                      ));
+                    },
+                  );
+                }
+              },
             ),
           ),
           // See All Button
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const FoodbankDetailPage()),
-                  );
-                },
-                child: const Text(
-                  'See All',
-                  style: TextStyle(
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Center(
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          //     child: TextButton(
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (context) => const FoodbankDetailPage()),
+          //         );
+          //       },
+          //       child: const Text(
+          //         'See All',
+          //         style: TextStyle(
+          //           color: Colors.blue,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       bottomNavigationBar: const BottomNavWrapper(currentIndex: 2),
     );
   }
 
-  Widget _buildFoodbankCard(
-      BuildContext context, {
-        required String imagePath,
-        required String name,
-        required String category,
-      }) {
+  Widget _buildFoodbankCard(BuildContext context, {
+    required Uint8List imagePath, // Base64 String
+    required String name,
+    required String category,
+  }) {
+
     return Container(
       width: 200.0,
       margin: const EdgeInsets.all(8.0),
@@ -209,8 +296,14 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 topLeft: Radius.circular(8.0),
                 topRight: Radius.circular(8.0),
               ),
-              child: Image.asset(
-                imagePath,
+              child: imagePath != null
+                  ? Image.memory(
+                imagePath, // Use the decoded image
+                fit: BoxFit.cover,
+                width: double.infinity,
+              )
+                  : Image.asset(
+                'assets/images/placeholder.png', // Fallback image
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),
@@ -235,24 +328,6 @@ class _FoodbankPageState extends State<FoodbankPage> {
                     color: Colors.grey,
                   ),
                 ),
-                const SizedBox(height: 4.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FoodbankDetailPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Open',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -260,4 +335,5 @@ class _FoodbankPageState extends State<FoodbankPage> {
       ),
     );
   }
+
 }
