@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankDetail.dart';
@@ -7,13 +9,65 @@ void main() {
   runApp(const MaterialApp(home: FoodbankPage()));
 }
 
-class FoodbankPage extends StatelessWidget {
+class FoodbankPage extends StatefulWidget {
   const FoodbankPage({Key? key}) : super(key: key);
+
+  @override
+  _FoodbankPageState createState() => _FoodbankPageState();
+}
+
+class _FoodbankPageState extends State<FoodbankPage> {
+  Location _locationController = Location();
+  LatLng? currentLocation;
+  late GoogleMapController _mapController;
+
+  //Request location permission and get the current location
+  Future<void> _getCurrentLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    // Check if location service is enabled
+    _serviceEnabled = await _locationController.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _locationController.requestService();
+      if (!_serviceEnabled) {
+        print('Location service is not enabled.');
+        return;
+      }
+    }
+
+    // Request permission
+    _permissionGranted = await _locationController.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _locationController.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        print('Location permission denied');
+        return;
+      }
+    }
+
+    // Get the current location
+    try {
+      final locationData = await _locationController.getLocation();
+      setState(() {
+        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
+      });
+      print('Current Location in: Latitude: ${currentLocation!.latitude}, Longitude: ${currentLocation!.longitude}');
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation(); // Fetch the location as soon as the page is initialized
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,27 +99,6 @@ class FoodbankPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8.0),
-          // Location Filter Chips
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Wrap(
-              spacing: 8.0,
-              children: [
-                FilterChip(
-                  label: const Text('Melaka'),
-                  onSelected: (bool selected) {},
-                ),
-                FilterChip(
-                  label: const Text('Selangor'),
-                  onSelected: (bool selected) {},
-                ),
-                FilterChip(
-                  label: const Text('Negeri Sembilan'),
-                  onSelected: (bool selected) {},
-                ),
-              ],
-            ),
-          ),
           // Map Section
           Expanded(
             flex: 2,
@@ -75,7 +108,18 @@ class FoodbankPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.grey[300],
               ),
-              child: const Center(child: Text("Map Placeholder")),
+              child: currentLocation == null ? const Center(child: CircularProgressIndicator()) // Loading until location is fetched
+                  : GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: currentLocation!,
+                  zoom: 15,
+                ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                onMapCreated: (GoogleMapController controller) {
+                  _mapController = controller;
+                },
+              ),
             ),
           ),
           // Nearby Foodbanks Section
@@ -115,7 +159,6 @@ class FoodbankPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: TextButton(
                 onPressed: () {
-                  // Navigate to "See All" Page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const FoodbankDetailPage()),
@@ -132,7 +175,7 @@ class FoodbankPage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: const BottomNavWrapper(currentIndex: 2),
     );
   }
 
