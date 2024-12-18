@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
-class ForumPage extends StatelessWidget {
+class ForumPage extends StatefulWidget {
+  const ForumPage({super.key});
+
+  @override
+  State<ForumPage> createState() => _ForumPageState();
+}
+
+class _ForumPageState extends State<ForumPage> {
+  String selectedTab = "Latest";
+
+  void changeTab(String tab) {
+    setState(() {
+      selectedTab = tab;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,24 +31,33 @@ class ForumPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(
-                  onPressed: () {}, // Add your action here
+                  onPressed: () => changeTab("Latest"),
                   child: Text(
                     "Latest",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: selectedTab == "Latest" ? Colors.white : Colors.grey[300],
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 TextButton(
-                  onPressed: () {}, // Add your action here
+                  onPressed: () => changeTab("Trending"),
                   child: Text(
                     "Trending",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: selectedTab == "Trending" ? Colors.white : Colors.grey[300],
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 TextButton(
-                  onPressed: () {}, // Add your action here
+                  onPressed: () => changeTab("Popular This Week"),
                   child: Text(
                     "Popular This Week",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: selectedTab == "Popular This Week" ? Colors.white : Colors.grey[300],
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -43,28 +67,31 @@ class ForumPage extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                ForumCard(
-                  question: "Where is a good place to eat with family?",
-                  answers: 0,
-                  votes: 0,
-                  views: 15,
-                  timeAgo: "23m ago",
-                ),
-                ForumCard(
-                  question: "I'm 23 years old, can you suggest what important skills should I learn? I have a lot of free time.",
-                  answers: 5,
-                  votes: 20,
-                  views: 478,
-                  timeAgo: "3h ago",
-                ),
-                ForumCardWithImage(
-                  question: "New eco opened at durian tunggal recently",
-                  imageUrl: "assets/logo.png", // Ensure this asset is available
-                  answers: 2,
-                  votes: 68,
-                  views: 727,
-                  timeAgo: "24h ago",
-                ),
+                if (selectedTab == "Latest" || selectedTab == "Trending" || selectedTab == "Popular This Week") ...[
+                  ForumCard(
+                    question: "Where is a good place to eat with family?",
+                    answers: 0,
+                    votes: 0,
+                    views: 15,
+                    timeAgo: "23m ago",
+                  ),
+                  ForumCard(
+                    question:
+                    "I'm 23 years old, can you suggest what important skills should I learn? I have a lot of free time.",
+                    answers: 5,
+                    votes: 20,
+                    views: 478,
+                    timeAgo: "3h ago",
+                  ),
+                  ForumCardWithImage(
+                    question: "New eco opened at durian tunggal recently",
+                    imageUrl: "assets/logo.png", // Ensure this asset is available
+                    answers: 2,
+                    votes: 68,
+                    views: 727,
+                    timeAgo: "24h ago",
+                  ),
+                ]
               ],
             ),
           ),
@@ -82,33 +109,34 @@ class ForumCard extends StatelessWidget {
   final int views;
   final String timeAgo;
 
-  ForumCard({
+  const ForumCard({
     required this.question,
     required this.answers,
     required this.votes,
     required this.views,
     required this.timeAgo,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               question,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("$answers Answers  •  $votes Votes  •  $views Views"),
-                Text(timeAgo, style: TextStyle(color: Colors.grey)),
+                Text(timeAgo, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ],
@@ -126,38 +154,39 @@ class ForumCardWithImage extends StatelessWidget {
   final int views;
   final String timeAgo;
 
-  ForumCardWithImage({
+  const ForumCardWithImage({
     required this.question,
     required this.imageUrl,
     required this.answers,
     required this.votes,
     required this.views,
     required this.timeAgo,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(imageUrl, fit: BoxFit.cover),
           Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   question,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("$answers Answers  •  $votes Votes  •  $views Views"),
-                    Text(timeAgo, style: TextStyle(color: Colors.grey)),
+                    Text(timeAgo, style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
