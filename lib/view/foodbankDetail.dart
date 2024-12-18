@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
-class FoodbankDetailPage extends StatelessWidget {
+class FoodbankDetailPage extends StatefulWidget {
   const FoodbankDetailPage({super.key});
 
   @override
+  State<FoodbankDetailPage> createState() => _FoodbankDetailPageState();
+}
+
+class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: CustomAppBar(),
+      appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -78,7 +83,7 @@ class FoodbankDetailPage extends StatelessWidget {
           ),
         ),
       ),
-     bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
     );
   }
 
@@ -138,6 +143,3 @@ class FoodbankDetailPage extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(const MaterialApp(home: FoodbankDetailPage()));
-}
