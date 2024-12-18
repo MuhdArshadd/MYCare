@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'appBar.dart'; 
+import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
-class SkillDetailsPage extends StatelessWidget {
+class SkillDetailsPage extends StatefulWidget {
   const SkillDetailsPage({super.key});
 
+  @override
+  State<SkillDetailsPage> createState() => _SkillDetailsPageState();
+}
+
+class _SkillDetailsPageState extends State<SkillDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,3 +166,5 @@ class SkillDetailsPage extends StatelessWidget {
     );
   }
 }
+
+
