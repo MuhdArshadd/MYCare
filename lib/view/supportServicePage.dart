@@ -5,24 +5,29 @@ import 'foodbankPage.dart';
 import 'skillBuildingPage.dart';
 import 'medicalService.dart';
 
-class SupportServicePage extends StatelessWidget {
+class SupportServicePage extends StatefulWidget {
   const SupportServicePage({super.key});
 
+  @override
+  State<SupportServicePage> createState() => _SupportServicePageState();
+}
+
+class _SupportServicePageState extends State<SupportServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: [
+                children: const [
                   Icon(Icons.arrow_back, size: 20),
-                   SizedBox(width: 8),
-                   Text(
+                  SizedBox(width: 8),
+                  Text(
                     'Support service',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -77,23 +82,17 @@ class ServiceCard extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const FoodbankPage()),
           );
-        }
-        else if (title =='Medical service')
-        {
+        } else if (title == 'Medical service') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>  MedicalService()),
+            MaterialPageRoute(builder: (context) => MedicalService()),
           );
-        }
-        else if (title == 'Skill Building Programme' )
-        {
+        } else if (title == 'Skill Building Programme') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SkillBuildingPage()),
           );
-        }
-        else
-        {
+        } else {
           print('$title tapped');
         }
       },
