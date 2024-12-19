@@ -2,32 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:workshop2dev/view/appBar.dart';
 import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
+import 'package:workshop2dev/controller/newsController.dart';
+import 'dart:typed_data';
+import 'supportServicePage.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String noIc;
+  const HomePage({super.key, required this.noIc});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0; // Mutable index to track the current page
+  int _currentIndex = 0;
+  List<Map<String, dynamic>> _newsArticles = [];
 
-  final List<Widget> _pages = [
-    Center(child: Text('Home Content', style: TextStyle(fontSize: 24))), // Placeholder for Home content
-    Center(child: Text('News', style: TextStyle(fontSize: 24))), // Placeholder for News content
-    Center(child: Text('Forum', style: TextStyle(fontSize: 24))), // Placeholder for Forum content
-    Center(child: Text('Profile', style: TextStyle(fontSize: 24))), // Placeholder for Profile content
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchNewsArticles();
+  }
+
+  Future<void> _fetchNewsArticles() async {
+    News news = News();
+    var fetchedNews = await news.fetchNews();
+    setState(() {
+      _newsArticles = fetchedNews.take(3).toList(); // Limit to 3 articles for home page
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: _currentIndex == 0
-          ? _buildHomeContent() // Show home content if index is 0
-          : _pages[_currentIndex], // Show other pages based on the current index
-     bottomNavigationBar: BottomNavWrapper(currentIndex: 0),
+          ? _buildHomeContent()
+          : Center(
+        child: Text(
+          'Content for tab $_currentIndex',
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: _currentIndex),
     );
   }
 
@@ -39,60 +56,47 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwipableSectionWidget(
-              title: 'News ',
+              title: 'News',
+              items: _newsArticles.map((article) {
+                return SectionItem(
+                  imageBytes: article['images'],
+                  description: article['headline'],
+                );
+              }).toList(),
+              onSeeMore: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewsPage(noIc: widget.noIc)),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            SwipableSectionWidget(
+              title: 'Support Service',
               items: [
                 SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2024',
+                  imageBytes: null,
+                  description: 'Foodbank',
                 ),
                 SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'New initiative for student welfare in 2024',
+                  imageBytes: null,
+                  description: 'Medical Service',
                 ),
                 SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Digital tools for education in rural areas',
+                  imageBytes: null,
+                  description: 'Skill Building Programme',
                 ),
               ],
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const NewsPage()),
+                  MaterialPageRoute(
+                    builder: (context) => SupportServicePage(noIc: widget.noIc),
+                  ),
                 );
               },
             ),
-            SwipableSectionWidget(
-              title: 'Support Services',
-              items: [
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Food Aid Foundation, Kuala Lumpur',
-                ),
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Volunteer opportunities in Malaysia',
-                ),
-              ],
-              onSeeMore: () {
-                print('See more support services');
-              },
-            ),
-            SwipableSectionWidget(
-              title: 'Forum',
-              items: [
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Community discussions and tips',
-                ),
-                SectionItem(
-                  imageUrl: 'https://via.placeholder.com/400x200',
-                  description: 'Healthy eating tips for students',
-                ),
-              ],
-              onSeeMore: () {
-                print('See more forum');
-              },
-            ),
+            // Add more sections if needed
           ],
         ),
       ),
@@ -125,12 +129,6 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
     super.initState();
     _pageController = PageController(viewportFraction: 0.85);
     _currentPage = 0;
-
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.toInt();
-      });
-    });
   }
 
   @override
@@ -165,9 +163,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
             ),
             TextButton(
               onPressed: widget.onSeeMore,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-              ),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -198,6 +194,11 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.items.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -207,15 +208,17 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                   ),
                   child: Column(
                     children: [
-                      ClipRRect(
+                      widget.items[index].imageBytes != null
+                          ? ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-                        child: Image.network(
-                          widget.items[index].imageUrl,
+                        child: Image.memory(
+                          widget.items[index].imageBytes!,
                           height: 150,
                           width: double.infinity,
-                          fit: BoxFit.cover,
+                          fit:BoxFit.contain,
                         ),
-                      ),
+                      )
+                          : Container(height: 150, color: Colors.grey),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -246,8 +249,8 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
 }
 
 class SectionItem {
-  final String imageUrl;
+  final Uint8List? imageBytes;
   final String description;
 
-  SectionItem({required this.imageUrl, required this.description});
+  SectionItem({required this.imageBytes, required this.description});
 }

@@ -1,60 +1,49 @@
 import 'package:flutter/material.dart';
-//import 'package:url_launcher/url_launcher.dart'; // Add this import
 import 'package:workshop2dev/view/appBar.dart';
 import 'bottomNavigationBar.dart';
-
-class NewsArticle {
-  final String imageUrl;
-  final String title;
-  final String link;
-  final String category; // Add category for filtering
-
-  NewsArticle({
-    required this.imageUrl,
-    required this.title,
-    required this.link,
-    required this.category,
-  });
-}
+import 'package:workshop2dev/controller/newsController.dart';
+import 'dart:typed_data';
+import 'newsDetailPage.dart';  // Import NewsDetailPage
 
 class NewsPage extends StatefulWidget {
-  const NewsPage({super.key});
+  final String noIc;
+  const NewsPage({super.key, required this.noIc});
 
   @override
   _NewsPageState createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
-  final List<NewsArticle> _articles = [
-    NewsArticle(
-      imageUrl: 'https://via.placeholder.com/400x200',
-      title: 'Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022',
-      link: 'https://perantisiswa.komunikasi.gov.my/login',
-      category: 'education',
-    ),
-    NewsArticle(
-      imageUrl: 'https://via.placeholder.com/400x200',
-      title: 'Bantuan E-Tunai Belia Rahmah Bernilai RM200 Khusus Untuk Golongan Belia',
-      link: 'https://portal.touchngo.com.my/login',
-      category: 'financial',
-    ),
-    NewsArticle(
-      imageUrl: 'https://via.placeholder.com/400x200',
-      title: 'Permohonan Bantuan Persekolahan RM150 2024',
-      link: 'https://marfitalent.gov.my/bozda/rmdtk/bsk',
-      category: 'healthcare',
-    ),
-  ];
-
+  late Future<List<Map<String, dynamic>>> newList;
   String _searchText = "";
-  String? _selectedFilter; // For storing the selected filter value
+  String? _selectedFilter;
+  String? _selectedCategory;
+
+  List<Map<String, dynamic>> _articles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNews();
+  }
+
+  Future<void> _loadNews() async {
+    News news = News();
+    var fetchedNews = await news.fetchNews();
+    setState(() {
+      _articles = fetchedNews;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Filter articles based on search text
-    List<NewsArticle> filteredArticles = _articles.where((article) {
-      final matchesSearch = article.title.toLowerCase().contains(_searchText.toLowerCase());
-      return matchesSearch;
+    List<Map<String, dynamic>> filteredArticles = _articles.where((article) {
+      bool matchesSearch = article['headline']
+          .toLowerCase()
+          .contains(_searchText.toLowerCase());
+      bool matchesCategory = _selectedCategory == null ||
+          article['newstype'].toLowerCase() == _selectedCategory?.toLowerCase();
+      return matchesSearch && matchesCategory;
     }).toList();
 
     return Scaffold(
@@ -65,7 +54,6 @@ class _NewsPageState extends State<NewsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search and Filter Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -73,7 +61,7 @@ class _NewsPageState extends State<NewsPage> {
                     child: TextField(
                       onChanged: (value) {
                         setState(() {
-                          _searchText = value; // Update search text
+                          _searchText = value;
                         });
                       },
                       decoration: InputDecoration(
@@ -100,7 +88,7 @@ class _NewsPageState extends State<NewsPage> {
                     ],
                     onChanged: (value) {
                       setState(() {
-                        _selectedFilter = value; // Update filter selection
+                        _selectedFilter = value;
                       });
                     },
                     hint: const Text("Filter by"),
@@ -108,7 +96,6 @@ class _NewsPageState extends State<NewsPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              // Category Chips
               Wrap(
                 spacing: 8.0,
                 children: [
@@ -118,9 +105,7 @@ class _NewsPageState extends State<NewsPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              // News Cards
-              for (var article in filteredArticles) // Use filtered articles here
-                _buildNewsCard(article),
+              for (var article in filteredArticles) _buildNewsCard(article),
             ],
           ),
         ),
@@ -130,28 +115,52 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   Widget _buildCategoryChip(String label, Color color) {
-    return Chip(
+    return ChoiceChip(
       label: Text(
         label,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white),
       ),
-      backgroundColor: color,
+      selected: _selectedCategory == label.toLowerCase(),
+      onSelected: (isSelected) {
+        setState(() {
+          _selectedCategory = isSelected ? label.toLowerCase() : null;
+        });
+      },
+      selectedColor: color,
+      backgroundColor: color.withOpacity(0.5),
     );
   }
 
-  Widget _buildNewsCard(NewsArticle article) {
+  Widget _buildNewsCard(Map<String, dynamic> article) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15),
-              topRight: Radius.circular(15),
+          article['images'] != null && article['images'] is Uint8List &&
+              article['images'].isNotEmpty
+              ? GestureDetector(
+            onTap: () {
+              _navigateToNewsDetailPage(article);
+            },
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              child: Image.memory(
+                article['images'],
+                width: double.infinity,
+                fit: BoxFit.contain, // Adjust the image size with BoxFit.contain
+              ),
             ),
-            child: Image.network(article.imageUrl, height: 150, width: double.infinity, fit: BoxFit.cover),
+          )
+              : GestureDetector(
+            onTap: () {
+              _navigateToNewsDetailPage(article);
+            },
+            child: Container(height: 250, color: Colors.grey),
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
@@ -159,24 +168,34 @@ class _NewsPageState extends State<NewsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  article.title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  article['headline'],
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 GestureDetector(
-                  onTap: () async {
-                    // Open the link
-
+                  onTap: () {
+                    _navigateToNewsDetailPage(article);
                   },
                   child: const Text(
                     'View More',
-                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                    style: TextStyle(color: Colors.blue,
+                        decoration: TextDecoration.underline),
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToNewsDetailPage(Map<String, dynamic> article) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsDetailPage(article: article),
       ),
     );
   }
