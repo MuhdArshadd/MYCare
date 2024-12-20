@@ -7,6 +7,7 @@ import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankDetail.dart';
 
+//
 class FoodbankPage extends StatefulWidget {
   const FoodbankPage({Key? key}) : super(key: key);
 

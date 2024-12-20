@@ -5,6 +5,7 @@ import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+//
 class FoodbankDetailPage extends StatefulWidget {
   final String foodbankID;
   final LatLng? currentLocation;

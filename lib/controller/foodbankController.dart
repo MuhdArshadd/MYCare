@@ -4,6 +4,7 @@ import 'package:workshop2dev/dbConnection/dbConnection.dart';
 import 'package:postgres/postgres.dart';
 
 class FoodBank {
+  //initialise database connection controller
   final DatabaseConnection dbConnection = DatabaseConnection();
 
   // Fetch nearby foodbanks based on user's latitude and longitude
