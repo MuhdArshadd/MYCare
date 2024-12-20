@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
       if (response == "Login successful") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(noIc: noIc)),
         );
       } else {
         _showSnackBar(response);

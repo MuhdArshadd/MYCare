@@ -62,10 +62,10 @@ class _FoodbankPageState extends State<FoodbankPage> {
   void _addMarkers(List<Map<String, dynamic>> foodbanks) {
     Set<Marker> newMarkers = {};
     for (var foodbank in foodbanks) {
-      String placeId = foodbank['foodbank_ID'];
-      String placeName = foodbank['foodbankName'];
-      double latitude = foodbank['latitude'];
-      double longitude = foodbank['longitude'];
+      String placeId = foodbank['foodbank_ID']; // Replace with the actual place ID
+      String placeName = foodbank['foodbankName']; // Replace with actual foodbank name
+      double latitude = foodbank['latitude']; // Replace with actual latitude
+      double longitude = foodbank['longitude']; // Replace with actual longitude
 
       newMarkers.add(
         Marker(
@@ -78,7 +78,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: currentLocation), // Navigate to a details page
+                  builder: (context) => FoodbankDetailPage(), // Navigate to a details page
                 ),
               );
             },
@@ -221,21 +221,20 @@ class _FoodbankPageState extends State<FoodbankPage> {
                     itemBuilder: (context, index) {
                       final foodbank = foodbanks[index];
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FoodbankDetailPage() // Pass the foodbank data,
+                              ),
+                            );
+                          },
+                          child: _buildFoodbankCard(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: currentLocation) // Pass the foodbank id,
-                            ),
-                          );
-                        },
-                      child: _buildFoodbankCard(
-                        context,
-                        imagePath: foodbank['imagePlace'],
-                        name: foodbank['foodbankName'],
-                        status: foodbank['foodbankStatus'],
-                        distance: foodbank['distance'],
-                      ));
+                            imagePath: foodbank['imagePlace'],
+                            name: foodbank['foodbankName'],
+                            category: foodbank['typeofFood'],
+                          ));
                     },
                   );
                 }
@@ -271,8 +270,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
   Widget _buildFoodbankCard(BuildContext context, {
     required Uint8List imagePath, // Base64 String
     required String name,
-    required String status,
-    required String distance,
+    required String category,
   }) {
 
     return Container(
@@ -325,17 +323,10 @@ class _FoodbankPageState extends State<FoodbankPage> {
                   ),
                 ),
                 Text(
-                  status,
+                  category,
                   style: const TextStyle(
                     fontSize: 14.0,
-                    color: Colors.green,
-                  ),
-                ),
-                Text(
-                  distance,
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.blueGrey,
+                    color: Colors.grey,
                   ),
                 ),
               ],

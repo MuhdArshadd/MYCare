@@ -1,12 +1,12 @@
-import 'dart:typed_data';
 
+
+import 'dart:typed_data';
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
 import 'package:postgres/postgres.dart';
 
 class FoodBank {
   //initialise database connection controller
   final DatabaseConnection dbConnection = DatabaseConnection();
-
   // Fetch nearby foodbanks based on user's latitude and longitude
   Future<List<Map<String, dynamic>>> fetchNearbyFoodbanks(double userLatitude, double userLongitude) async {
     // Store into a list
@@ -21,6 +21,9 @@ class FoodBank {
         SELECT 
           foodbank_ID, 
           foodbankName, 
+          address::TEXT, -- Convert JSON to text for easier handling
+          contactNo, 
+          typeofFood, 
           foodbankStatus, 
           latitude, 
           longitude, 
@@ -38,11 +41,14 @@ class FoodBank {
         nearbyFoodbanks.add({
           'foodbank_ID': row[0].toString(), // Integer to string conversion
           'foodbankName': row[1] as String,
-          'foodbankStatus': row[2] as String,
-          'latitude': row[3] as double,
-          'longitude': row[4] as double,
-          'imagePlace': row[5] as Uint8List, // Assuming this is stored as base64 string
-          'distance': '${row[6].toStringAsFixed(2)} KM away', // Calculated distance
+          'address': row[2] as String, // Address as JSON string
+          'contactNo': row[3] as String,
+          'typeofFood': row[4] as String,
+          'foodbankStatus': row[5] as String,
+          'latitude': row[6] as double,
+          'longitude': row[7] as double,
+          'imagePlace': row[8] as Uint8List, // Assuming this is stored as base64 string
+          'distance': '${row[9].toStringAsFixed(2)} KM away', // Calculated distance
         });
         print(nearbyFoodbanks);
       }
@@ -54,59 +60,6 @@ class FoodBank {
     }
     //return nearby foodbanks data
     return nearbyFoodbanks;
-  }
-
-  // Fetch detailed foodbanks based on foodbank id (only one row of data)
-  Future<Map<String, dynamic>?> fetchFoodbankDetails(String foodbankID) async {
-    Map<String, dynamic>? foodbankDetails;
-
-    try {
-      // Ensure the database connection is open
-      await dbConnection.connectToDatabase();
-
-      // Query to fetch a single foodbank based on foodbankID
-      var results = await dbConnection.connection.query('''
-      SELECT
-        foodbank_ID,
-        foodbankName,
-        address,
-        contactNo,
-        typeofFood,
-        foodbankStatus,
-        latitude,
-        longitude,
-        imagePlace
-      FROM foodbanks
-      WHERE foodbank_ID = @foodbankID
-    ''', substitutionValues: {
-        'foodbankID': foodbankID,
-      });
-
-      // If the result is not empty, map the row data to a map
-      if (results.isNotEmpty) {
-        var row = results.first;
-        foodbankDetails = {
-          'foodbank_ID': row[0].toString(), // Integer to string conversion
-          'foodbankName': row[1] as String,
-          'address': row[2] as String,
-          'contactNo': row[3] as String,
-          'typeofFood': row[4] as String,
-          'foodbankStatus': row[5] as String,
-          'latitude': row[6] as double,
-          'longitude': row[7] as double,
-          'imagePlace': row[8] as Uint8List, // Assuming this is stored as base64 string
-        };
-      }
-
-    } catch (e) {
-      print('Error fetching foodbank details: $e');
-    } finally {
-      // Ensure the connection is closed
-      dbConnection.closeConnection();
-    }
-
-    // Return the single foodbank details map
-    return foodbankDetails;
   }
 
 }

@@ -29,13 +29,13 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage(noIc: '',)));
         break;
       case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NewsPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NewsPage(noIc: '',)));
         break;
       case 2:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage(noIc: '',)));
         break;
       case 3:
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage()));
