@@ -10,7 +10,8 @@ import 'foodbankDetail.dart';
 
 //foodbank page
 class FoodbankPage extends StatefulWidget {
-  const FoodbankPage({Key? key}) : super(key: key);
+  final  LatLng? currentLocation;
+  const FoodbankPage({Key? key, this.currentLocation}) : super(key: key);
 
   @override
   _FoodbankPageState createState() => _FoodbankPageState();
@@ -22,7 +23,6 @@ class _FoodbankPageState extends State<FoodbankPage> {
 
   // For displaying map
   final Location _locationController = Location();
-  LatLng? currentLocation;
   late GoogleMapController _mapController;
 
   // Fetching nearby foodbanks
@@ -30,34 +30,6 @@ class _FoodbankPageState extends State<FoodbankPage> {
   late Future<List<Map<String, dynamic>>> nearbyFoodbank;
   // For markers
   Set<Marker> _foodbankMarkers = {}; // Set to store markers
-
-  // Request location permission and get the current location
-  Future<void> _getCurrentLocation() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await _locationController.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await _locationController.requestService();
-      if (!_serviceEnabled) return;
-    }
-
-    _permissionGranted = await _locationController.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _locationController.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) return;
-    }
-
-    try {
-      final locationData = await _locationController.getLocation();
-      setState(() {
-        currentLocation =
-            LatLng(locationData.latitude!, locationData.longitude!);
-      });
-    } catch (e) {
-      print('Error getting location: $e');
-    }
-  }
 
   // Add markers to the map
   void _addMarkers(List<Map<String, dynamic>> foodbanks) {
@@ -79,7 +51,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: currentLocation), // Navigate to a details page
+                  builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: widget.currentLocation), // Navigate to a details page
                 ),
               );
             },
@@ -97,10 +69,9 @@ class _FoodbankPageState extends State<FoodbankPage> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation().then((_) {
-      if (currentLocation != null) {
+      if (widget.currentLocation != null) {
         // Ensure nearbyFoodbank is assigned a proper Future
-        nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(currentLocation!.latitude, currentLocation!.longitude).then((value) {
+        nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(widget.currentLocation!.latitude, widget.currentLocation!.longitude).then((value) {
           setState(() {
             isLoading = false; // Stop loading once the data is fetched
             _addMarkers(value); // Add markers to the map
@@ -118,7 +89,6 @@ class _FoodbankPageState extends State<FoodbankPage> {
           isLoading = false;
         });
       }
-    });
   }
 
 
@@ -168,11 +138,11 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.grey[300],
               ),
-              child: currentLocation == null
+              child: widget.currentLocation == null
                   ? const Center(child: CircularProgressIndicator())
                   : GoogleMap(
                 initialCameraPosition: CameraPosition(
-                  target: currentLocation!,
+                  target: widget.currentLocation!,
                   zoom: 15,
                 ),
                 myLocationEnabled: true,
@@ -226,7 +196,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: currentLocation) // Pass the foodbank id,
+                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: widget.currentLocation) // Pass the foodbank id,
                               ),
                             );
                           },

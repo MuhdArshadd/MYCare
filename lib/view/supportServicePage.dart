@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:typed_data';
-import '../controller/newsController.dart'; // Import your controller
+import '../controller/newsController.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankPage.dart';
 import 'skillBuildingPage.dart';
 import 'medicalService.dart';
+import 'package:location/location.dart';
 
 class SupportServicePage extends StatefulWidget {
   final String noIc;
@@ -18,12 +20,44 @@ class SupportServicePage extends StatefulWidget {
 class _SupportServicePageState extends State<SupportServicePage> {
   List<Map<String, dynamic>> _supportServices = [];
   bool _isLoading = true;
+  LatLng? currentLocation;
+  final Location _locationController = Location();
 
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
     _fetchSupportServices();
   }
+
+  // Request location permission and get the current location
+  Future<void> _getCurrentLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await _locationController.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _locationController.requestService();
+      if (!_serviceEnabled) return;
+    }
+
+    _permissionGranted = await _locationController.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _locationController.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) return;
+    }
+
+    try {
+      final locationData = await _locationController.getLocation();
+      setState(() {
+        currentLocation =
+            LatLng(locationData.latitude!, locationData.longitude!);
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+
 
   Future<void> _fetchSupportServices() async {
     try {
@@ -72,6 +106,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   return ServiceCard(
                     title: service['name'],
                     imageBytes: service['images'],
+                    currentLocation: currentLocation, // Pass location here
                   );
                 }).toList(),
               )
@@ -88,10 +123,12 @@ class _SupportServicePageState extends State<SupportServicePage> {
 class ServiceCard extends StatelessWidget {
   final String title;
   final Uint8List imageBytes;
+  final LatLng? currentLocation;
 
   const ServiceCard({
     required this.title,
     required this.imageBytes,
+    required this.currentLocation,
     Key? key,
   }) : super(key: key);
 
@@ -99,23 +136,33 @@ class ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (title == 'Foodbank') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const FoodbankPage()),
+        if (currentLocation == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fetching location, please wait...'),
+            ),
           );
-        } else if (title == 'Medical service') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MedicalService()),
-          );
-        } else if (title == 'Skill Building Programme') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SkillBuildingPage()),
-          );
-        } else {
-          print('$title tapped');
+          return;
+        }else{
+          if (title == 'Foodbank') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation),
+              ),
+            );
+          } else if (title == 'Medical Service') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation)),
+            );
+          } else if (title == 'Skill Building Programme') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SkillBuildingPage()),
+            );
+          } else {
+            print('$title tapped');
+          }
         }
       },
       child: Container(
@@ -165,4 +212,4 @@ class ServiceCard extends StatelessWidget {
     );
   }
 }
-//s
+
