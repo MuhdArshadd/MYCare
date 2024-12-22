@@ -10,16 +10,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text('MyCare', style: TextStyle(fontSize: 24, color: Colors.white)),
       backgroundColor: Colors.blue,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {
-            _showSlidingPopupMenu(context);
-          },
-        ),
-      ],
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white, size: 28), // Slightly larger for emphasis
+            onPressed: () {
+              _showSlidingPopupMenu(context);
+            },
+          ),
+          const SizedBox(width: 5), // Space between the icon and text
+          const Text(
+            'MyCare',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold, // Bold text
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -36,13 +47,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         return Transform.translate(
           offset: Offset(-300 * (1 - anim1.value), 0), // Slide from left
           child: Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerLeft, // Align to the left
             child: Material(
               color: Colors.transparent,
               elevation: 4,
               child: Container(
                 width: 250,
-                height: MediaQuery.of(context).size.height, // Adjust height dynamically
+                height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -57,7 +68,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 50), // Space for design
+                    const SizedBox(height: 50),
                     const CircleAvatar(
                       backgroundImage: AssetImage('assets/myCare.png'),
                       radius: 40,
@@ -125,6 +136,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+
   /// Helper Widget to Build Menu Items
   Widget _buildMenuItem(
       BuildContext context, {
@@ -135,8 +147,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         Color textColor = Colors.black,
       }) {
     return ListTile(
-      leading: Icon(icon, color: iconColor),
-      title: Text(label, style: TextStyle(color: textColor)),
+      leading: Icon(icon, color: iconColor, size: 24), // Standard size for icons
+      title: Text(
+        label,
+        style: TextStyle(
+          fontWeight: FontWeight.bold, // Bold text for menu items
+          color: textColor,
+        ),
+      ),
       onTap: onTap,
     );
   }
