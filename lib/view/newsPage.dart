@@ -3,7 +3,7 @@ import 'package:workshop2dev/view/appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
 import 'dart:typed_data';
-import 'newsDetailPage.dart';  // Import NewsDetailPage
+import 'newsDetailPage.dart'; // Import NewsDetailPage
 
 class NewsPage extends StatefulWidget {
   final String noIc;
@@ -57,23 +57,13 @@ class _NewsPageState extends State<NewsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          _searchText = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
+                  const Text(
+                    "News", // News title
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 10),
                   DropdownButton<String>(
                     value: _selectedFilter,
                     items: const [
@@ -92,6 +82,28 @@ class _NewsPageState extends State<NewsPage> {
                       });
                     },
                     hint: const Text("Filter by"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 9), // Space between the row and the search bar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          _searchText = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -200,4 +212,3 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 }
-//s
