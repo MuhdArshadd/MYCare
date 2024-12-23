@@ -38,7 +38,7 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage(noIc: '',)));
         break;
       case 3:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage(noIc: '',)));
         break;
       default:
         break;

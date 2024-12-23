@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/view/appBar.dart';
+import 'forumPage.dart';
 import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
@@ -127,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SupportServicePage(noIc: widget.noIc),
+                    builder: (context) => ForumPage(noIc: widget.noIc),
                   ),
                 );
               },

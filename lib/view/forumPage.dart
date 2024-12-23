@@ -3,7 +3,9 @@ import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
 class ForumPage extends StatefulWidget {
-  const ForumPage({super.key});
+  final String noIc;
+
+  const ForumPage({super.key, required this.noIc});
 
   @override
   State<ForumPage> createState() => _ForumPageState();
@@ -18,13 +20,29 @@ class _ForumPageState extends State<ForumPage> {
     });
   }
 
+  void _navigateToAddPostPage() {
+    // Navigate to the "Add Post" page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddPostPage(noIc: widget.noIc),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(), // Ensure CustomAppBar is properly defined
+      appBar: CustomAppBar(),
       body: Column(
         children: [
-          // Tab Bar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "User ID: ${widget.noIc}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
           Container(
             color: Colors.lightBlue,
             child: Row(
@@ -63,7 +81,6 @@ class _ForumPageState extends State<ForumPage> {
               ],
             ),
           ),
-          // Forum List
           Expanded(
             child: ListView(
               children: [
@@ -83,21 +100,19 @@ class _ForumPageState extends State<ForumPage> {
                     views: 478,
                     timeAgo: "3h ago",
                   ),
-                  ForumCardWithImage(
-                    question: "New eco opened at durian tunggal recently",
-                    imageUrl: "assets/logo.png", // Ensure this asset is available
-                    answers: 2,
-                    votes: 68,
-                    views: 727,
-                    timeAgo: "24h ago",
-                  ),
                 ]
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 3), // Make sure this is properly defined
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToAddPostPage,
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+        tooltip: "Add Post",
+      ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 3),
     );
   }
 }
@@ -146,53 +161,51 @@ class ForumCard extends StatelessWidget {
   }
 }
 
-class ForumCardWithImage extends StatelessWidget {
-  final String question;
-  final String imageUrl;
-  final int answers;
-  final int votes;
-  final int views;
-  final String timeAgo;
+class AddPostPage extends StatelessWidget {
+  final String noIc;
 
-  const ForumCardWithImage({
-    required this.question,
-    required this.imageUrl,
-    required this.answers,
-    required this.votes,
-    required this.views,
-    required this.timeAgo,
-    Key? key,
-  }) : super(key: key);
+  const AddPostPage({super.key, required this.noIc});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(imageUrl, fit: BoxFit.cover),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  question,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("$answers Answers  •  $votes Votes  •  $views Views"),
-                    Text(timeAgo, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add New Post"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Create a New Forum Post",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "Title",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "Description",
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 5,
+            ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                // Add functionality to submit post
+                Navigator.pop(context);
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        ),
       ),
     );
   }
