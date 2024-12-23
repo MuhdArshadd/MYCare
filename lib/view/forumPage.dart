@@ -21,7 +21,6 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   void _navigateToAddPostPage() {
-    // Navigate to the "Add Post" page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -239,7 +238,55 @@ class AddPostPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add New Post"),
+        backgroundColor: Colors.blue,
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.menu, // This icon represents the three horizontal lines (hamburger menu)
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer(); // Open the drawer when the icon is pressed
+              },
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              "MyCare",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      drawer: Drawer( // Add the drawer here
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+            ),
+            ListTile(
+              title: const Text('Home'),
+              onTap: () {
+                // Add navigation or functionality here
+              },
+            ),
+            ListTile(
+              title: const Text('Settings'),
+              onTap: () {
+                // Add navigation or functionality here
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -268,9 +315,11 @@ class AddPostPage extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                // Add functionality to submit post
-                Navigator.pop(context);
+                Navigator.pop(context); // Add functionality to submit post
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Button color
+              ),
               child: const Text("Submit"),
             ),
           ],
