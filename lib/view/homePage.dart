@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import for rootBundle
 import 'package:workshop2dev/view/appBar.dart';
-import 'forumPage.dart';
 import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
 import 'dart:typed_data';
 import 'supportServicePage.dart';
+import 'forumPage.dart';
 
 class HomePage extends StatefulWidget {
   final String noIc;
@@ -14,19 +15,18 @@ class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
-//s
+
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Map<String, dynamic>> _newsArticles = [];
-  List<Map<String, dynamic>> _supportServices = [];
+  List<SectionItem> _supportServices = [];
   bool _isLoading = true;
-
 
   @override
   void initState() {
     super.initState();
     _fetchNewsArticles();
-    _fetchSupportServices();
+    _loadStaticSupportServices();
   }
 
   Future<void> _fetchNewsArticles() async {
@@ -37,20 +37,24 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _fetchSupportServices() async {
-    try {
-      News news = News();
-      var services = await news.fetchSupportService();
-      setState(() {
-        _supportServices = services;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print("Error fetching support services: $e");
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  Future<void> _loadStaticSupportServices() async {
+    _supportServices = [
+      SectionItem(
+        imageBytes: (await rootBundle.load('assets/foodbank.png')).buffer.asUint8List(),
+        description: 'FoodBank',
+      ),
+      SectionItem(
+        imageBytes: (await rootBundle.load('assets/medical.png')).buffer.asUint8List(),
+        description: 'Medical Services',
+      ),
+      SectionItem(
+        imageBytes: (await rootBundle.load('assets/skill.png')).buffer.asUint8List(),
+        description: 'Skill Building',
+      ),
+    ];
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -94,12 +98,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             SwipableSectionWidget(
               title: 'Support Services',
-              items:_supportServices.map((services) {
-                return SectionItem(
-                  imageBytes: services['images'],
-                  description: services['name'],
-                );
-              }).toList(),
+              items: _supportServices,
               onSeeMore: () {
                 Navigator.push(
                   context,
@@ -127,14 +126,10 @@ class _HomePageState extends State<HomePage> {
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ForumPage(noIc: widget.noIc),
-                  ),
+                  MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
                 );
               },
-
             ),
-
             // Add more sections if needed
           ],
         ),
@@ -254,7 +249,7 @@ class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
                           widget.items[index].imageBytes!,
                           height: 150,
                           width: double.infinity,
-                          fit:BoxFit.contain,
+                          fit: BoxFit.contain,
                         ),
                       )
                           : Container(height: 150, color: Colors.grey),
@@ -293,4 +288,3 @@ class SectionItem {
 
   SectionItem({required this.imageBytes, required this.description});
 }
-//s
