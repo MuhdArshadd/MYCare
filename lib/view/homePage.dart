@@ -13,15 +13,19 @@ class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
-
+//s
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Map<String, dynamic>> _newsArticles = [];
+  List<Map<String, dynamic>> _supportServices = [];
+  bool _isLoading = true;
+
 
   @override
   void initState() {
     super.initState();
     _fetchNewsArticles();
+    _fetchSupportServices();
   }
 
   Future<void> _fetchNewsArticles() async {
@@ -30,6 +34,22 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _newsArticles = fetchedNews.take(3).toList(); // Limit to 3 articles for home page
     });
+  }
+
+  Future<void> _fetchSupportServices() async {
+    try {
+      News news = News();
+      var services = await news.fetchSupportService();
+      setState(() {
+        _supportServices = services;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching support services: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -72,30 +92,19 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             SwipableSectionWidget(
-              title: 'Support Service',
-              items: [
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Foodbank',
-                ),
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Medical Service',
-                ),
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Skill Building Programme',
-                ),
-              ],
+              title: 'Support Services',
+              items:_supportServices.map((services) {
+                return SectionItem(
+                  imageBytes: services['images'],
+                  description: services['name'],
+                );
+              }).toList(),
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SupportServicePage(noIc: widget.noIc),
-                  ),
+                  MaterialPageRoute(builder: (context) => SupportServicePage(noIc: widget.noIc)),
                 );
               },
-
             ),
             const SizedBox(height: 20),
             SwipableSectionWidget(
