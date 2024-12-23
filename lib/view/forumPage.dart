@@ -100,6 +100,15 @@ class _ForumPageState extends State<ForumPage> {
                     views: 478,
                     timeAgo: "3h ago",
                   ),
+                  ForumCardWithImage(
+                    profileImage: "assets/profile3.png", // Add appropriate profile image
+                    question: "New eco opened at durian tunggal recently",
+                    imageUrl: "assets/store_image.png", // Add your image asset path
+                    answers: 2,
+                    votes: 68,
+                    views: 727,
+                    timeAgo: "24h ago",
+                  ),
                 ]
               ],
             ),
@@ -156,6 +165,66 @@ class ForumCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ForumCardWithImage extends StatelessWidget {
+  final String profileImage;
+  final String question;
+  final String imageUrl;
+  final int answers;
+  final int votes;
+  final int views;
+  final String timeAgo;
+
+  const ForumCardWithImage({
+    required this.profileImage,
+    required this.question,
+    required this.imageUrl,
+    required this.answers,
+    required this.votes,
+    required this.views,
+    required this.timeAgo,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage(profileImage),
+                radius: 16,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  question,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Image.asset(imageUrl, fit: BoxFit.cover),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("$answers Answers  •  $votes Votes  •  $views Views"),
+                Text(timeAgo, style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
