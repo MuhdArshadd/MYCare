@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:typed_data';
 import '../controller/newsController.dart';
-import 'bottomNavigationBar.dart';
 import 'appBar.dart';
+import 'bottomNavigationBar.dart';
 import 'foodbankPage.dart';
-import 'skillBuildingPage.dart';
 import 'medicalService.dart';
+import 'skillBuildingPage.dart';
 import 'package:location/location.dart';
 
 class SupportServicePage extends StatefulWidget {
@@ -30,7 +29,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
     _fetchSupportServices();
   }
 
-  // Request location permission and get the current location
+
   Future<void> _getCurrentLocation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -79,40 +78,55 @@ class _SupportServicePageState extends State<SupportServicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: const [
-                  Icon(Icons.arrow_back, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'Support Service',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _supportServices.isNotEmpty
-                  ? Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: _supportServices.map((service) {
-                  return ServiceCard(
-                    title: service['name'],
-                    imageBytes: service['images'],
-                    currentLocation: currentLocation, // Pass location here
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Support service',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SupportServiceCard(
+                  image: 'assets/foodbank.png',
+                  label: 'Foodbank',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                        MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation)),
+                    );
+                  },
+                ),
+                SupportServiceCard(
+                  image: 'assets/medical.png',
+                  label: 'Medical service',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation)),
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: SupportServiceCard(
+                image: 'assets/skill.png',
+                label: 'Skill Building Programme',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SkillBuildingPage()),
                   );
-                }).toList(),
-              )
-                  : const Center(child: Text("No support services available.")),
-            ],
-          ),
+                },
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
@@ -120,91 +134,43 @@ class _SupportServicePageState extends State<SupportServicePage> {
   }
 }
 
-class ServiceCard extends StatelessWidget {
-  final String title;
-  final Uint8List imageBytes;
-  final LatLng? currentLocation;
+class SupportServiceCard extends StatelessWidget {
+  final String image;
+  final String label;
+  final VoidCallback onTap;
 
-  const ServiceCard({
-    required this.title,
-    required this.imageBytes,
-    required this.currentLocation,
-    Key? key,
-  }) : super(key: key);
+  const SupportServiceCard({
+    required this.image,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        if (currentLocation == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fetching location, please wait...'),
-            ),
-          );
-          return;
-        }else{
-          if (title == 'Foodbank') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation),
-              ),
-            );
-          } else if (title == 'Medical Service') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation)),
-            );
-          } else if (title == 'Skill Building Programme') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SkillBuildingPage()),
-            );
-          } else {
-            print('$title tapped');
-          }
-        }
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.4,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              blurRadius: 5,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.memory(
-                imageBytes,
-                height: 80,
-                width: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.broken_image,
-                    size: 80,
-                    color: Colors.grey,
-                  );
-                },
+            Container(
+              width: 120, // Set a fixed width for all images to ensure consistent size
+              height: 120, // Set a fixed height for all images
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover, // Ensure the image covers the entire container
               ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 16),
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -212,4 +178,5 @@ class ServiceCard extends StatelessWidget {
     );
   }
 }
+
 
