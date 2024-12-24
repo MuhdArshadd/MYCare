@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controller/newsController.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'foodbankPage.dart';
@@ -9,8 +10,8 @@ import 'skillBuildingPage.dart';
 import 'package:location/location.dart';
 
 class SupportServicePage extends StatefulWidget {
-  final String noIc;
-  const SupportServicePage({super.key, required this.noIc});
+  final User user;
+  const SupportServicePage({super.key, required this.user});
 
   @override
   State<SupportServicePage> createState() => _SupportServicePageState();
@@ -26,7 +27,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    _fetchSupportServices();
+    // _fetchSupportServices();
   }
 
 
@@ -58,21 +59,21 @@ class _SupportServicePageState extends State<SupportServicePage> {
   }
 
 
-  Future<void> _fetchSupportServices() async {
-    try {
-      News news = News();
-      var services = await news.fetchSupportService();
-      setState(() {
-        _supportServices = services;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print("Error fetching support services: $e");
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+  // Future<void> _fetchSupportServices() async {
+  //   try {
+  //     News news = News();
+  //     var services = await news.fetchSupportService();
+  //     setState(() {
+  //       _supportServices = services;
+  //       _isLoading = false;
+  //     });
+  //   } catch (e) {
+  //     print("Error fetching support services: $e");
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +98,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                        MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation)),
+                        MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation, user: widget.user)),
                     );
                   },
                 ),
@@ -107,7 +108,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation)),
+                      MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation, user: widget.user)),
                     );
                   },
                 ),
@@ -121,7 +122,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SkillBuildingPage()),
+                    MaterialPageRoute(builder: (context) => SkillBuildingPage(user: widget.user)),
                   );
                 },
               ),
@@ -129,7 +130,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

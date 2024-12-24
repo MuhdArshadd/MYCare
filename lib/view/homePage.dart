@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for rootBundle
 import 'package:workshop2dev/view/appBar.dart';
+import '../model/userModel.dart';
 import 'newsPage.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
@@ -9,8 +10,8 @@ import 'supportServicePage.dart';
 import 'forumPage.dart';
 
 class HomePage extends StatefulWidget {
-  final String noIc;
-  const HomePage({super.key, required this.noIc});
+  final User user;
+  const HomePage({super.key, required this.user});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(fontSize: 24),
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: _currentIndex),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: _currentIndex, user: widget.user),
     );
   }
 
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewsPage(noIc: widget.noIc)),
+                  MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)),
                 );
               },
             ),
@@ -102,34 +103,34 @@ class _HomePageState extends State<HomePage> {
               onSeeMore: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SupportServicePage(noIc: widget.noIc)),
+                  MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
                 );
               },
             ),
-            const SizedBox(height: 20),
-            SwipableSectionWidget(
-              title: 'Forum',
-              items: [
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Null',
-                ),
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Null',
-                ),
-                SectionItem(
-                  imageBytes: null,
-                  description: 'Skill Building Programme',
-                ),
-              ],
-              onSeeMore: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
-                );
-              },
-            ),
+            // const SizedBox(height: 20),
+            // SwipableSectionWidget(
+            //   title: 'Forum',
+            //   items: [
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Null',
+            //     ),
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Null',
+            //     ),
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Skill Building Programme',
+            //     ),
+            //   ],
+            //   // onSeeMore: () {
+            //   //   Navigator.push(
+            //   //   //   context,
+            //   //   //   MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
+            //   //   // );
+            //   // },
+            // ),
             // Add more sections if needed
           ],
         ),

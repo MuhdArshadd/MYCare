@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import '../model/userModel.dart';
 import 'homePage.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
 
 class BottomNavWrapper extends StatefulWidget {
+  final User user; // Accept User model
   final int currentIndex;
 
-  const BottomNavWrapper({super.key, required this.currentIndex});
+  const BottomNavWrapper({super.key, required this.currentIndex, required this.user});
 
   @override
   _BottomNavWrapperState createState() => _BottomNavWrapperState();
@@ -29,16 +31,16 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage(noIc: '',)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(user: widget.user)));
         break;
       case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NewsPage(noIc: '',)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)));
         break;
       case 2:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SupportServicePage(noIc: '',)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)));
         break;
       case 3:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage(noIc: '',)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage(user: widget.user)));
         break;
       default:
         break;

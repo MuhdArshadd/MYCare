@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controller/foodbankController.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //Foodbank Page detail
 class FoodbankDetailPage extends StatefulWidget {
+  final User user;
   final String foodbankID;
   final LatLng? currentLocation;
 
-  const FoodbankDetailPage({super.key, required this.foodbankID, required this.currentLocation});
+  const FoodbankDetailPage({super.key, required this.foodbankID, required this.currentLocation, required this.user});
 
   @override
   State<FoodbankDetailPage> createState() => _FoodbankDetailPageState();
@@ -169,7 +171,7 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 

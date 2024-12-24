@@ -50,37 +50,37 @@ class News {
     return newsList;
   }
 
-  Future<List<Map<String, dynamic>>> fetchSupportService() async {
-    // Store into a list
-    List<Map<String, dynamic>> supportServiceList = [];
-
-    try {
-      // Ensure the database connection is open
-      await dbConnection.connectToDatabase();
-
-      // Query to fetch news
-      var results = await dbConnection.connection.query(''' 
-        SELECT 
-          id, 
-          name, 
-          images
-        FROM image_data
-      ''');
-
-      for (var row in results) {
-        supportServiceList.add({
-          'id': row[0].toString(), // Integer to string conversion
-          'name': row[1] as String,
-          'images': row[2] as Uint8List,
-        });
-      }
-    } catch (e) {
-      print('Error fetching SupportService: $e');
-    } finally {
-      // Ensure the connection is closed
-      dbConnection.closeConnection();
-    }
-
-    return supportServiceList;
-  }
+  // Future<List<Map<String, dynamic>>> fetchSupportService() async {
+  //   // Store into a list
+  //   List<Map<String, dynamic>> supportServiceList = [];
+  //
+  //   try {
+  //     // Ensure the database connection is open
+  //     await dbConnection.connectToDatabase();
+  //
+  //     // Query to fetch news
+  //     var results = await dbConnection.connection.query('''
+  //       SELECT
+  //         id,
+  //         name,
+  //         images
+  //       FROM image_data
+  //     ''');
+  //
+  //     for (var row in results) {
+  //       supportServiceList.add({
+  //         'id': row[0].toString(), // Integer to string conversion
+  //         'name': row[1] as String,
+  //         'images': row[2] as Uint8List,
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching SupportService: $e');
+  //   } finally {
+  //     // Ensure the connection is closed
+  //     dbConnection.closeConnection();
+  //   }
+  //
+  //   return supportServiceList;
+  // }
 }

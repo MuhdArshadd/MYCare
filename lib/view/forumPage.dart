@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
 class ForumPage extends StatefulWidget {
-  final String noIc;
+  final User user;
 
-  const ForumPage({super.key, required this.noIc});
+  const ForumPage({super.key, required this.user});
 
   @override
   State<ForumPage> createState() => _ForumPageState();
@@ -24,7 +25,7 @@ class _ForumPageState extends State<ForumPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddPostPage(noIc: widget.noIc),
+        builder: (context) => AddPostPage(noIc: widget.user.userIC),
       ),
     );
   }
@@ -38,7 +39,7 @@ class _ForumPageState extends State<ForumPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "User ID: ${widget.noIc}",
+              "User ID: ${widget.user.userIC}",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -120,7 +121,7 @@ class _ForumPageState extends State<ForumPage> {
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: "Add Post",
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 3),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 3, user: widget.user),
     );
   }
 }

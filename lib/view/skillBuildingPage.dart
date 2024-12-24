@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'skillDetailsPage.dart';
 
 class SkillBuildingPage extends StatefulWidget {
+  final User user;
+  const SkillBuildingPage({super.key, required this.user});
+
   @override
   _SkillBuildingPageState createState() => _SkillBuildingPageState();
 }
@@ -37,26 +41,26 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
               ],
             ),
           ),
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value; // Update search query
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Search categories...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade200,
-              ),
-            ),
-          ),
+          // // Search Bar
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          //   child: TextField(
+          //     onChanged: (value) {
+          //       setState(() {
+          //         searchQuery = value; // Update search query
+          //       });
+          //     },
+          //     decoration: InputDecoration(
+          //       hintText: "Search categories...",
+          //       prefixIcon: const Icon(Icons.search),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(10),
+          //       ),
+          //       filled: true,
+          //       fillColor: Colors.grey.shade200,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 8),
           // Image
           Padding(
@@ -104,7 +108,7 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2), // Custom Bottom Nav
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user), // Custom Bottom Nav
     );
   }
 
@@ -112,16 +116,42 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
     return InkWell(
       onTap: () {
         // Navigate or handle tap
-        if (title == 'Technical')
-          {
+        if (title == 'Technical') {
+            String category = "Technical";
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SkillDetailsPage(),
+                builder: (context) => SkillDetailsPage(category: category,user: widget.user),
               ),
             );
-          }
-        print('Tapped on $title');
+        }
+        if (title == 'Business') {
+          String category = "Business";
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
+            ),
+          );
+        }
+        if (title == 'Technology') {
+          String category = "Technology";
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
+            ),
+          );
+        }
+        if (title == 'Career Development') {
+          String category = "Career Development";
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
+            ),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(10),
       child: Container(

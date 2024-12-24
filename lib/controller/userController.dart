@@ -1,4 +1,5 @@
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
+import '../model/userModel.dart';
 
 class UserController {
   final DatabaseConnection dbConnection = DatabaseConnection();
@@ -35,30 +36,50 @@ class UserController {
     }
   }
 
-  Future<String> login(String noIc, String password) async {
-    await dbConnection.connectToDatabase();
+  Future<User?> login(String noIc, String password) async {
+    await dbConnection.connectToDatabase(); // Connect to database
 
     try {
-      // Validate the user credentials
-      String query =
-          'SELECT * FROM users WHERE user_ic = @user_ic AND password = @password';
+      // Query to validate user credentials and fetch user data
+      String query = '''
+      SELECT * FROM users
+      WHERE user_ic = @user_ic AND password = @password
+    ''';
+
       final results = await dbConnection.connection.query(
         query,
         substitutionValues: {
           'user_ic': noIc,
-          'password': password, // Hash password comparison in production
+          'password': password, // Note: Hash password comparison in production
         },
       );
 
       if (results.isNotEmpty) {
-        return "Login successful";
+        // Map the query results to the User model
+        var row = results[0];
+        User user = User(
+          userIC: row[0] as String, // Assuming column order matches the model
+          fullname: row[1] as String,
+          age: int.parse(row[2].toString()), // Ensure conversion to int
+          email: row[3] as String,
+          phoneNumber: row[4] as String,
+          address: row[5] as String,
+          userCategory: row[6] as String,
+          incomeRange: row[7] as String,
+          marriageStatus: row[8] as String,
+          password: row[9] as String,
+        );
+
+        print("Mapped User Model: ${user.toString()}"); // Debug: Show mapped user model
+        return user; // Return the populated User object
       } else {
-        return "Invalid email or password";
+        return null; // Return null if no match found
       }
     } catch (e) {
-      return "Error logging in: $e";
+      print("Error logging in: $e");
+      return null; // Return null in case of an error
     } finally {
-      dbConnection.closeConnection();
+      dbConnection.closeConnection(); // Close database connection
     }
   }
 

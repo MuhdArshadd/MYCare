@@ -1,7 +1,5 @@
 import 'dart:typed_data';
-
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
-import 'package:postgres/postgres.dart';
 
 //foodbank controller
 class FoodBank {

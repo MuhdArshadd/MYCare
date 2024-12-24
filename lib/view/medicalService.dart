@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'clinicDetailPage.dart';
@@ -7,8 +8,9 @@ import '../controller/medicalservicesController.dart';
 import 'dart:typed_data';
 
 class MedicalService extends StatefulWidget {
+  final User user;
   final LatLng? currentLocation;
-  const MedicalService({Key? key, this.currentLocation}) : super(key: key);
+  const MedicalService({Key? key, this.currentLocation, required this.user}) : super(key: key);
 
   @override
   _MedicalServiceState createState() => _MedicalServiceState();
@@ -64,7 +66,7 @@ class _MedicalServiceState extends State<MedicalService> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 
@@ -90,6 +92,7 @@ class _MedicalServiceState extends State<MedicalService> {
             context,
             MaterialPageRoute(
               builder: (context) => ClinicDetailsPage(
+                user: widget.user,
                 id: id,
                 name: name,
                 contact: contact.isNotEmpty ? contact : 'Not available',

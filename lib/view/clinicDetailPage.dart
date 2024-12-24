@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
 class ClinicDetailsPage extends StatefulWidget {
+  final User user;
   final String id;
   final String name;
   final String contact;
@@ -18,6 +20,7 @@ class ClinicDetailsPage extends StatefulWidget {
   final String status;
 
   ClinicDetailsPage({
+    required this.user,
     required this.id,
     required this.name,
     required this.contact,
@@ -183,7 +186,7 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

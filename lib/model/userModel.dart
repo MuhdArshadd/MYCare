@@ -21,39 +21,24 @@ class User {
     required this.userCategory,
     required this.incomeRange,
     required this.marriageStatus,
-    required this.password
+    required this.password,
   });
 
-  // Method to convert a User object to a Map
-  Map<String, dynamic> toMap() {
-    return {
-      'userIC': userIC,
-      'fullname': fullname,
-      'age': age,
-      'email': email,
-      'phoneNumber': phoneNumber,
-      'address': address,
-      'userCategory': userCategory,
-      'incomeRange': incomeRange,
-      'marriageStatus': marriageStatus,
-      'password': password
-    };
+  // Override toString method for debugging
+  @override
+  String toString() {
+    return '''
+User {
+  userIC: $userIC,
+  fullname: $fullname,
+  age: $age,
+  email: $email,
+  phoneNumber: $phoneNumber,
+  address: $address,
+  userCategory: $userCategory,
+  incomeRange: $incomeRange,
+  marriageStatus: $marriageStatus,
+  password: $password
+}''';
   }
-
-  // // Optional: Method to convert a Map to a User object (from database, etc.)
-  // factory User.fromMap(Map<String, dynamic> map) {
-  //   return User(
-  //     userIC: map['userIC'] ?? '',
-  //     fullname: map['fullname'] ?? '',
-  //     age: map['age'] ?? 0,
-  //     email: map['email'] ?? '',
-  //     phoneNumber: map['phoneNumber'] ?? '',
-  //     address: map['address'] ?? '',
-  //     userCategory: map['userCategory'] ?? '',
-  //     incomeRange: map['incomeRange'] ?? '',
-  //     marriageStatus: map['marriageStatus'] ?? '',
-  //     password: map['password'] ?? '',
-  //   );
-  // }
-
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import '../controller/foodbankController.dart';
+import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankDetail.dart';
@@ -10,8 +11,9 @@ import 'foodbankDetail.dart';
 
 //foodbank page
 class FoodbankPage extends StatefulWidget {
+  final User user;
   final  LatLng? currentLocation;
-  const FoodbankPage({Key? key, this.currentLocation}) : super(key: key);
+  const FoodbankPage({Key? key, this.currentLocation, required this.user}) : super(key: key);
 
   @override
   _FoodbankPageState createState() => _FoodbankPageState();
@@ -51,7 +53,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: widget.currentLocation), // Navigate to a details page
+                  builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: widget.currentLocation, user: widget.user), // Navigate to a details page
                 ),
               );
             },
@@ -196,7 +198,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: widget.currentLocation) // Pass the foodbank id,
+                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: widget.currentLocation, user: widget.user) // Pass the foodbank id,
                               ),
                             );
                           },
@@ -235,7 +237,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
           // ),
         ],
       ),
-      bottomNavigationBar: const BottomNavWrapper(currentIndex: 2),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 

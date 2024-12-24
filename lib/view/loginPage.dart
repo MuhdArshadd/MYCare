@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/controller/userController.dart';
+import '../model/userModel.dart';
+import 'bottomNavigationBar.dart';
 import 'signUpPage.dart';
 import 'homePage.dart';
 import 'resetPage.dart';
@@ -24,37 +26,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Function to handle user login
+// Function to handle user login
   void _login() async {
-    final noIc = _noIcController.text;
-    final password = _passwordController.text;
+    final noIc = _noIcController.text; // Get IC input
+    final password = _passwordController.text; // Get password input
 
+    // Validation for empty fields
     if (noIc.isEmpty || password.isEmpty) {
       _showSnackBar('Please fill all fields');
       return;
     }
 
-    // if (password.length < 6) {
-    //   _showSnackBar('Password must be at least 6 characters');
-    //   return;
-    // }
-
-    setState(() => _isLoading = true);
+    setState(() => _isLoading = true); // Show loading indicator
 
     try {
-      String response = await _userController.login(noIc, password);
-      if (response == "Login successful") {
+      // Attempt login and fetch user data
+      User? loggedInUser = await _userController.login(noIc, password);
+
+      if (loggedInUser != null) {
+        // Login successful, navigate to HomePage with User object
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(noIc: noIc)),
+          MaterialPageRoute(
+            builder: (context) => BottomNavWrapper(currentIndex: 0, user: loggedInUser), // Pass user model and direct to homepage
+          ),
         );
       } else {
-        _showSnackBar(response);
+        // Login failed
+        _showSnackBar('Invalid IC or password');
       }
+    } catch (e) {
+      // Handle unexpected errors
+      _showSnackBar('An error occurred. Please try again.');
     } finally {
-      setState(() => _isLoading = false);
+      setState(() => _isLoading = false); // Stop loading indicator
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

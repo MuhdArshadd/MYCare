@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/view/appBar.dart';
+import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
 import 'dart:typed_data';
 import 'newsDetailPage.dart'; // Import NewsDetailPage
 
 class NewsPage extends StatefulWidget {
-  final String noIc;
-  const NewsPage({super.key, required this.noIc});
+  final User user;
+  const NewsPage({super.key, required this.user});
 
   @override
   _NewsPageState createState() => _NewsPageState();
@@ -122,7 +123,7 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavWrapper(currentIndex: 1),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 1, user: widget.user),
     );
   }
 
@@ -154,7 +155,7 @@ class _NewsPageState extends State<NewsPage> {
               article['images'].isNotEmpty
               ? GestureDetector(
             onTap: () {
-              _navigateToNewsDetailPage(article);
+              _navigateToNewsDetailPage(article, widget.user);
             },
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
@@ -170,7 +171,7 @@ class _NewsPageState extends State<NewsPage> {
           )
               : GestureDetector(
             onTap: () {
-              _navigateToNewsDetailPage(article);
+              _navigateToNewsDetailPage(article, widget.user);
             },
             child: Container(height: 250, color: Colors.grey),
           ),
@@ -187,7 +188,7 @@ class _NewsPageState extends State<NewsPage> {
                 const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () {
-                    _navigateToNewsDetailPage(article);
+                    _navigateToNewsDetailPage(article, widget.user);
                   },
                   child: const Text(
                     'View More',
@@ -203,11 +204,11 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 
-  void _navigateToNewsDetailPage(Map<String, dynamic> article) {
+  void _navigateToNewsDetailPage(Map<String, dynamic> article, User? user) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NewsDetailPage(article: article),
+        builder: (context) => NewsDetailPage(article: article, user: widget.user),
       ),
     );
   }

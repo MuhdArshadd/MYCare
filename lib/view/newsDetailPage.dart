@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart'; // Import the BottomNavWrapper widget
 
 class NewsDetailPage extends StatefulWidget {
+  final User user;
   final Map<String, dynamic> article;
 
-  const NewsDetailPage({super.key, required this.article});
+  const NewsDetailPage({super.key, required this.article, required this.user});
 
   @override
   _NewsDetailPageState createState() => _NewsDetailPageState();
@@ -59,7 +61,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavWrapper(currentIndex: 1), // Add the bottom navigation bar here
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 1, user: widget.user), // Add the bottom navigation bar here
     );
   }
 }
