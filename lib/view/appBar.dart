@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'myProfile.dart'; // Import the MyProfilePage
+
 import 'loginPage.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -81,7 +83,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       label: 'My Profile',
                       onTap: () {
                         Navigator.pop(context); // Close popup
-                        print('My Profile selected');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyProfilePage()),
+                        );
                       },
                     ),
                     _buildMenuItem(
@@ -136,7 +141,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-
   /// Helper Widget to Build Menu Items
   Widget _buildMenuItem(
       BuildContext context, {
@@ -159,4 +163,3 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-

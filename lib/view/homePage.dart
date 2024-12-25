@@ -107,34 +107,34 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-            // const SizedBox(height: 20),
-            // SwipableSectionWidget(
-            //   title: 'Forum',
-            //   items: [
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Null',
-            //     ),
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Null',
-            //     ),
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Skill Building Programme',
-            //     ),
-            //   ],
-            //   // onSeeMore: () {
-            //   //   Navigator.push(
-            //   //   //   context,
-            //   //   //   MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
-            //   //   // );
-            //   // },
-            // ),
-            // Add more sections if needed
-          ],
-        ),
-      ),
+            const SizedBox(height: 20),
+            SwipableSectionWidget(
+               title: 'Forum',
+               items: [
+                 SectionItem(
+                   imageBytes: null,
+                   description: 'Null',
+                 ),
+                 SectionItem(
+                   imageBytes: null,
+                   description: 'Null',
+                 ),
+                 SectionItem(
+                   imageBytes: null,
+                   description: 'Skill Building Programme',
+                 ),
+               ],
+               onSeeMore: () {
+                 Navigator.push(
+                 context,
+                   MaterialPageRoute(builder: (context) => ForumPage(user: widget.user,)),
+    );
+                 },
+     ),
+    // Add more sections if needed
+    ],
+    ),
+    ),
     );
   }
 }
