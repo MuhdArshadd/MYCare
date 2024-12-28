@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => BottomNavWrapper(currentIndex: 0, user: loggedInUser), // Pass user model and direct to homepage
+            builder: (context) => HomePage( user: loggedInUser), // Pass user model and direct to homepage
           ),
         );
       } else {
