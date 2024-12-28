@@ -60,6 +60,16 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
     }
   }
 
+  // Launch phone dialer
+  Future<void> _launchDialer(String phoneNumber) async {
+    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,20 +98,31 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
             ),
             SizedBox(height: 16),
 
-            // Contact Information
+            // Contact Information with clickable link
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.contact_phone, color: Colors.blue),
-                SizedBox(width: 10),
+                const Icon(Icons.contact_phone, color: Colors.blue),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    widget.contact,
-                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  child: InkWell(
+                    onTap: () {
+                      // Call the _launchDialer function with the dynamic number
+                      _launchDialer(widget.contact);
+                    },
+                    child: Text(
+                      widget.contact,
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        decoration: TextDecoration.underline, // Underline for link appearance
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
+
             SizedBox(height: 16),
 
             // Address
