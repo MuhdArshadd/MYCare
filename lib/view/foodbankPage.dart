@@ -71,33 +71,33 @@ class _FoodbankPageState extends State<FoodbankPage> {
   @override
   void initState() {
     super.initState();
-      if (widget.currentLocation != null) {
-        // Ensure nearbyFoodbank is assigned a proper Future
-        nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(widget.currentLocation!.latitude, widget.currentLocation!.longitude).then((value) {
-          setState(() {
-            isLoading = false; // Stop loading once the data is fetched
-            _addMarkers(value); // Add markers to the map
-          });
-          return value; // Return the fetched data
-        }).catchError((error) {
-          // Handle potential errors here and return an empty list
-          print('Error fetching foodbanks: $error');
-          return <Map<String, dynamic>>[];
-        });
-      } else {
-        // Assign a default empty list if location is null
-        nearbyFoodbank = Future.value(<Map<String, dynamic>>[]);
+    if (widget.currentLocation != null) {
+      // Ensure nearbyFoodbank is assigned a proper Future
+      nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(widget.currentLocation!.latitude, widget.currentLocation!.longitude).then((value) {
         setState(() {
-          isLoading = false;
+          isLoading = false; // Stop loading once the data is fetched
+          _addMarkers(value); // Add markers to the map
         });
-      }
+        return value; // Return the fetched data
+      }).catchError((error) {
+        // Handle potential errors here and return an empty list
+        print('Error fetching foodbanks: $error');
+        return <Map<String, dynamic>>[];
+      });
+    } else {
+      // Assign a default empty list if location is null
+      nearbyFoodbank = Future.value(<Map<String, dynamic>>[]);
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar:  CustomAppBar(user: widget.user),
       body: isLoading
           ? const Center(child: CircularProgressIndicator()) // Display loading animation
           : Column(
