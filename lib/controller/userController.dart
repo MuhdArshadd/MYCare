@@ -36,6 +36,47 @@ class UserController {
     }
   }
 
+  Future<String> updateUser(User user) async {
+    await dbConnection.connectToDatabase();
+
+    try {
+      String query = '''
+      UPDATE users
+      SET fullname = @fullname,
+          age = @age,
+          email = @email,
+          phonenumber = @phonenumber,
+          address = @address,
+          user_category = @user_category,
+          income_range = @income_range,
+          marriage_status = @marriage_status
+      WHERE user_ic = @user_ic
+      ''';
+
+      await dbConnection.connection.query(
+        query,
+        substitutionValues: {
+          'user_ic': user.userIC,
+          'fullname': user.fullname,
+          'age': user.age,
+          'email': user.email,
+          'phonenumber': user.phoneNumber,
+          'address': user.address,
+          'user_category': user.userCategory,
+          'income_range': user.incomeRange,
+          'marriage_status': user.marriageStatus,
+        },
+      );
+
+      return "User details updated successfully";
+    } catch (e) {
+      return "Error updating user: $e";
+    } finally {
+      dbConnection.closeConnection();
+    }
+  }
+
+
   Future<User?> login(String noIc, String password) async {
     await dbConnection.connectToDatabase(); // Connect to database
 
