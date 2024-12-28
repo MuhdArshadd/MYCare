@@ -78,7 +78,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(user: widget.user),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -98,7 +98,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                        MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation, user: widget.user)),
+                      MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation, user: widget.user)),
                     );
                   },
                 ),
@@ -179,5 +179,3 @@ class SupportServiceCard extends StatelessWidget {
     );
   }
 }
-
-
