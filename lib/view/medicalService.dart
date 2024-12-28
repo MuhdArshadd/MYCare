@@ -30,7 +30,7 @@ class _MedicalServiceState extends State<MedicalService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(user: widget.user),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: futureClinics,
         builder: (context, snapshot) {
@@ -49,17 +49,17 @@ class _MedicalServiceState extends State<MedicalService> {
                 //To pass all the fetched data into the Card, which is for onTap specific clinic
                 return buildClinicCard(
                   context,
-                    clinic['id'],
-                    clinic['name'],
-                    clinic['address'],
-                    clinic['contact_no'],
-                    clinic['operating_hours'],
-                    clinic['service_description'],
-                    clinic['latitude'],
-                    clinic['longitude'],
-                    clinic['imagePlace'],
-                    clinic['isOpen'] ? 'Open Now' : 'Closed',
-                    clinic['distance'],
+                  clinic['id'],
+                  clinic['name'],
+                  clinic['address'],
+                  clinic['contact_no'],
+                  clinic['operating_hours'],
+                  clinic['service_description'],
+                  clinic['latitude'],
+                  clinic['longitude'],
+                  clinic['imagePlace'],
+                  clinic['isOpen'] ? 'Open Now' : 'Closed',
+                  clinic['distance'],
                 );
               },
             );
