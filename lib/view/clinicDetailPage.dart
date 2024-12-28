@@ -5,6 +5,8 @@ import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
+
+//Update
 class ClinicDetailsPage extends StatefulWidget {
   final User user;
   final String id;

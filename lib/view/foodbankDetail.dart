@@ -6,7 +6,7 @@ import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-//Foodbank Page detail
+//Foodbank Page detail update
 class FoodbankDetailPage extends StatefulWidget {
   final User user;
   final String foodbankID;
