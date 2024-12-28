@@ -1,28 +1,66 @@
 class User {
-  final String userIC;
-  final String fullname;
-  final int age;
-  final String email;
-  final String phoneNumber;
-  final String address;
-  final String userCategory;
-  final String incomeRange;
-  final String marriageStatus;
-  final String password;
+  String _userIC;
+  String _fullname;
+  int _age;
+  String _email;
+  String _phoneNumber;
+  String _address;
+  String _userCategory;
+  String _incomeRange;
+  String _marriageStatus;
+  String _password;
 
   // Constructor
   User({
-    required this.userIC,
-    required this.fullname,
-    required this.age,
-    required this.email,
-    required this.phoneNumber,
-    required this.address,
-    required this.userCategory,
-    required this.incomeRange,
-    required this.marriageStatus,
-    required this.password,
-  });
+    required String userIC,
+    required String fullname,
+    required int age,
+    required String email,
+    required String phoneNumber,
+    required String address,
+    required String userCategory,
+    required String incomeRange,
+    required String marriageStatus,
+    required String password,
+  })  : _userIC = userIC,
+        _fullname = fullname,
+        _age = age,
+        _email = email,
+        _phoneNumber = phoneNumber,
+        _address = address,
+        _userCategory = userCategory,
+        _incomeRange = incomeRange,
+        _marriageStatus = marriageStatus,
+        _password = password;
+
+  // Getters and setters
+  String get userIC => _userIC;
+  String get fullname => _fullname;
+  set fullname(String value) => _fullname = value;
+
+  int get age => _age;
+  set age(int value) => _age = value;
+
+  String get email => _email;
+  set email(String value) => _email = value;
+
+  String get phoneNumber => _phoneNumber;
+  set phoneNumber(String value) => _phoneNumber = value;
+
+  String get address => _address;
+  set address(String value) => _address = value;
+
+  String get userCategory => _userCategory;
+  set userCategory(String value) => _userCategory = value;
+
+  String get incomeRange => _incomeRange;
+  set incomeRange(String value) => _incomeRange = value;
+
+  String get marriageStatus => _marriageStatus;
+  set marriageStatus(String value) => _marriageStatus = value;
+
+  String get password => _password;
+  set password(String value) => _password = value;
 
   // Override toString method for debugging
   @override

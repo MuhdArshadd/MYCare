@@ -31,7 +31,7 @@ class _SkillDetailsPageState extends State<SkillDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(user: widget.user),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -4,6 +4,7 @@ import 'homePage.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
+import 'profilePage.dart';
 
 class BottomNavWrapper extends StatefulWidget {
   final User user; // Accept User model
@@ -43,7 +44,9 @@ class _BottomNavWrapperState extends State<BottomNavWrapper> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage(user: widget.user)));
         break;
       default:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(user: widget.user)));
         break;
+
     }
   }
 

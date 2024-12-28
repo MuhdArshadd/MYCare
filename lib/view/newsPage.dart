@@ -48,7 +48,7 @@ class _NewsPageState extends State<NewsPage> {
     }).toList();
 
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar:  CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

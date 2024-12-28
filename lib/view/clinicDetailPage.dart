@@ -60,20 +60,10 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
     }
   }
 
-  // Launch phone dialer
-  Future<void> _launchDialer(String phoneNumber) async {
-    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -98,31 +88,20 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
             ),
             SizedBox(height: 16),
 
-            // Contact Information with clickable link
+            // Contact Information
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.contact_phone, color: Colors.blue),
-                const SizedBox(width: 10),
+                Icon(Icons.contact_phone, color: Colors.blue),
+                SizedBox(width: 10),
                 Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      // Call the _launchDialer function with the dynamic number
-                      _launchDialer(widget.contact);
-                    },
-                    child: Text(
-                      widget.contact,
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline, // Underline for link appearance
-                      ),
-                    ),
+                  child: Text(
+                    widget.contact,
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
                   ),
                 ),
               ],
             ),
-
             SizedBox(height: 16),
 
             // Address

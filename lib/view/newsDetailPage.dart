@@ -18,7 +18,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar:  CustomAppBar(user: widget.user),
       body: SingleChildScrollView(  // Make the entire body scrollable
         child: Padding(
           padding: const EdgeInsets.all(16.0),

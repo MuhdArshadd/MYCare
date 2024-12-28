@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'myProfile.dart'; // Import the MyProfilePage
-
+import 'package:workshop2dev/view/profilePage.dart';
+import '../model/userModel.dart';
 import 'loginPage.dart';
+import 'bottomNavigationBar.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final User user;
+  const CustomAppBar({super.key, required this.user});
+
+  @override
+  _CustomAppBarState createState() => _CustomAppBarState();
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
 
+class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -62,10 +69,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     topRight: Radius.circular(10),
                     bottomRight: Radius.circular(10),
                   ),
-                  image: const DecorationImage(
-                    image: AssetImage('assets/background.png'),
-                    fit: BoxFit.cover,
-                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,11 +85,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       icon: Icons.person,
                       label: 'My Profile',
                       onTap: () {
-                        Navigator.pop(context); // Close popup
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyProfilePage()),
-                        );
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfilePage(user: widget.user)));
                       },
                     ),
                     _buildMenuItem(

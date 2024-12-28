@@ -18,49 +18,23 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(), // Custom AppBar
+      appBar: CustomAppBar(user: widget.user), // Custom AppBar
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back Button and Title
+          // Centered Title
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
+            child: Center(
+              child: const Text(
+                "Skill Building Programme",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                const Text(
-                  "Skill Building Programme",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-          // // Search Bar
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          //   child: TextField(
-          //     onChanged: (value) {
-          //       setState(() {
-          //         searchQuery = value; // Update search query
-          //       });
-          //     },
-          //     decoration: InputDecoration(
-          //       hintText: "Search categories...",
-          //       prefixIcon: const Icon(Icons.search),
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(10),
-          //       ),
-          //       filled: true,
-          //       fillColor: Colors.grey.shade200,
-          //     ),
-          //   ),
-          // ),
           const SizedBox(height: 8),
           // Image
           Padding(
@@ -73,8 +47,8 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
-                  'assets/skillsmalaysia_logo.png',
-                  height: 150,
+                  'assets/skillBuilding.png',
+                  height: 210,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -99,93 +73,71 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
               children: [
-                _buildCategoryCard('Technical', Icons.engineering),
-                _buildCategoryCard('Business', Icons.bar_chart),
-                _buildCategoryCard('Technology', Icons.computer),
-                _buildCategoryCard('Career Development', Icons.school),
+                _buildCategoryCard('Technical', 'assets/technical.png'),
+                _buildCategoryCard('Business', 'assets/business.png'),
+                _buildCategoryCard('Technology', 'assets/technology.png'),
+                _buildCategoryCard('Career Development', 'assets/career.png'),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user), // Custom Bottom Nav
+      bottomNavigationBar: BottomNavWrapper(
+        currentIndex: 2,
+        user: widget.user,
+      ), // Custom Bottom Nav
     );
   }
 
-  Widget _buildCategoryCard(String title, IconData icon) {
-    return InkWell(
-      onTap: () {
-        // Navigate or handle tap
-        if (title == 'Technical') {
-            String category = "Technical";
+  Widget _buildCategoryCard(String title, String imagePath) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            // Navigate or handle tap
+            String category = title;
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SkillDetailsPage(category: category,user: widget.user),
+                builder: (context) =>
+                    SkillDetailsPage(category: category, user: widget.user),
               ),
             );
-        }
-        if (title == 'Business') {
-          String category = "Business";
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
-            ),
-          );
-        }
-        if (title == 'Technology') {
-          String category = "Technology";
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
-            ),
-          );
-        }
-        if (title == 'Career Development') {
-          String category = "Career Development";
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SkillDetailsPage(category: category,user: widget.user),
-            ),
-          );
-        }
-      },
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          },
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              offset: Offset(0, 2),
-              blurRadius: 4,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  offset: Offset(0, 2),
+                  blurRadius: 4,
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 50,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover, // Makes the image cover the entire container
+                height: 120,
+                width: double.infinity, // Adjust width to stretch within the grid
               ),
-              textAlign: TextAlign.center,
             ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 8), // Space between the container and title
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

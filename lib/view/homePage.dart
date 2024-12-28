@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    setState(() {});
     _fetchNewsArticles();
     _loadStaticSupportServices();
   }
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar:  CustomAppBar(user: widget.user),
       body: _currentIndex == 0
           ? _buildHomeContent()
           : Center(
@@ -105,36 +106,38 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
                 );
+                print (widget.user.fullname);
+                print (widget.user.incomeRange);
               },
             ),
-            const SizedBox(height: 20),
-            SwipableSectionWidget(
-               title: 'Forum',
-               items: [
-                 SectionItem(
-                   imageBytes: null,
-                   description: 'Null',
-                 ),
-                 SectionItem(
-                   imageBytes: null,
-                   description: 'Null',
-                 ),
-                 SectionItem(
-                   imageBytes: null,
-                   description: 'Skill Building Programme',
-                 ),
-               ],
-               onSeeMore: () {
-                 Navigator.push(
-                 context,
-                   MaterialPageRoute(builder: (context) => ForumPage(user: widget.user,)),
-    );
-                 },
-     ),
-    // Add more sections if needed
-    ],
-    ),
-    ),
+            // const SizedBox(height: 20),
+            // SwipableSectionWidget(
+            //   title: 'Forum',
+            //   items: [
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Null',
+            //     ),
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Null',
+            //     ),
+            //     SectionItem(
+            //       imageBytes: null,
+            //       description: 'Skill Building Programme',
+            //     ),
+            //   ],
+            //   // onSeeMore: () {
+            //   //   Navigator.push(
+            //   //   //   context,
+            //   //   //   MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
+            //   //   // );
+            //   // },
+            // ),
+            // Add more sections if needed
+          ],
+        ),
+      ),
     );
   }
 }
