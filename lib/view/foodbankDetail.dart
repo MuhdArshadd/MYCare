@@ -45,6 +45,16 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     }
   }
 
+  // Launch phone dialer
+  Future<void> _launchDialer(String phoneNumber) async {
+    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -202,7 +212,21 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
               const SizedBox(width: 8),
             ],
             Expanded(
-              child: Text(
+              child: title == 'Contact No'
+                  ? InkWell(
+                onTap: () {
+                  _launchDialer(content); // Launch dialer for contact number
+                },
+                child: Text(
+                  content,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline, // Link-like appearance
+                  ),
+                ),
+              )
+                  : Text(
                 content,
                 style: const TextStyle(fontSize: 16),
               ),
@@ -212,4 +236,5 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
       ],
     );
   }
+
 }
