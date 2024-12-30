@@ -1,11 +1,14 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:workshop2dev/controller/forumController.dart';
 import '../model/userModel.dart';
+import 'addPost.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
+import 'feedDetailsPage.dart';
 
 class ForumPage extends StatefulWidget {
   final User user;
-
   const ForumPage({super.key, required this.user});
 
   @override
@@ -13,12 +16,24 @@ class ForumPage extends StatefulWidget {
 }
 
 class _ForumPageState extends State<ForumPage> {
-  String selectedTab = "Latest";
+  final ForumController _forumController = ForumController();
+  String selectedTab = "latest"; // Default tab is "Latest"
 
+  // Function to change tab and trigger fetching new data
   void changeTab(String tab) {
     setState(() {
       selectedTab = tab;
     });
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchFeeds() async {
+    try {
+      // Replace with the actual call to fetch data based on selected tab
+      return await _forumController.fetchFeeds(selectedTab.toLowerCase());
+    } catch (e) {
+      print("Error fetching feeds: $e");
+      return []; // Return an empty list in case of an error
+    }
   }
 
   void _navigateToAddPostPage() {
@@ -36,44 +51,38 @@ class _ForumPageState extends State<ForumPage> {
       appBar: CustomAppBar(user: widget.user),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "User ID: ${widget.user.userIC}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
+          // Tabs for selecting feed types
           Container(
             color: Colors.lightBlue,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(
-                  onPressed: () => changeTab("Latest"),
+                  onPressed: () => changeTab("latest"),
                   child: Text(
                     "Latest",
                     style: TextStyle(
-                      color: selectedTab == "Latest" ? Colors.white : Colors.grey[300],
+                      color: selectedTab == "latest" ? Colors.white : Colors.grey[300],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 TextButton(
-                  onPressed: () => changeTab("Trending"),
+                  onPressed: () => changeTab("trending"),
                   child: Text(
                     "Trending",
                     style: TextStyle(
-                      color: selectedTab == "Trending" ? Colors.white : Colors.grey[300],
+                      color: selectedTab == "trending" ? Colors.white : Colors.grey[300],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 TextButton(
-                  onPressed: () => changeTab("Popular This Week"),
+                  onPressed: () => changeTab("popular this week"),
                   child: Text(
                     "Popular This Week",
                     style: TextStyle(
-                      color: selectedTab == "Popular This Week" ? Colors.white : Colors.grey[300],
+                      color: selectedTab == "popular this week" ? Colors.white : Colors.grey[300],
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -81,36 +90,54 @@ class _ForumPageState extends State<ForumPage> {
               ],
             ),
           ),
+          // Feed Content with FutureBuilder
           Expanded(
-            child: ListView(
-              children: [
-                if (selectedTab == "Latest" || selectedTab == "Trending" || selectedTab == "Popular This Week") ...[
-                  ForumCard(
-                    question: "Where is a good place to eat with family?",
-                    answers: 0,
-                    votes: 0,
-                    views: 15,
-                    timeAgo: "23m ago",
-                  ),
-                  ForumCard(
-                    question:
-                    "I'm 23 years old, can you suggest what important skills should I learn? I have a lot of free time.",
-                    answers: 5,
-                    votes: 20,
-                    views: 478,
-                    timeAgo: "3h ago",
-                  ),
-                  ForumCardWithImage(
-                    profileImage: "assets/profile3.png", // Add appropriate profile image
-                    question: "New eco opened at durian tunggal recently",
-                    imageUrl: "assets/store_image.png", // Add your image asset path
-                    answers: 2,
-                    votes: 68,
-                    views: 727,
-                    timeAgo: "24h ago",
-                  ),
-                ]
-              ],
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _fetchFeeds(), // Asynchronous call to fetch data
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator()); // Show loading
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}")); // Show error message
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No feeds available")); // Show empty state message
+                } else {
+                  final feeds = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: feeds.length,
+                    itemBuilder: (context, index) {
+                      final feed = feeds[index];
+                      // Return a clickable card based on feed data
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FeedDetailsPage(feedForumID: feed['feedforum_ID'], caption: feed['caption'], creation_dateTime: feed['creation_dateTime'] , total_like: feed['total_like'], total_dislikes: feed['total_dislike'], user_name: feed['user_name'], images: feed['images'], total_comments: feed['total_comments'] , user: widget.user),  // Navigate on tap
+                            ),
+                          );
+                        },
+                        child: feed['images'].length > 0
+                            ? ForumCardWithImage(
+                          caption: feed['caption'],
+                          imageUrl: feed['images'],
+                          comment: feed['total_comments'],
+                          likes: feed['total_like'],
+                          dislikes: feed['total_dislike'],
+                          timeAgo: feed['creation_dateTime'],
+                        )
+                            : ForumCard(
+                          caption: feed['caption'],
+                          comment: feed['total_comments'],
+                          likes: feed['total_like'],
+                          dislikes: feed['total_dislike'],
+                          timeAgo: feed['creation_dateTime'],
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
             ),
           ),
         ],
@@ -126,24 +153,33 @@ class _ForumPageState extends State<ForumPage> {
   }
 }
 
+String truncateDescription(String description, int maxLength) {
+  return description.length > maxLength ? '${description.substring(0, maxLength)}...' : description;
+}
+
+
+// Forum card without image
 class ForumCard extends StatelessWidget {
-  final String question;
-  final int answers;
-  final int votes;
-  final int views;
+  final String caption;
+  final int comment;
+  final int likes;
+  final int dislikes;
   final String timeAgo;
 
   const ForumCard({
-    required this.question,
-    required this.answers,
-    required this.votes,
-    required this.views,
+    required this.caption,
+    required this.comment,
+    required this.likes,
+    required this.dislikes,
     required this.timeAgo,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final splitCaption = caption.split(':');
+    final String title = splitCaption[0];
+    final String description = splitCaption.length > 1 ? truncateDescription(splitCaption[1].trim(), 50) : '';
     return Card(
       margin: const EdgeInsets.all(10),
       child: Padding(
@@ -152,14 +188,28 @@ class ForumCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              question,
+              caption,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("$answers Answers  •  $votes Votes  •  $views Views"),
+                Row(
+                  children: [
+                    Icon(Icons.comment, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$comment", style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 10),
+                    Icon(Icons.thumb_up, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$likes", style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 10),
+                    Icon(Icons.thumb_down, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$dislikes", style: const TextStyle(fontSize: 14)),
+                  ],
+                ),
                 Text(timeAgo, style: const TextStyle(color: Colors.grey)),
               ],
             ),
@@ -170,161 +220,82 @@ class ForumCard extends StatelessWidget {
   }
 }
 
+// Forum card with image
 class ForumCardWithImage extends StatelessWidget {
-  final String profileImage;
-  final String question;
-  final String imageUrl;
-  final int answers;
-  final int votes;
-  final int views;
+  final String caption;
+  final Uint8List imageUrl;
+  final int comment;
+  final int likes;
+  final int dislikes;
   final String timeAgo;
 
   const ForumCardWithImage({
-    required this.profileImage,
-    required this.question,
+    required this.caption,
     required this.imageUrl,
-    required this.answers,
-    required this.votes,
-    required this.views,
+    required this.comment,
+    required this.likes,
+    required this.dislikes,
     required this.timeAgo,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final splitCaption = caption.split(':');
+    final String title = splitCaption[0];
+    final String description = splitCaption.length > 1 ? truncateDescription(splitCaption[1].trim(), 50) : '';
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(profileImage),
-                radius: 16,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  question,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    caption,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          Image.asset(imageUrl, fit: BoxFit.cover),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.memory(
+              imageUrl,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("$answers Answers  •  $votes Votes  •  $views Views"),
+                Row(
+                  children: [
+                    Icon(Icons.comment, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$comment", style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 10),
+                    Icon(Icons.thumb_up, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$likes", style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 10),
+                    Icon(Icons.thumb_down, size: 16, color: Colors.grey),
+                    const SizedBox(width: 5),
+                    Text("$dislikes", style: const TextStyle(fontSize: 14)),
+                  ],
+                ),
                 Text(timeAgo, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class AddPostPage extends StatelessWidget {
-  final String noIc;
-
-  const AddPostPage({super.key, required this.noIc});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Row(
-          children: [
-            IconButton(
-              icon: const Icon(
-                Icons.menu, // This icon represents the three horizontal lines (hamburger menu)
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer(); // Open the drawer when the icon is pressed
-              },
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              "MyCare",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      drawer: Drawer( // Add the drawer here
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              onTap: () {
-                // Add navigation or functionality here
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                // Add navigation or functionality here
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Create a New Forum Post",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: "Title",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: "Description",
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 5,
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Add functionality to submit post
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Button color
-              ),
-              child: const Text("Submit"),
-            ),
-          ],
-        ),
       ),
     );
   }
