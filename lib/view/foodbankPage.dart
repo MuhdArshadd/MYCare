@@ -50,7 +50,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
             title: placeName,
             snippet: 'Lat: $latitude, Lng: $longitude',
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => FoodbankDetailPage(foodbankID: placeId, currentLocation: widget.currentLocation, user: widget.user), // Navigate to a details page

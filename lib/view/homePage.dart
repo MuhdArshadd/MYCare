@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
               onSeeMore: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)),
                 );
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
               title: 'Support Services',
               items: _supportServices,
               onSeeMore: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
                 );

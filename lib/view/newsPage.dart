@@ -205,7 +205,7 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   void _navigateToNewsDetailPage(Map<String, dynamic> article, User? user) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => NewsDetailPage(article: article, user: widget.user),

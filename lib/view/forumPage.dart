@@ -19,7 +19,6 @@ class _ForumPageState extends State<ForumPage> {
   final ForumController _forumController = ForumController();
   String selectedTab = "latest"; // Default tab is "Latest"
 
-  // Function to change tab and trigger fetching new data
   void changeTab(String tab) {
     setState(() {
       selectedTab = tab;
@@ -28,16 +27,15 @@ class _ForumPageState extends State<ForumPage> {
 
   Future<List<Map<String, dynamic>>> _fetchFeeds() async {
     try {
-      // Replace with the actual call to fetch data based on selected tab
       return await _forumController.fetchFeeds(selectedTab.toLowerCase());
     } catch (e) {
       print("Error fetching feeds: $e");
-      return []; // Return an empty list in case of an error
+      return [];
     }
   }
 
   void _navigateToAddPostPage() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => AddPostPage(noIc: widget.user.userIC),
@@ -51,69 +49,58 @@ class _ForumPageState extends State<ForumPage> {
       appBar: CustomAppBar(user: widget.user),
       body: Column(
         children: [
-          // Tabs for selecting feed types
+          // Futuristic Tab Bar with gradient background
           Container(
-            color: Colors.lightBlue,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue, Colors.purple],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25)),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(
-                  onPressed: () => changeTab("latest"),
-                  child: Text(
-                    "Latest",
-                    style: TextStyle(
-                      color: selectedTab == "latest" ? Colors.white : Colors.grey[300],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => changeTab("trending"),
-                  child: Text(
-                    "Trending",
-                    style: TextStyle(
-                      color: selectedTab == "trending" ? Colors.white : Colors.grey[300],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => changeTab("popular this week"),
-                  child: Text(
-                    "Popular This Week",
-                    style: TextStyle(
-                      color: selectedTab == "popular this week" ? Colors.white : Colors.grey[300],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                _buildTabButton("Latest"),
+                _buildTabButton("Trending"),
+                _buildTabButton("Popular This Week"),
               ],
             ),
           ),
-          // Feed Content with FutureBuilder
+          // Feed Content with futuristic styling
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: _fetchFeeds(), // Asynchronous call to fetch data
+              future: _fetchFeeds(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator()); // Show loading
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}")); // Show error message
+                  return Center(child: Text("Error: ${snapshot.error}"));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("No feeds available")); // Show empty state message
+                  return const Center(child: Text("No feeds available"));
                 } else {
                   final feeds = snapshot.data!;
                   return ListView.builder(
                     itemCount: feeds.length,
                     itemBuilder: (context, index) {
                       final feed = feeds[index];
-                      // Return a clickable card based on feed data
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FeedDetailsPage(feedForumID: feed['feedforum_ID'], caption: feed['caption'], creation_dateTime: feed['creation_dateTime'] , total_like: feed['total_like'], total_dislikes: feed['total_dislike'], user_name: feed['user_name'], images: feed['images'], total_comments: feed['total_comments'] , user: widget.user),  // Navigate on tap
+                              builder: (context) => FeedDetailsPage(
+                                feedForumID: feed['feedforum_ID'],
+                                caption: feed['caption'],
+                                creation_dateTime: feed['creation_dateTime'],
+                                total_like: feed['total_like'],
+                                total_dislikes: feed['total_dislike'],  // Change this to `total_dislikes`
+                                user_name: feed['user_name'],
+                                images: feed['images'],
+                                total_comments: feed['total_comments'],
+                                user: widget.user,
+                              ),
                             ),
                           );
                         },
@@ -142,13 +129,22 @@ class _ForumPageState extends State<ForumPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToAddPostPage,
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add, color: Colors.white),
-        tooltip: "Add Post",
-      ),
+      floatingActionButton: AnimatedFloatingActionButton(onPressed: _navigateToAddPostPage),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 3, user: widget.user),
+    );
+  }
+
+  Widget _buildTabButton(String title) {
+    return TextButton(
+      onPressed: () => changeTab(title.toLowerCase()),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: selectedTab == title.toLowerCase() ? Colors.white : Colors.grey[300],
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
     );
   }
 }
@@ -157,6 +153,26 @@ String truncateDescription(String description, int maxLength) {
   return description.length > maxLength ? '${description.substring(0, maxLength)}...' : description;
 }
 
+// Animated Floating Action Button
+class AnimatedFloatingActionButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const AnimatedFloatingActionButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      transform: Matrix4.identity()..scale(1.2),
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+        tooltip: "Add Post",
+      ),
+    );
+  }
+}
 
 // Forum card without image
 class ForumCard extends StatelessWidget {
@@ -182,14 +198,16 @@ class ForumCard extends StatelessWidget {
     final String description = splitCaption.length > 1 ? truncateDescription(splitCaption[1].trim(), 50) : '';
     return Card(
       margin: const EdgeInsets.all(10),
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              caption,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Row(
@@ -197,15 +215,15 @@ class ForumCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.comment, size: 16, color: Colors.grey),
+                    Icon(Icons.comment, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$comment", style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 10),
-                    Icon(Icons.thumb_up, size: 16, color: Colors.grey),
+                    Icon(Icons.thumb_up, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$likes", style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 10),
-                    Icon(Icons.thumb_down, size: 16, color: Colors.grey),
+                    Icon(Icons.thumb_down, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$dislikes", style: const TextStyle(fontSize: 14)),
                   ],
@@ -246,20 +264,16 @@ class ForumCardWithImage extends StatelessWidget {
     final String description = splitCaption.length > 1 ? truncateDescription(splitCaption[1].trim(), 50) : '';
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    caption,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           ClipRRect(
@@ -278,15 +292,15 @@ class ForumCardWithImage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.comment, size: 16, color: Colors.grey),
+                    Icon(Icons.comment, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$comment", style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 10),
-                    Icon(Icons.thumb_up, size: 16, color: Colors.grey),
+                    Icon(Icons.thumb_up, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$likes", style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 10),
-                    Icon(Icons.thumb_down, size: 16, color: Colors.grey),
+                    Icon(Icons.thumb_down, size: 18, color: Colors.blueAccent),
                     const SizedBox(width: 5),
                     Text("$dislikes", style: const TextStyle(fontSize: 14)),
                   ],

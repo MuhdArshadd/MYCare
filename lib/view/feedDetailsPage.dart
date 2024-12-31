@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../controller/forumController.dart';
 import '../model/userModel.dart';
+import 'forumPage.dart';
+import 'appBar.dart';
 
 class FeedDetailsPage extends StatefulWidget {
   final String feedForumID;
@@ -38,7 +40,8 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
 
   int totalLikes = 0;
   int totalDislikes = 0;
-  int? userSelection; // 1 for like, 2 for dislike, null for no selection
+  int? userSelection;
+  int totalComments = 0; // 1 for like, 2 for dislike, null for no selection
 
   @override
   void initState() {
@@ -46,26 +49,35 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
     _commentsFuture = forumController.fetchFeedComments(widget.feedForumID);
     totalLikes = widget.total_like;
     totalDislikes = widget.total_dislikes;
+    totalComments = widget.total_comments;
   }
 
   Future<void> _updateLikes(int selection) async {
-    // Prevent the user from spamming the same choice
-    if (userSelection == selection) return;
-
     try {
-      final response = await forumController.updateFeedLikes(selection, widget.feedForumID, widget.user.userIC);
+      final response = await forumController.updateFeedLikes(
+        selection,
+        widget.feedForumID,
+        widget.user.userIC,
+      );
+
+      if (response == "Action not allowed") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("You can only like or dislike once")),
+        );
+        return;
+      }
+
       setState(() {
         if (selection == 1) {
-          // Increment likes, decrement dislikes if previously selected
           totalLikes++;
           if (userSelection == 2) totalDislikes--;
         } else if (selection == 2) {
-          // Increment dislikes, decrement likes if previously selected
           totalDislikes++;
           if (userSelection == 1) totalLikes--;
         }
-        userSelection = selection; // Update user selection
+        userSelection = selection; // Update user's current selection
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response)),
       );
@@ -80,11 +92,19 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
     final comment = _commentController.text.trim();
     if (comment.isNotEmpty) {
       try {
-        await forumController.commentFeed(widget.feedForumID, widget.user.userIC, comment);
+        await forumController.commentFeed(
+          widget.feedForumID,
+          widget.user.userIC,
+          comment,
+        );
         setState(() {
           _commentsFuture = forumController.fetchFeedComments(widget.feedForumID);
+          totalComments += 1;
         });
         _commentController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Comment added successfully")),
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to add comment: $e")),
@@ -99,161 +119,227 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Feed Details"),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Feed details section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Back Button below AppBar
+              Row(
                 children: [
-                  Text(
-                    widget.caption,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Posted by: ${widget.user_name} on ${widget.creation_dateTime}",
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 10),
-                  widget.images != null && widget.images!.isNotEmpty
-                      ? Image.memory(
-                    widget.images!,
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                      : const Text(
-                    "",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Likes Button
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => _updateLikes(1),
-                            icon: Icon(
-                              userSelection == 1
-                                  ? Icons.thumb_up_alt
-                                  : Icons.thumb_up_alt_outlined,
-                            ),
-                            color: Colors.blue,
-                          ),
-                          Text(
-                            "$totalLikes",
-                            style: const TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      // Dislikes Button
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => _updateLikes(2),
-                            icon: Icon(
-                              userSelection == 2
-                                  ? Icons.thumb_down_alt
-                                  : Icons.thumb_down_alt_outlined,
-                            ),
-                            color: Colors.red,
-                          ),
-                          Text(
-                            "$totalDislikes",
-                            style: const TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Total Comments: ${widget.total_comments}",
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForumPage(user: widget.user), // Navigate to a details page
+                        ),
+                      ); // Go back to the previous screen
+                    },
                   ),
                 ],
               ),
-            ),
-            const Divider(),
-
-            // Comments section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FutureBuilder<List<Map<String, dynamic>>>(
+              // User Profile Section
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: theme.primaryColor,
+                    child: Text(
+                      widget.user_name[0].toUpperCase(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.user_name,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "Posted on: ${widget.creation_dateTime}",
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Divider(),
+              // Feed Details
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.images != null && widget.images!.isNotEmpty)
+                      Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Image.memory(
+                              widget.images!,
+                              height: 250,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: Chip(
+                              backgroundColor: Colors.black54,
+                              label: Text(
+                                widget.creation_dateTime,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.caption,
+                            style: theme.textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              ActionChip(
+                                avatar: Icon(
+                                  Icons.thumb_up,
+                                  color: userSelection == 1 ? Colors.blue : Colors.grey,
+                                ),
+                                label: Text("$totalLikes"),
+                                onPressed: () => _updateLikes(1),
+                              ),
+                              const SizedBox(width: 10),
+                              ActionChip(
+                                avatar: Icon(
+                                  Icons.thumb_down,
+                                  color: userSelection == 2 ? Colors.red : Colors.grey,
+                                ),
+                                label: Text("$totalDislikes"),
+                                onPressed: () => _updateLikes(2),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              // Comments Section
+              FutureBuilder<List<Map<String, dynamic>>>(
                 future: _commentsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(
-                        child: Text("Error fetching comments: ${snapshot.error}"));
+                    return Center(child: Text("Error: ${snapshot.error}"));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text("No comments available"));
-                  } else {
-                    final comments = snapshot.data!;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: comments.length,
-                      itemBuilder: (context, index) {
-                        final comment = comments[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            child: Text(
-                              comment['comment_author'][0].toUpperCase(),
-                              style: const TextStyle(color: Colors.white),
+                    return const Center(child: Text("No Comment"));
+                  }
+
+                  final comments = snapshot.data!;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: comments.length,
+                    itemBuilder: (context, index) {
+                      final comment = comments[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],  // Background color for the comment box
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.grey[400]!,  // Border color for the comment box
+                              width: 1,
                             ),
                           ),
-                          title: Text(comment['comment']),
-                          subtitle: Text(
-                              "By ${comment['comment_author']} on ${comment['comment_dateTime']}"),
-                        );
-                      },
-                    );
-                  }
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: Text(
+                                  comment['comment_author'][0].toUpperCase(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      comment['comment'],
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      "By ${comment['comment_author']} on ${comment['comment_dateTime']}",
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
-            ),
-            const Divider(),
-
-            // Comment input section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
+              const Divider(),
+              // Add Comment
+              Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _commentController,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your comment",
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: "Write a comment...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: _submitComment,
-                    child: const Text("Post"),
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(12),
+                    ),
+                    child: const Icon(Icons.send),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

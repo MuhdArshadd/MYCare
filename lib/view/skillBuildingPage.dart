@@ -96,7 +96,7 @@ class _SkillBuildingPageState extends State<SkillBuildingPage> {
           onTap: () {
             // Navigate or handle tap
             String category = title;
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) =>

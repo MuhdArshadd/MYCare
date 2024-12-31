@@ -96,7 +96,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   image: 'assets/foodbank.png',
                   label: 'Foodbank',
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation, user: widget.user)),
                     );
@@ -106,7 +106,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   image: 'assets/medical.png',
                   label: 'Medical service',
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation, user: widget.user)),
                     );
@@ -120,7 +120,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                 image: 'assets/skill.png',
                 label: 'Skill Building Programme',
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => SkillBuildingPage(user: widget.user)),
                   );

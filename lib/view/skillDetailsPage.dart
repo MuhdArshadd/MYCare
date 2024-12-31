@@ -4,6 +4,7 @@ import '../controller/skillsController.dart';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
+import 'skillBuildingPage.dart';
 
 class SkillDetailsPage extends StatefulWidget {
   final String category;
@@ -42,7 +43,14 @@ class _SkillDetailsPageState extends State<SkillDetailsPage> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: ()  {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>SkillBuildingPage(user: widget.user), // Navigate to a details page
+                      ),
+                    ); // Go back to the previous screen
+                  },
                 ),
                 const SizedBox(width: 8),
                 Text(
