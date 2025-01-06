@@ -1,294 +1,222 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import for rootBundle
 import 'package:workshop2dev/view/appBar.dart';
 import '../model/userModel.dart';
 import 'newsPage.dart';
-import 'bottomNavigationBar.dart';
-import 'package:workshop2dev/controller/newsController.dart';
-import 'dart:typed_data';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
 
 class HomePage extends StatefulWidget {
   final User user;
-  const HomePage({super.key, required this.user});
+  const HomePage({Key? key, required this.user}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-  List<Map<String, dynamic>> _newsArticles = [];
-  List<SectionItem> _supportServices = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {});
-    _fetchNewsArticles();
-    _loadStaticSupportServices();
-  }
-
-  Future<void> _fetchNewsArticles() async {
-    News news = News();
-    var fetchedNews = await news.fetchNews();
-    setState(() {
-      _newsArticles = fetchedNews.take(3).toList(); // Limit to 3 articles for home page
-    });
-  }
-
-  Future<void> _loadStaticSupportServices() async {
-    _supportServices = [
-      SectionItem(
-        imageBytes: (await rootBundle.load('assets/foodbank.png')).buffer.asUint8List(),
-        description: 'FoodBank',
-      ),
-      SectionItem(
-        imageBytes: (await rootBundle.load('assets/medical.png')).buffer.asUint8List(),
-        description: 'Medical Services',
-      ),
-      SectionItem(
-        imageBytes: (await rootBundle.load('assets/skill.png')).buffer.asUint8List(),
-        description: 'Skill Building',
-      ),
-    ];
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  CustomAppBar(user: widget.user),
-      body: _currentIndex == 0
-          ? _buildHomeContent()
-          : Center(
-        child: Text(
-          'Content for tab $_currentIndex',
-          style: const TextStyle(fontSize: 24),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {},
+        ),
+        title: const Text(
+          "MyCare",
+          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: _currentIndex, user: widget.user),
-    );
-  }
-
-  Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SwipableSectionWidget(
-              title: 'News',
-              items: _newsArticles.map((article) {
-                return SectionItem(
-                  imageBytes: article['images'],
-                  description: article['headline'],
-                );
-              }).toList(),
-              onSeeMore: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)),
-                );
-              },
+            // Welcome Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Welcome, ${widget.user.fullname}! Checkout below",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
             ),
-            const SizedBox(height: 20),
-            SwipableSectionWidget(
-              title: 'Support Services',
-              items: _supportServices,
-              onSeeMore: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
-                );
-                print (widget.user.fullname);
-                print (widget.user.incomeRange);
-              },
-            ),
-            // const SizedBox(height: 20),
-            // SwipableSectionWidget(
-            //   title: 'Forum',
-            //   items: [
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Null',
-            //     ),
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Null',
-            //     ),
-            //     SectionItem(
-            //       imageBytes: null,
-            //       description: 'Skill Building Programme',
-            //     ),
-            //   ],
-            //   // onSeeMore: () {
-            //   //   Navigator.push(
-            //   //   //   context,
-            //   //   //   MaterialPageRoute(builder: (context) => ForumPage(user: {},)),
-            //   //   // );
-            //   // },
-            // ),
-            // Add more sections if needed
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class SwipableSectionWidget extends StatefulWidget {
-  final String title;
-  final List<SectionItem> items;
-  final VoidCallback onSeeMore;
-
-  const SwipableSectionWidget({
-    super.key,
-    required this.title,
-    required this.items,
-    required this.onSeeMore,
-  });
-
-  @override
-  _SwipableSectionWidgetState createState() => _SwipableSectionWidgetState();
-}
-
-class _SwipableSectionWidgetState extends State<SwipableSectionWidget> {
-  late PageController _pageController;
-  late int _currentPage;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(viewportFraction: 0.85);
-    _currentPage = 0;
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  Widget _buildIndicator(int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 3),
-      width: _currentPage == index ? 12 : 8,
-      height: _currentPage == index ? 12 : 8,
-      decoration: BoxDecoration(
-        color: _currentPage == index ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(6),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              widget.title,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            TextButton(
-              onPressed: widget.onSeeMore,
-              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+            // Program Bootcamp Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'See more',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: Image.asset(
+                        'assets/bootcamp_image.jpg',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward, size: 16, color: Colors.white),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "PROGRAM BOOTCAMP",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                          ),
+                          SizedBox(height: 8),
+                          Text("- Skill area: Engineering\n- Training method: Coaching\n- Age: 17-35 years old\n- 1 Aug 2024\n- 8:00 AM\n- RECSAM, Pulau Pinang\n- Certificate provided"),
+                          SizedBox(height: 8),
+                          Text(
+                            "1 available seat left",
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
+
+            const SizedBox(height: 20),
+
+            // Navigation Buttons Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildNavButton(
+                    icon: Icons.article,
+                    label: "News",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)),
+                      );
+                    },
+                  ),
+                  _buildNavButton(
+                    icon: Icons.support_agent,
+                    label: "Support Service",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
+                      );
+                    },
+                  ),
+                  _buildNavButton(
+                    icon: Icons.forum,
+                    label: "Forum",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ForumPage(user: widget.user)),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // News Highlights Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "News Highlight",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  NewsHighlightCard(
+                    headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
+                    imagePath: 'assets/news1.jpg',
+                  ),
+                  SizedBox(height: 10),
+                  NewsHighlightCard(
+                    headline: "Bantuan E-Tunai belia rahmah bernilai RM200 khusus untuk golongan belia",
+                    imagePath: 'assets/news2.jpg',
+                  ),
+                  SizedBox(height: 10),
+                  NewsHighlightCard(
+                    headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
+                    imagePath: 'assets/news3.jpg',
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 280,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.items.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    children: [
-                      widget.items[index].imageBytes != null
-                          ? ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.memory(
-                          widget.items[index].imageBytes!,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                          : Container(height: 150, color: Colors.grey),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.items[index].description,
-                          style: const TextStyle(fontSize: 16),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+      ),
+    );
+  }
+
+  Widget _buildNavButton({required IconData icon, required String label, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.blue.shade100,
+            child: Icon(icon, color: Colors.blue, size: 30),
           ),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            widget.items.length,
-                (index) => _buildIndicator(index),
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        ],
+      ),
     );
   }
 }
 
-class SectionItem {
-  final Uint8List? imageBytes;
-  final String description;
+class NewsHighlightCard extends StatelessWidget {
+  final String headline;
+  final String imagePath;
 
-  SectionItem({required this.imageBytes, required this.description});
+  const NewsHighlightCard({Key? key, required this.headline, required this.imagePath}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+            ),
+            child: Image.asset(
+              imagePath,
+              height: 80,
+              width: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              headline,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
