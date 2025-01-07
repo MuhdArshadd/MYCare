@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                         topRight: Radius.circular(12),
                       ),
                       child: Image.asset(
-                        'assets/bootcamp_image.jpg',
+                        'assets/bootcamp_image.png',
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -144,17 +144,17 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 10),
                   NewsHighlightCard(
                     headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
-                    imagePath: 'assets/news1.jpg',
+                    imagePath: 'assets/news1.png',
                   ),
                   SizedBox(height: 10),
                   NewsHighlightCard(
                     headline: "Bantuan E-Tunai belia rahmah bernilai RM200 khusus untuk golongan belia",
-                    imagePath: 'assets/news2.jpg',
+                    imagePath: 'assets/news2.png',
                   ),
                   SizedBox(height: 10),
                   NewsHighlightCard(
                     headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
-                    imagePath: 'assets/news3.jpg',
+                    imagePath: 'assets/news3.png',
                   ),
                 ],
               ),
