@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workshop2dev/view/appBar.dart';
+import 'package:workshop2dev/controller/newsController.dart';
 import '../model/userModel.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
@@ -14,6 +14,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> newsHighlights = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNewsHighlights();
+  }
+
+  Future<void> _fetchNewsHighlights() async {
+    try {
+      News newsModel = News();
+      List<Map<String, dynamic>> fetchedNews = await newsModel.fetchNews();
+      setState(() {
+        newsHighlights = fetchedNews.take(5).toList(); // Limit to 5 news highlights
+      });
+    } catch (e) {
+      print('Error fetching news highlights: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,26 +156,31 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "News Highlight",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
-                  NewsHighlightCard(
-                    headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
-                    imagePath: 'assets/news1.png',
-                  ),
-                  SizedBox(height: 10),
-                  NewsHighlightCard(
-                    headline: "Bantuan E-Tunai belia rahmah bernilai RM200 khusus untuk golongan belia",
-                    imagePath: 'assets/news2.png',
-                  ),
-                  SizedBox(height: 10),
-                  NewsHighlightCard(
-                    headline: "Golongan B40 pelajar IPT di bawah KPT terima peranti siswa 2022",
-                    imagePath: 'assets/news3.png',
-                  ),
+                  const SizedBox(height: 10),
+                  if (newsHighlights.isEmpty)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    SizedBox(
+                      height: 300, // Set a fixed height for the scrollable area
+                      child: ListView.builder(
+                        itemCount: newsHighlights.length,
+                        itemBuilder: (context, index) {
+                          final news = newsHighlights[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: NewsHighlightCard(
+                              headline: news['title'],
+                              imagePath: news['image_url'], // Assuming `image_url` is the local asset path
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -201,11 +226,14 @@ class NewsHighlightCard extends StatelessWidget {
               topLeft: Radius.circular(8),
               bottomLeft: Radius.circular(8),
             ),
-            child: Image.asset(
+            child: Image.network(
               imagePath,
               height: 80,
               width: 80,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.broken_image, size: 80);
+              },
             ),
           ),
           const SizedBox(width: 10),

@@ -4,7 +4,7 @@ import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
 import 'dart:typed_data';
-import 'newsDetailPage.dart'; // Import NewsDetailPage
+import 'newsDetailPage.dart';
 
 class NewsPage extends StatefulWidget {
   final User user;
@@ -39,16 +39,16 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> filteredArticles = _articles.where((article) {
-      bool matchesSearch = article['headline']
+      bool matchesSearch = article['title']
           .toLowerCase()
           .contains(_searchText.toLowerCase());
       bool matchesCategory = _selectedCategory == null ||
-          article['newstype'].toLowerCase() == _selectedCategory?.toLowerCase();
+          article['type'].toLowerCase() == _selectedCategory?.toLowerCase();
       return matchesSearch && matchesCategory;
     }).toList();
 
     return Scaffold(
-      appBar:  CustomAppBar(user: widget.user),
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -59,7 +59,7 @@ class _NewsPageState extends State<NewsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "News", // News title
+                    "News",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _NewsPageState extends State<NewsPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 9), // Space between the row and the search bar
+              const SizedBox(height: 9),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -145,14 +145,17 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   Widget _buildNewsCard(Map<String, dynamic> article) {
+    bool isImageUrl = article['image_url'] != null &&
+        article['image_url'] is String &&
+        Uri.tryParse(article['image_url'])?.hasAbsolutePath == true;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          article['images'] != null && article['images'] is Uint8List &&
-              article['images'].isNotEmpty
+          isImageUrl
               ? GestureDetector(
             onTap: () {
               _navigateToNewsDetailPage(article, widget.user);
@@ -162,10 +165,20 @@ class _NewsPageState extends State<NewsPage> {
                 topLeft: Radius.circular(15),
                 topRight: Radius.circular(15),
               ),
-              child: Image.memory(
-                article['images'],
+              child: Image.network(
+                article['image_url'],
                 width: double.infinity,
-                fit: BoxFit.contain, // Adjust the image size with BoxFit.contain
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 250,
+                    color: Colors.grey,
+                    child: const Center(
+                      child: Text('Image not available'),
+                    ),
+                  );
+                },
               ),
             ),
           )
@@ -173,7 +186,13 @@ class _NewsPageState extends State<NewsPage> {
             onTap: () {
               _navigateToNewsDetailPage(article, widget.user);
             },
-            child: Container(height: 250, color: Colors.grey),
+            child: Container(
+              height: 250,
+              color: Colors.grey,
+              child: const Center(
+                child: Text('No Image'),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
@@ -181,7 +200,7 @@ class _NewsPageState extends State<NewsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  article['headline'],
+                  article['title'],
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -192,7 +211,8 @@ class _NewsPageState extends State<NewsPage> {
                   },
                   child: const Text(
                     'View More',
-                    style: TextStyle(color: Colors.blue,
+                    style: TextStyle(
+                        color: Colors.blue,
                         decoration: TextDecoration.underline),
                   ),
                 ),

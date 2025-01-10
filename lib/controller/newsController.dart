@@ -17,27 +17,25 @@ class News {
       // Query to fetch news
       var results = await dbConnection.connection.query(''' 
         SELECT 
-          news_id, 
-          headline, 
+          id, 
+          title, 
           author, 
-          date, 
           description, 
-          newstype, 
-          newscriteria,
-          images
+          date, 
+          type, 
+          image_url
         FROM news
       ''');
 
       for (var row in results) {
         newsList.add({
-          'news_id': row[0].toString(), // Integer to string conversion
-          'headline': row[1] as String,
+          'id': row[0].toString(), // Integer to string conversion
+          'title': row[1] as String,
           'author': row[2] as String,
-          'date': row[3] as DateTime,
-          'description': row[4] as String,
-          'newstype': row[5] as String,
-          'newscriteria': row[6] as String,
-          'images': row[7] as Uint8List, // Store as String
+          'description': row[3] as String,
+          'date': row[4] as String,
+          'type': row[5] ,
+          'image_url': row[6] as String, // Store as String
         });
       }
     } catch (e) {
