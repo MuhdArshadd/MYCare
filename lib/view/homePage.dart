@@ -4,6 +4,7 @@ import '../model/userModel.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
+import 'appBar.dart';
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -37,18 +38,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
-        ),
-        title: const Text(
-          "MyCare",
-          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icons.article,
                     label: "News",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => NewsPage(user: widget.user)),
                       );
@@ -129,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icons.support_agent,
                     label: "Support Service",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => SupportServicePage(user: widget.user)),
                       );
@@ -139,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icons.forum,
                     label: "Forum",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => ForumPage(user: widget.user)),
                       );
