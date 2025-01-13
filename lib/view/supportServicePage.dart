@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../controller/newsController.dart';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'foodbankPage.dart';
-import 'medicalService.dart';
-import 'skillBuildingPage.dart';
+import 'categoryMedicalService.dart';
+import 'categorySkillBuilding.dart';
 import 'package:location/location.dart';
 
 class SupportServicePage extends StatefulWidget {
@@ -18,8 +17,6 @@ class SupportServicePage extends StatefulWidget {
 }
 
 class _SupportServicePageState extends State<SupportServicePage> {
-  List<Map<String, dynamic>> _supportServices = [];
-  bool _isLoading = true;
   LatLng? currentLocation;
   final Location _locationController = Location();
 
@@ -27,9 +24,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    // _fetchSupportServices();
   }
-
 
   Future<void> _getCurrentLocation() async {
     bool _serviceEnabled;
@@ -50,30 +45,12 @@ class _SupportServicePageState extends State<SupportServicePage> {
     try {
       final locationData = await _locationController.getLocation();
       setState(() {
-        currentLocation =
-            LatLng(locationData.latitude!, locationData.longitude!);
+        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
       });
     } catch (e) {
       print('Error getting location: $e');
     }
   }
-
-
-  // Future<void> _fetchSupportServices() async {
-  //   try {
-  //     News news = News();
-  //     var services = await news.fetchSupportService();
-  //     setState(() {
-  //       _supportServices = services;
-  //       _isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print("Error fetching support services: $e");
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +75,12 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => FoodbankPage(currentLocation: currentLocation, user: widget.user)),
+                      MaterialPageRoute(
+                        builder: (context) => FoodbankPage(
+                          currentLocation: currentLocation,
+                          user: widget.user,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -108,7 +90,11 @@ class _SupportServicePageState extends State<SupportServicePage> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => MedicalService(currentLocation: currentLocation, user: widget.user)),
+                      MaterialPageRoute(
+                        builder: (context) => CategoryMedicalService(
+                          user: widget.user,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -122,7 +108,9 @@ class _SupportServicePageState extends State<SupportServicePage> {
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => SkillBuildingPage(user: widget.user)),
+                    MaterialPageRoute(
+                      builder: (context) => CategorySkillBuilding(user: widget.user),
+                    ),
                   );
                 },
               ),
@@ -159,11 +147,11 @@ class SupportServiceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 120, // Set a fixed width for all images to ensure consistent size
-              height: 120, // Set a fixed height for all images
+              width: 120, // Fixed width for consistency
+              height: 120, // Fixed height for consistency
               child: Image.asset(
                 image,
-                fit: BoxFit.cover, // Ensure the image covers the entire container
+                fit: BoxFit.cover,
               ),
             ),
             Padding(

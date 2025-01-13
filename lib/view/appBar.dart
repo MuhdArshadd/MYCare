@@ -6,7 +6,9 @@ import 'bottomNavigationBar.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final User user;
-  const CustomAppBar({super.key, required this.user});
+  final Widget? leading; // Add the optional leading widget
+
+  const CustomAppBar({super.key, required this.user, this.leading}); // Modify the constructor to accept leading
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -20,15 +22,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.blue,
+      leading: widget.leading ?? IconButton(  // Use the leading widget passed in or default to menu icon
+        icon: const Icon(Icons.menu, color: Colors.white, size: 28),
+        onPressed: () {
+          _showSlidingPopupMenu(context);
+        },
+      ),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white, size: 28), // Slightly larger for emphasis
-            onPressed: () {
-              _showSlidingPopupMenu(context);
-            },
-          ),
           const SizedBox(width: 5), // Space between the icon and text
           const Text(
             'MyCare',
