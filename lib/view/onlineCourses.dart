@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'BusinessCourses.dart';
-import 'languagelearning.dart';
+import 'informationtechnology.dart';
 import 'computersciencecourses.dart';
-import 'healthcourses.dart';
+import 'personaldevelopment.dart';
 
 class OnlineCoursesPage extends StatefulWidget {
   @override
@@ -56,9 +56,9 @@ class _OnlineCoursesPageState extends State<OnlineCoursesPage> {
                   _buildCategoryCard(
                       context, 'Computer Science', 'assets/computer_science.png', ComputerScienceCourses()),
                   _buildCategoryCard(
-                      context, 'Language Learning', 'assets/language.png', LanguageLearningCourses()),
+                      context, 'Information Technology', 'assets/information_technology.png', InformationTechnology()),
                   _buildCategoryCard(
-                      context, 'Health', 'assets/health.png', HealthCourses()),
+                      context, 'Personal Development', 'assets/personal_development.png', PersonalDevelopment()),
                 ],
               ),
             ),
