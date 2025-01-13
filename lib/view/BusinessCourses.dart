@@ -1,119 +1,82 @@
 import 'package:flutter/material.dart';
-import 'coursesDetails.dart'; // Ensure this file exists
+import 'coursesDetails.dart';
 
 class BusinessCourses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade800,
         title: Text('Business Courses', style: TextStyle(color: Colors.white)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CourseCard(
-            title: "Business Analysis & Process Management",
-            level: "Beginner",
-            duration: "2 hours",
-            imageUrl: null,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetails(
-                    courseTitle: "Business Analysis & Process Management",
-                    courseUrl: "https://www.coursera.org/projects/business-analysis-process-management",
-                    platform: "Coursera",
-                    deliveryMode: "Online Classroom",
-                    priceInfo: "Free for all, Registration Required",
-                  ),
-                ),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "List of courses available",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+              ),
+            ),
           ),
-          CourseCard(
-            title: "Financial Accounting for Managers",
-            level: "Intermediate",
-            duration: "4 hours",
-            imageUrl: null,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetails(
-                    courseTitle: "Financial Accounting for Managers",
-                    courseUrl: "https://www.edx.org/course/financial-accounting-for-managers",
-                    platform: "edX",
-                    deliveryMode: "Online",
-                    priceInfo: "Free to audit, certificate available for a fee",
-                  ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(8.0),
+              children: [
+                CourseCard(
+                  title: "Business Analysis & Process Management",
+                  level: "Beginner",
+                  duration: "2 hours",
+                  imageUrl: null, // Leave the imageUrl as null for now
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CourseDetails(
+                          courseTitle: "Business Analysis & Process Management",
+                          courseUrl:
+                          "https://www.coursera.org/projects/business-analysis-process-management",
+                          coursePlatform: "Coursera",
+                          deliveryMode: "Online Classroom",
+                          priceInfo: "Free for all, Registration Required",
+                          imageUrl: null, // Pass null for now
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          CourseCard(
-            title: "Project Management Professional",
-            level: "Advanced",
-            duration: "8 hours",
-            imageUrl: null,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetails(
-                    courseTitle: "Project Management Professional",
-                    courseUrl: "https://www.udemy.com/course/project-management-professional-pmp-exam-prep/",
-                    platform: "Udemy",
-                    deliveryMode: "Self-paced",
-                    priceInfo: "Paid course, discounts available",
-                  ),
+                CourseCard(
+                  title: "Financial Accounting for Managers",
+                  level: "Intermediate",
+                  duration: "4 hours",
+                  imageUrl: null, // Leave the imageUrl as null for now
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CourseDetails(
+                          courseTitle: "Financial Accounting for Managers",
+                          courseUrl:
+                          "https://www.edx.org/course/financial-accounting-for-managers",
+                          coursePlatform: "edX",
+                          deliveryMode: "Online",
+                          priceInfo: "Free to audit, certificate available for a fee",
+                          imageUrl: null, // Pass null for now
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          CourseCard(
-            title: "Entrepreneurship Essentials",
-            level: "Beginner",
-            duration: "6 hours",
-            imageUrl: null,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetails(
-                    courseTitle: "Entrepreneurship Essentials",
-                    courseUrl: "https://www.coursera.org/learn/entrepreneurship-essentials",
-                    platform: "Coursera",
-                    deliveryMode: "Online Classroom",
-                    priceInfo: "Free for all, Registration Required",
-                  ),
-                ),
-              );
-            },
-          ),
-          CourseCard(
-            title: "Leadership & Management",
-            level: "Intermediate",
-            duration: "5 hours",
-            imageUrl: null,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetails(
-                    courseTitle: "Leadership & Management",
-                    courseUrl: "https://www.edx.org/course/leadership-and-management",
-                    platform: "edX",
-                    deliveryMode: "Online",
-                    priceInfo: "Free to audit, certificate available for a fee",
-                  ),
-                ),
-              );
-            },
+              ],
+            ),
           ),
         ],
       ),
@@ -141,13 +104,43 @@ class CourseCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        margin: EdgeInsets.all(8.0),
-        child: ListTile(
-          leading: imageUrl != null
-              ? Image.network(imageUrl!, width: 60, height: 60, fit: BoxFit.cover)
-              : Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
-          title: Text(title),
-          subtitle: Text("Level: $level\nDuration: $duration"),
+        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: Colors.blue.shade100,
+                child: Icon(Icons.business, size: 40, color: Colors.blue.shade700),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Level: $level",
+                      style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                    Text(
+                      "Duration: $duration",
+                      style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'skilCourses.dart';
+import 'technologycourses.dart';
+import 'speedcourses.dart';
 
-class PhysicalCoursesPage extends StatelessWidget {
+class PhysicalCoursesPage extends StatefulWidget {
+  @override
+  _PhysicalCoursesPageState createState() => _PhysicalCoursesPageState();
+}
+
+class _PhysicalCoursesPageState extends State<PhysicalCoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Physical Courses', style: TextStyle(color: Colors.white)),
+        title: Text(
+          'Physical Courses',
+          style: TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -26,9 +37,9 @@ class PhysicalCoursesPage extends StatelessWidget {
               child: GridView.count(
                 crossAxisCount: 2,
                 children: [
-                  _buildCategoryCard('Skill', 'assets/skil.png'),
-                  _buildCategoryCard('Technology', 'assets/technology.png'),
-                  _buildCategoryCard('SPEED', 'assets/speed.png'),
+                  _buildCategoryCard(context, 'Skill', 'assets/skil.png', SkillCourses()),
+                  _buildCategoryCard(context, 'Technology', 'assets/technology.png', TechnologyCourses()),
+                  _buildCategoryCard(context, 'SPEED', 'assets/speed.png', SpeedCourses()),
                 ],
               ),
             ),
@@ -38,19 +49,30 @@ class PhysicalCoursesPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(String title, String assetPath) {
-    return Card(
-      elevation: 4,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(assetPath, height: 80),
-          SizedBox(height: 10),
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
+  Widget _buildCategoryCard(
+      BuildContext context, String title, String assetPath, Widget? targetPage) {
+    return GestureDetector(
+      onTap: () {
+        if (targetPage != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => targetPage),
+          );
+        }
+      },
+      child: Card(
+        elevation: 4,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(assetPath, height: 80),
+            SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }

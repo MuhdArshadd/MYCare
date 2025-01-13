@@ -1,69 +1,202 @@
 import 'package:flutter/material.dart';
 
-class CourseDetails extends StatelessWidget {
+class CourseDetails extends StatefulWidget {
   final String courseTitle;
   final String courseUrl;
-  final String platform;
+  final String coursePlatform;
   final String deliveryMode;
   final String priceInfo;
+  final String? imageUrl; // Add this property for the course image URL
 
   const CourseDetails({
     required this.courseTitle,
     required this.courseUrl,
-    required this.platform,
+    required this.coursePlatform,
     required this.deliveryMode,
     required this.priceInfo,
+    this.imageUrl, // Accept image URL as an optional parameter
   });
+
+  @override
+  _CourseDetailsState createState() => _CourseDetailsState();
+}
+
+class _CourseDetailsState extends State<CourseDetails> {
+  bool isFavorite = false; // State to track if the course is marked as favorite
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(courseTitle),
-        backgroundColor: Colors.blue,
+        title: Text(widget.courseTitle),
+        backgroundColor: Colors.blue.shade800,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.book, size: 100, color: Colors.blue),
-            SizedBox(height: 20),
-            Text(
-              courseTitle,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.white,
             ),
-            SizedBox(height: 20),
-            buildIconRow(Icons.link, 'URL: $courseUrl'),
-            SizedBox(height: 10),
-            buildIconRow(Icons.school, 'Platform: $platform'),
-            SizedBox(height: 10),
-            buildIconRow(Icons.delivery_dining, 'Delivery Mode: $deliveryMode'),
-            SizedBox(height: 10),
-            buildIconRow(Icons.attach_money, 'Price Info: $priceInfo'),
+            onPressed: () {
+              setState(() {
+                isFavorite = !isFavorite; // Toggle favorite status
+              });
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top banner with dynamic image or default gradient
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: widget.imageUrl == null // Use gradient if imageUrl is null
+                    ? LinearGradient(
+                  colors: [Colors.blue.shade800, Colors.blue.shade400],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                )
+                    : null,
+              ),
+              child: widget.imageUrl != null
+                  ? ClipRRect(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+                child: Image.network(
+                  widget.imageUrl!,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+              )
+                  : Center(
+                child: Icon(Icons.school, size: 100, color: Colors.white),
+              ),
+            ),
+            // Course details section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.courseTitle,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  buildDetailCard(
+                    icon: Icons.link,
+                    title: "Course URL",
+                    description: widget.courseUrl,
+                    onTap: () => _launchURL(context, widget.courseUrl),
+                  ),
+                  buildDetailCard(
+                    icon: Icons.school,
+                    title: "Platform",
+                    description: widget.coursePlatform,
+                  ),
+                  buildDetailCard(
+                    icon: Icons.delivery_dining,
+                    title: "Delivery Mode",
+                    description: widget.deliveryMode,
+                  ),
+                  buildDetailCard(
+                    icon: Icons.attach_money,
+                    title: "Price Info",
+                    description: widget.priceInfo,
+                  ),
+                  SizedBox(height: 24),
+                  // Enroll Now button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade800,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () => _launchURL(context, widget.courseUrl),
+                    child: Text(
+                      "Enroll Now",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildIconRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 24, color: Colors.blue),
-        SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 16),
-            overflow: TextOverflow.ellipsis,
+  Widget buildDetailCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: Colors.blue.shade100,
+                child: Icon(icon, size: 28, color: Colors.blue.shade700),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade800,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                  ],
+                ),
+              ),
+              if (onTap != null)
+                Icon(Icons.open_in_new, size: 24, color: Colors.blue.shade800),
+            ],
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  void _launchURL(BuildContext context, String url) {
+    // Implement URL launching logic here
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Opening $url")),
     );
   }
 }

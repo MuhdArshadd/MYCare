@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'coursesDetails.dart';
 import 'coursecard.dart';
 
-class LanguageLearningCourses extends StatelessWidget {
+class LanguageLearningCourses extends StatefulWidget {
+  @override
+  _LanguageLearningCoursesState createState() => _LanguageLearningCoursesState();
+}
+
+class _LanguageLearningCoursesState extends State<LanguageLearningCourses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +33,7 @@ class LanguageLearningCourses extends StatelessWidget {
                   builder: (context) => CourseDetails(
                     courseTitle: "Spanish for Beginners",
                     courseUrl: "https://www.example.com/spanish-course",
-                    platform: "Duolingo",
+                    coursePlatform: "Duolingo",
                     deliveryMode: "Mobile App",
                     priceInfo: "Free",
                   ),
@@ -46,11 +51,11 @@ class LanguageLearningCourses extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CourseDetails(
-                    courseTitle: "Spanish for Beginners",
-                    courseUrl: "https://www.example.com/spanish-course",
-                    platform: "Duolingo",
-                    deliveryMode: "Mobile App",
-                    priceInfo: "Free",
+                    courseTitle: "English for Common Interactions in the workplace",
+                    courseUrl: "https://www.example.com/english-course",
+                    coursePlatform: "Coursera",
+                    deliveryMode: "Online",
+                    priceInfo: "Free with optional paid certificate",
                   ),
                 ),
               );
