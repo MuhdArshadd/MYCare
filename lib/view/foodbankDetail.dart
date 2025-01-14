@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import '../controller/foodbankController.dart';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'foodbankPage.dart';
 
 //Foodbank Page detail update
 class FoodbankDetailPage extends StatefulWidget {
@@ -20,6 +22,8 @@ class FoodbankDetailPage extends StatefulWidget {
 }
 
 class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
+  LatLng? currentLocation;
+  final Location _locationController = Location();
   // Loading state for page
   bool isLoading = true;
 
@@ -64,6 +68,33 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
         isLoading = false; // Stop loading once data is fetched
       });
     });
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await _locationController.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _locationController.requestService();
+      if (!_serviceEnabled) return;
+    }
+
+    _permissionGranted = await _locationController.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _locationController.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) return;
+    }
+
+    try {
+      final locationData = await _locationController.getLocation();
+      setState(() {
+        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
   }
 
   @override
@@ -103,7 +134,15 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FoodbankPage(
+                                  currentLocation: currentLocation,
+                                  user: widget.user,
+                                ),
+                              ),
+                            );
                           },
                           child: const Icon(Icons.arrow_back),
                         ),
@@ -117,9 +156,9 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
                     const SizedBox(height: 16),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: foodbankData['imagePlace'] != null
-                          ? Image.memory(
-                        foodbankData['imagePlace'],
+                      child: foodbankData['image_url'] != null
+                          ? Image.network(
+                        foodbankData['image_url'],
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -141,7 +180,7 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
                     _buildSection(
                       context,
                       title: 'Foodbank location name',
-                      content: foodbankData['foodbankName'],
+                      content: foodbankData['foodbankname'],
                     ),
                     const SizedBox(height: 16),
                     _buildSection(
@@ -153,20 +192,20 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
                     _buildSection(
                       context,
                       title: 'Type of food donated',
-                      content: foodbankData['typeofFood'],
+                      content: foodbankData['typeoffood'],
                     ),
                     const SizedBox(height: 16),
                     _buildSection(
                       context,
                       title: 'Contact No',
-                      content: foodbankData['contactNo'],
+                      content: foodbankData['contactno'],
                       icon: Icons.phone,
                     ),
                     const SizedBox(height: 16),
                     _buildSection(
                       context,
                       title: 'Foodbank Status',
-                      content: foodbankData['foodbankStatus'],
+                      content: foodbankData['foodbankstatus'],
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(

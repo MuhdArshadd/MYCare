@@ -7,6 +7,7 @@ import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
 import 'foodbankDetail.dart';
+import 'supportServicePage.dart';
 
 
 //foodbank page
@@ -108,7 +109,19 @@ class _FoodbankPageState extends State<FoodbankPage> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                const Icon(Icons.arrow_back, size: 20),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SupportServicePage(
+                          user: widget.user,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Icon(Icons.arrow_back),
+                ),
                 const SizedBox(width: 8),
                 const Text(
                   'Foodbank',
@@ -195,7 +208,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                       final foodbank = foodbanks[index];
                       return GestureDetector(
                           onTap: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FoodbankDetailPage(foodbankID: foodbank['id'], currentLocation: widget.currentLocation, user: widget.user) // Pass the foodbank id,
