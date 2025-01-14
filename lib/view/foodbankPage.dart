@@ -37,8 +37,8 @@ class _FoodbankPageState extends State<FoodbankPage> {
   void _addMarkers(List<Map<String, dynamic>> foodbanks) {
     Set<Marker> newMarkers = {};
     for (var foodbank in foodbanks) {
-      String placeId = foodbank['foodbank_ID'];
-      String placeName = foodbank['foodbankName'];
+      String placeId = foodbank['id'];
+      String placeName = foodbank['foodbankname'];
       double latitude = foodbank['latitude'];
       double longitude = foodbank['longitude'];
 
@@ -198,15 +198,15 @@ class _FoodbankPageState extends State<FoodbankPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['foodbank_ID'], currentLocation: widget.currentLocation, user: widget.user) // Pass the foodbank id,
+                                  builder: (context) => FoodbankDetailPage(foodbankID: foodbank['id'], currentLocation: widget.currentLocation, user: widget.user) // Pass the foodbank id,
                               ),
                             );
                           },
                           child: _buildFoodbankCard(
                             context,
-                            imagePath: foodbank['imagePlace'],
-                            name: foodbank['foodbankName'],
-                            status: foodbank['foodbankStatus'],
+                            imagePath: foodbank['image_url'],
+                            name: foodbank['foodbankname'],
+                            status: foodbank['foodbankstatus'],
                             distance: foodbank['distance'],
                           ));
                     },
@@ -242,7 +242,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
   }
 
   Widget _buildFoodbankCard(BuildContext context, {
-    required Uint8List imagePath, // Base64 String
+    required String imagePath,
     required String name,
     required String status,
     required String distance,
@@ -273,7 +273,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 topRight: Radius.circular(8.0),
               ),
               child: imagePath != null
-                  ? Image.memory(
+                  ? Image.network(
                 imagePath, // Use the decoded image
                 fit: BoxFit.cover,
                 width: double.infinity,
