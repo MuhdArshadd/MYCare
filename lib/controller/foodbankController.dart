@@ -17,30 +17,36 @@ class FoodBank {
       // Query to fetch nearby foodbanks
       var results = await dbConnection.connection.query('''
         SELECT 
-          foodbank_ID, 
-          foodbankName, 
-          foodbankStatus, 
+          id, 
+          foodbankname, 
+          address,
+          contactno,
+          typeoffood,
+          foodbankstatus,
+          image_url, 
           latitude, 
           longitude, 
-          imagePlace,
           (6371 * acos(
             cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
             sin(radians($userLatitude)) * sin(radians(latitude))
           )) AS distance
-        FROM foodbanks
-        WHERE foodbankStatus = 'Aktif' 
+        FROM foodbanks_new
+        WHERE foodbankstatus = 'Aktif' 
         ORDER BY distance
       ''');
 
       for (var row in results) {
         nearbyFoodbanks.add({
-          'foodbank_ID': row[0].toString(), // Integer to string conversion
-          'foodbankName': row[1] as String,
-          'foodbankStatus': row[2] as String,
-          'latitude': row[3] as double,
-          'longitude': row[4] as double,
-          'imagePlace': row[5] as Uint8List, // Assuming this is stored as base64 string
-          'distance': '${row[6].toStringAsFixed(2)} KM away', // Calculated distance
+          'id': row[0].toString(), // Integer to string conversion
+          'foodbankname': row[1] as String,
+          'address': row[2] as String,
+          'contactno':row[3] as String,
+          'typeoffood':row[4] as String,
+          'foodbankstatus':row[5] as String,
+          'image_url': row[6] as String,
+          'latitude': row[7] as double,
+          'longitude': row[8] as double,
+          'distance': '${row[9].toStringAsFixed(2)} KM away', // Calculated distance
         });
         print(nearbyFoodbanks);
       }
@@ -65,34 +71,34 @@ class FoodBank {
       // Query to fetch a single foodbank based on foodbankID
       var results = await dbConnection.connection.query('''
       SELECT
-        foodbank_ID,
-        foodbankName,
+        id,
+        foodbankname,
         address,
-        contactNo,
-        typeofFood,
-        foodbankStatus,
+        contactno,
+        typeoffood,
+        foodbankstatus,
+        image_url,
         latitude,
-        longitude,
-        imagePlace
-      FROM foodbanks
-      WHERE foodbank_ID = @foodbankID
+        longitude
+      FROM foodbanks_new
+      WHERE id = @id
     ''', substitutionValues: {
-        'foodbankID': foodbankID,
+        'id': foodbankID,
       });
 
       // If the result is not empty, map the row data to a map
       if (results.isNotEmpty) {
         var row = results.first;
         foodbankDetails = {
-          'foodbank_ID': row[0].toString(), // Integer to string conversion
-          'foodbankName': row[1] as String,
+          'id': row[0].toString(), // Integer to string conversion
+          'foodbankname': row[1] as String,
           'address': row[2] as String,
-          'contactNo': row[3] as String,
-          'typeofFood': row[4] as String,
-          'foodbankStatus': row[5] as String,
-          'latitude': row[6] as double,
-          'longitude': row[7] as double,
-          'imagePlace': row[8] as Uint8List, // Assuming this is stored as base64 string
+          'contactno': row[3] as String,
+          'typeoffood': row[4] as String,
+          'foodbankstatus': row[5] as String,
+          'image_url': row[6] as String,
+          'latitude': row[7] as double,
+          'longitude': row[8] as double,
         };
       }
 
