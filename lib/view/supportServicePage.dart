@@ -91,9 +91,7 @@ class _SupportServicePageState extends State<SupportServicePage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CategoryMedicalService(
-                          user: widget.user,
-                        ),
+                        builder: (context) => CategoryMedicalService(user: widget.user, currentLocation: currentLocation),
                       ),
                     );
                   },

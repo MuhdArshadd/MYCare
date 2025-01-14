@@ -5,7 +5,7 @@ import 'dart:typed_data';
 class MedicalServices {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  Future<List<Map<String, dynamic>>> fetchNearbyMedicalServices(double userLatitude, double userLongitude) async {
+  Future<List<Map<String, dynamic>>> fetchNearbyMedicalServices(double userLatitude, double userLongitude, String category) async {
     List<Map<String, dynamic>> nearbyMedical = [];
 
     try {
@@ -15,38 +15,38 @@ class MedicalServices {
       // Query to fetch nearby medical services and their operating hours status
       var results = await dbConnection.connection.query('''
         SELECT 
-          medical_id, 
+          id, 
           clinic_name, 
           address, 
-          contact_no,
+          contact,
           operating_hours,
           service_description,
           latitude,
           longitude,
-          imageplace, 
+          image_url, 
           (6371 * acos(
             cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
             sin(radians($userLatitude)) * sin(radians(latitude))
           )) AS distance,
           CASE
             WHEN (
-              SELECT COUNT(*) > 0 
+              SELECT COUNT(*) 
               FROM jsonb_each_text(operating_hours) AS h(day, hours)
-              WHERE TRIM(day) = TRIM(to_char(now(), 'Day')) -- Remove padding spaces from both sides
-              AND (
-                EXISTS (
-                  SELECT 1
-                  FROM regexp_split_to_table(hours, ',') AS shift
-                  WHERE (
-                    -- Compare with current time in 24-hour format
-                    split_part(shift, '-', 1)::time <= CURRENT_TIME -- Start time (24-hour)
-                    AND split_part(shift, '-', 2)::time >= CURRENT_TIME -- End time (24-hour)
-                  )
+              WHERE TRIM(day) = TRIM(to_char(now(), 'FMDay')) -- Match current day without extra padding
+              AND hours IS NOT NULL -- Ensure hours are present
+              AND hours != 'Closed' -- Exclude closed days
+              AND EXISTS (
+                SELECT 1
+                FROM regexp_split_to_table(hours, ',') AS shift
+                WHERE (
+                  trim(split_part(shift, '-', 1))::time <= CURRENT_TIME -- Start time (24-hour)
+                  AND trim(split_part(shift, '-', 2))::time >= CURRENT_TIME -- End time (24-hour)
                 )
               )
-            ) THEN TRUE ELSE FALSE 
+            ) > 0 THEN TRUE ELSE FALSE 
           END AS is_open
-        FROM medical_services
+        FROM clinics_services
+        WHERE clinic_category = '$category'  -- Fixed query for filtering by category
         ORDER BY distance ASC
       ''');
 
@@ -70,16 +70,20 @@ class MedicalServices {
         // Format operating hours into a user-friendly string
         String formattedOperatingHours = formatOperatingHours(operatingHours);
 
+        // Process service_description as an array of strings
+        List<String> serviceDescriptionList = List<String>.from(row[5] as List); // Assuming it's a list of strings
+        String formattedServiceDescription = serviceDescriptionList.join(', '); // Join array into a string if needed
+
         nearbyMedical.add({
           'id': row[0].toString(),
-          'name': row[1] as String,
+          'clinic_name': row[1] as String,
           'address': row[2] as String,
-          'contact_no': row[3] as String, // Adding contact number
+          'contact': row[3] as String, // Adding contact number
           'operating_hours': formattedOperatingHours, // Storing formatted operating_hours as a String
-          'service_description': row[5] as String, // Adding service description
+          'service_description': formattedServiceDescription, // Store the formatted service descriptions as a string
           'latitude': row[6] as double,
           'longitude': row[7] as double,
-          'imagePlace': row[8] as Uint8List,
+          'image_url': row[8] as String,
           'distance': '${row[9].toStringAsFixed(2)} KM away', // Calculated distance
           'isOpen': row[10] as bool, // Directly cast as bool
         });
@@ -96,7 +100,7 @@ class MedicalServices {
     return nearbyMedical;
   }
 
-// Helper function to format operating hours into a readable string
+  // Helper function to format operating hours into a readable string
   String formatOperatingHours(Map<String, dynamic> operatingHours) {
     List<String> formattedHours = [];
     operatingHours.forEach((day, hours) {
@@ -105,5 +109,4 @@ class MedicalServices {
     // Join the formatted hours with newline characters instead of commas
     return formattedHours.join('\n');
   }
-
 }

@@ -5,12 +5,12 @@ import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'clinicDetailPage.dart';
 import '../controller/medicalservicesController.dart';
-import 'dart:typed_data';
 
 class MedicalService extends StatefulWidget {
+  final String category;
   final User user;
   final LatLng? currentLocation;
-  const MedicalService({Key? key, this.currentLocation, required this.user}) : super(key: key);
+  const MedicalService({Key? key, this.currentLocation, required this.user, required this.category}) : super(key: key);
 
   @override
   _MedicalServiceState createState() => _MedicalServiceState();
@@ -24,7 +24,7 @@ class _MedicalServiceState extends State<MedicalService> {
   @override
   void initState() {
     super.initState();
-    futureClinics = _medicalServices.fetchNearbyMedicalServices(widget.currentLocation!.latitude, widget.currentLocation!.longitude);
+    futureClinics = _medicalServices.fetchNearbyMedicalServices(widget.currentLocation!.latitude, widget.currentLocation!.longitude, widget.category);
   }
 
   @override
@@ -50,16 +50,16 @@ class _MedicalServiceState extends State<MedicalService> {
                 return buildClinicCard(
                   context,
                   clinic['id'],
-                  clinic['name'],
+                  clinic['clinic_name'],
                   clinic['address'],
-                  clinic['contact_no'],
+                  clinic['contact'],
                   clinic['operating_hours'],
                   clinic['service_description'],
                   clinic['latitude'],
                   clinic['longitude'],
-                  clinic['imagePlace'],
-                  clinic['isOpen'] ? 'Open Now' : 'Closed',
+                  clinic['image_url'],
                   clinic['distance'],
+                  clinic['isOpen'] ? 'Open Now' : 'Closed',
                 );
               },
             );
@@ -69,7 +69,6 @@ class _MedicalServiceState extends State<MedicalService> {
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
-
   Widget buildClinicCard(
       BuildContext context,
       String id,
@@ -80,9 +79,9 @@ class _MedicalServiceState extends State<MedicalService> {
       String serviceDescription,
       double latitude,
       double longitude,
-      Uint8List imageBytes,
-      String status,
+      String imageUrl,
       String distance,
+      String status,
       ) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -96,7 +95,7 @@ class _MedicalServiceState extends State<MedicalService> {
                 id: id,
                 name: name,
                 contact: contact.isNotEmpty ? contact : 'Not available',
-                imagePath: imageBytes,
+                imagePath: imageUrl,  // Corrected to imageUrl
                 address: address,
                 operationHours: operatingHours.isNotEmpty ? operatingHours : 'Not available',
                 serviceDescription: serviceDescription.isNotEmpty ? serviceDescription : 'Not available',
@@ -109,7 +108,7 @@ class _MedicalServiceState extends State<MedicalService> {
           );
         },
         child: ListTile(
-          leading: Image.memory(imageBytes, width: 50, height: 50, fit: BoxFit.cover),
+          leading: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),  // Corrected to imageUrl
           title: Text(name),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

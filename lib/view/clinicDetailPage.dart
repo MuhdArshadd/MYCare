@@ -1,18 +1,15 @@
-import 'dart:typed_data';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
-
-//Update
 class ClinicDetailsPage extends StatefulWidget {
   final User user;
   final String id;
   final String name;
   final String contact;
-  final Uint8List imagePath;
+  final String imagePath;
   final String address;
   final String operationHours;
   final String serviceDescription;
@@ -82,7 +79,7 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
             // Clinic Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.memory(
+              child: Image.network(
                 widget.imagePath,
                 width: double.infinity,
                 height: 200,

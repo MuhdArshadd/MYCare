@@ -8,8 +8,9 @@ import 'supportServicePage.dart'; // Import the SupportServicePage
 
 class CategoryMedicalService extends StatelessWidget {
   final User user; // Pass the User object
+  final LatLng? currentLocation;
 
-  const CategoryMedicalService({Key? key, required this.user}) : super(key: key);
+  const CategoryMedicalService({Key? key, required this.user, this.currentLocation}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +103,9 @@ class CategoryMedicalService extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => MedicalService(
+                      category: title,
                       user: user, // Pass the User object
-                      currentLocation: LatLng(37.7749, -122.4194), // Replace with actual location
+                      currentLocation: currentLocation, // Replace with actual location
                     ),
                   ),
                 );
