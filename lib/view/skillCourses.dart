@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import '../controller/skillsController.dart';
-import 'coursesDetails.dart';
-import 'coursecard.dart';
+import 'coursesDetails.dart'; // Ensure this file exists
 
-class PersonalDevelopment extends StatefulWidget {
+class SkillCourses extends StatefulWidget {
   @override
-  _PersonalDevelopmentState createState() => _PersonalDevelopmentState();
+  _SkillCoursesState createState() => _SkillCoursesState();
 }
 
-class _PersonalDevelopmentState extends State<PersonalDevelopment> {
+class _SkillCoursesState extends State<SkillCourses> {
   final SkillsController skillsController = SkillsController();
-  String learning_type = "Online";
-  String category = "Personal Development";
+  String learning_type = "Physical";
+  String category = "skill";
 
   // This will hold the future to fetch the courses
   late Future<List<Map<String, dynamic>>> coursesFuture;
@@ -28,7 +27,7 @@ class _PersonalDevelopmentState extends State<PersonalDevelopment> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue.shade800,
-        title: Text('Personal Development Courses', style: TextStyle(color: Colors.white)),
+        title: Text('SKILL Courses', style: TextStyle(color: Colors.white)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -166,3 +165,4 @@ class CourseCard extends StatelessWidget {
     );
   }
 }
+

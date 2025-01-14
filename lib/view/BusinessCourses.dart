@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:workshop2dev/controller/skillsController.dart';
 import 'coursesDetails.dart';
 
-class BusinessCourses extends StatelessWidget {
+class BusinessCourses extends StatefulWidget {
+  @override
+  _BusinessCoursesState createState() => _BusinessCoursesState();
+}
+
+class _BusinessCoursesState extends State<BusinessCourses> {
+  final SkillsController skillsController = SkillsController();
+  String learning_type = "Online";
+  String category = "Business";
+
+  // This will hold the future to fetch the courses
+  late Future<List<Map<String, dynamic>>> coursesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the future
+    coursesFuture = skillsController.fetchSkills(learning_type, category);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,54 +48,53 @@ class BusinessCourses extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(8.0),
-              children: [
-                CourseCard(
-                  title: "Business Analysis & Process Management",
-                  level: "Beginner",
-                  duration: "2 hours",
-                  imageUrl: null, // Leave the imageUrl as null for now
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CourseDetails(
-                          courseTitle: "Business Analysis & Process Management",
-                          courseUrl:
-                          "https://www.coursera.org/projects/business-analysis-process-management",
-                          coursePlatform: "Coursera",
-                          deliveryMode: "Online Classroom",
-                          priceInfo: "Free for all, Registration Required",
-                          imageUrl: null, // Pass null for now
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                CourseCard(
-                  title: "Financial Accounting for Managers",
-                  level: "Intermediate",
-                  duration: "4 hours",
-                  imageUrl: null, // Leave the imageUrl as null for now
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CourseDetails(
-                          courseTitle: "Financial Accounting for Managers",
-                          courseUrl:
-                          "https://www.edx.org/course/financial-accounting-for-managers",
-                          coursePlatform: "edX",
-                          deliveryMode: "Online",
-                          priceInfo: "Free to audit, certificate available for a fee",
-                          imageUrl: null, // Pass null for now
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: coursesFuture, // The future to fetch the courses
+              builder: (context, snapshot) {
+                // Check the connection state of the Future
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Show a loading spinner while data is being fetched
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  // Show an error message if something went wrong
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  // When data is available, display the courses
+                  List<Map<String, dynamic>> courses = snapshot.data!;
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      final course = courses[index];
+                      return CourseCard(
+                        title: course['name'],  // Updated to match data
+                        level: course['level'],  // Updated to match data
+                        duration: course['duration'],  // Updated to match data
+                        imageUrl: course['image'],  // Updated to match data
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CourseDetails(
+                                courseTitle: course['name'],  // Updated to match data
+                                courseUrl: course['link'],  // Updated to match data
+                                coursePlatform: course['organizer'],  // Updated to match data
+                                deliveryMode: course['venue'],  // Updated to match data
+                                  priceInfo: course['criteria'] ?? 'No criteria available', // Criteria as a formatted string
+                                imageUrl: course['image'],  // Updated to match data
+                                courseEducator: course['educator']
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  // Handle case when there is no data
+                  return Center(child: Text('No courses available'));
+                }
+              },
             ),
           ),
         ],
@@ -146,3 +165,4 @@ class CourseCard extends StatelessWidget {
     );
   }
 }
+

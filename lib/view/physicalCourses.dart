@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'skilCourses.dart';
+import 'skillCourses.dart';
 import 'technologycourses.dart';
 import 'speedcourses.dart';
 

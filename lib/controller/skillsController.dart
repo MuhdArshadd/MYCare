@@ -1,13 +1,10 @@
-import 'dart:typed_data';
-import 'package:workshop2dev/dbConnection/dbConnection.dart';
 import 'dart:convert';
-import '../model/userModel.dart';
+import 'package:workshop2dev/dbConnection/dbConnection.dart';
 
-class Skills {
+class SkillsController {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  // Updated fetchSkills to accept User model
-  Future<List<Map<String, dynamic>>> fetchSkills(String category, User user) async {
+  Future<List<Map<String, dynamic>>> fetchSkills(String learningType, String category) async {
     List<Map<String, dynamic>> skills = [];
 
     try {
@@ -15,55 +12,72 @@ class Skills {
 
       // SQL Query to fetch and filter skills based on User model criteria
       var results = await dbConnection.connection.query('''
-        SELECT 
-            s.skills_ID,
-            s.skillsName,
-            s.skillsOrganizer,
-            s.skillVenueAddress,
-            s.startDate,
-            s.endDate,
-            s.skillsCriteria,
-            s.imageCompany,
-            CASE 
-                WHEN 
-                    CAST(s.skillsCriteria->>'minAge' AS INT) <= @age
-                    AND CAST(s.skillsCriteria->>'maxAge' AS INT) >= @age
-                    AND s.skillsCriteria->>'userCategory' LIKE '%' || @userCategory || '%'
-                    AND s.skillsCriteria->>'incomeRange' LIKE '%' || @incomeRange || '%'
-                THEN 'Available'
-                ELSE 'Not Available'
-            END AS availability
-        FROM 
-            SKILLS s
-        WHERE 
-            s.skillsCategory = @category
-            AND s.startDate <= CURRENT_DATE
-            AND s.endDate >= CURRENT_DATE;
+      SELECT
+        skills_id,
+        skillsname,
+        sourceslink,
+        image,
+        skillseducator,
+        skillvenueaddress,
+        skillsorganizer,
+        skillscriteria,
+        skilllevel,
+        skillduration
+      FROM skills_building
+      WHERE skillstype = @learning_type
+        AND skillscategory = @category
       ''', substitutionValues: {
-        'category': category,
-        'age': user.age.toString(), // Use age from User model
-        'userCategory': user.userCategory, // User category
-        'incomeRange': user.incomeRange // Income range
+        'learning_type': learningType,  // Dynamically passed learning type (e.g., 'Online')
+        'category': category,          // Dynamically passed category (e.g., 'Business')
       });
 
       // Process results
       for (var row in results) {
+        List<String> criteria = [];
+
+        try {
+          // Decode the JSONB field (row[7]) if it's not null or empty
+          var criteriaJson = row[7];
+          if (criteriaJson is String && criteriaJson.isNotEmpty) {
+            dynamic decodedJson = jsonDecode(criteriaJson);
+
+            // If it's a list, assign it to criteria
+            if (decodedJson is List) {
+              criteria = List<String>.from(decodedJson);
+            }
+          } else if (criteriaJson is List) {
+            criteria = List<String>.from(criteriaJson);
+          }
+        } catch (e) {
+          print('Error decoding criteria JSON: $e');
+        }
+
+        // Format criteria into a numbered list
+        String formattedCriteria = criteria.asMap().entries.map((entry) {
+          int index = entry.key + 1;
+          String value = entry.value;
+          return "$index. $value";
+        }).join('\n');
+
+        // Add the processed skill to the skills list
         skills.add({
           'id': row[0].toString(),
           'name': row[1] as String,
-          'organizer': row[2] as String,
-          'venue': row[3] as String,
-          'startDate': row[4].toString(),
-          'endDate': row[5].toString(),
-          'criteria': row[6] as Map<String, dynamic>, // FIX: No decoding required
-          'availability': row[8] as String, // 'Available' or 'Not Available'
-          'imageCompany': row[7] as Uint8List,
+          'link': row[2] as String,
+          'image': row[3] as String,
+          'educator': row[4] as String,
+          'venue': row[5] as String,
+          'organizer': row[6] as String,
+          'criteria': formattedCriteria, // Numbered list of criteria
+          'level': row[8] as String,
+          'duration': row[9] as String,
         });
+
+        print(skills);
       }
 
-      print(skills); // Debugging output
     } catch (e) {
-      print('Error fetching skills: $e'); // Error handling
+      print('Error fetching skills: $e');
     } finally {
       dbConnection.closeConnection();
     }

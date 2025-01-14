@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CourseDetails extends StatefulWidget {
   final String courseTitle;
@@ -7,6 +8,7 @@ class CourseDetails extends StatefulWidget {
   final String deliveryMode;
   final String priceInfo;
   final String? imageUrl; // Add this property for the course image URL
+  final String courseEducator;
 
   const CourseDetails({
     required this.courseTitle,
@@ -14,7 +16,7 @@ class CourseDetails extends StatefulWidget {
     required this.coursePlatform,
     required this.deliveryMode,
     required this.priceInfo,
-    this.imageUrl, // Accept image URL as an optional parameter
+    this.imageUrl, required this.courseEducator, // Accept image URL as an optional parameter
   });
 
   @override
@@ -34,19 +36,6 @@ class _CourseDetailsState extends State<CourseDetails> {
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              setState(() {
-                isFavorite = !isFavorite; // Toggle favorite status
-              });
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -96,16 +85,21 @@ class _CourseDetailsState extends State<CourseDetails> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  buildDetailCard(
-                    icon: Icons.link,
-                    title: "Course URL",
-                    description: widget.courseUrl,
-                    onTap: () => _launchURL(context, widget.courseUrl),
-                  ),
+                  // buildDetailCard(
+                  //   icon: Icons.link,
+                  //   title: "Course URL",
+                  //   description: widget.courseUrl,
+                  //   onTap: () => _launchURL(context, widget.courseUrl),
+                  // ),
                   buildDetailCard(
                     icon: Icons.school,
                     title: "Platform",
                     description: widget.coursePlatform,
+                  ),
+                  buildDetailCard(
+                    icon: Icons.school,
+                    title: "Educator",
+                    description: widget.courseEducator,
                   ),
                   buildDetailCard(
                     icon: Icons.delivery_dining,
@@ -130,7 +124,7 @@ class _CourseDetailsState extends State<CourseDetails> {
                     onPressed: () => _launchURL(context, widget.courseUrl),
                     child: Text(
                       "Enroll Now",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
                 ],
@@ -193,10 +187,23 @@ class _CourseDetailsState extends State<CourseDetails> {
     );
   }
 
-  void _launchURL(BuildContext context, String url) {
-    // Implement URL launching logic here
+
+  void _launchURL(BuildContext context, String url) async {
+    // Show a Snackbar indicating the URL is opening
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Opening $url")),
     );
+
+    // Check if the URL can be launched
+    if (await canLaunch(url)) {
+      // Launch the URL in the phone's default browser
+      await launch(url);
+    } else {
+      // If the URL can't be launched, show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Could not open the URL")),
+      );
+    }
   }
+
 }
