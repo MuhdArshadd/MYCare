@@ -25,6 +25,7 @@ class News {
           type, 
           image_url
         FROM news
+        ORDER BY TO_TIMESTAMP(date, 'DD/MM/YYYY HH24:MI ') DESC
       ''');
 
       for (var row in results) {

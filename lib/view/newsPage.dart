@@ -216,6 +216,12 @@ class _NewsPageState extends State<NewsPage> {
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
+                Text(
+                  article['date'],
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.normal),
+                ),
+                const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () {
                     _navigateToNewsDetailPage(article, widget.user);
