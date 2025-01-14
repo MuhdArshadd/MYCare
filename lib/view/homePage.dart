@@ -5,6 +5,7 @@ import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
 import 'appBar.dart';
+import 'bottomNavigationBar.dart';
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -43,14 +44,38 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome Section
+            // Welcome Section with Enhanced Styling
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "Welcome, ${widget.user.fullname}! Checkout below",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Welcome, ",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+                    ),
+                    TextSpan(
+                      text: widget.user.fullname,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent,
+                        shadows: [Shadow(blurRadius: 2.0, color: Colors.grey, offset: Offset(1.0, 1.0))],
+                      ),
+                    ),
+                    TextSpan(
+                      text: "!\n", // Line break
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+                    ),
+                    TextSpan(
+                      text: "Check out below",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+                    ),
+                  ],
+                ),
               ),
             ),
+
 
             // Program Bootcamp Section
             Padding(
@@ -156,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                     const Center(child: CircularProgressIndicator())
                   else
                     SizedBox(
-                      height: 300, // Set a fixed height for the scrollable area
+                      height: 300,
                       child: ListView.builder(
                         itemCount: newsHighlights.length,
                         itemBuilder: (context, index) {
@@ -165,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.symmetric(vertical: 5.0),
                             child: NewsHighlightCard(
                               headline: news['title'],
-                              imagePath: news['image_url'], // Assuming `image_url` is the local asset path
+                              imagePath: news['image_url'],
                             ),
                           );
                         },
@@ -177,6 +202,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 0, user: widget.user),
     );
   }
 
