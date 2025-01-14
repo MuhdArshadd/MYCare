@@ -3,8 +3,8 @@ import 'package:workshop2dev/view/appBar.dart';
 import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
-import 'dart:typed_data';
 import 'newsDetailPage.dart';
+import 'homePage.dart';
 
 class NewsPage extends StatefulWidget {
   final User user;
@@ -15,11 +15,9 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  late Future<List<Map<String, dynamic>>> newList;
   String _searchText = "";
   String? _selectedFilter;
   String? _selectedCategory;
-
   List<Map<String, dynamic>> _articles = [];
 
   @override
@@ -58,11 +56,23 @@ class _NewsPageState extends State<NewsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "News",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: widget.user)));
+                          },
+                          child: const Icon(Icons.arrow_back, size: 20),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'News',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                   DropdownButton<String>(
@@ -123,7 +133,8 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 1, user: widget.user),
+      bottomNavigationBar:
+      BottomNavWrapper(currentIndex: 1, user: widget.user),
     );
   }
 
@@ -131,7 +142,7 @@ class _NewsPageState extends State<NewsPage> {
     return ChoiceChip(
       label: Text(
         label,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
       selected: _selectedCategory == label.toLowerCase(),
       onSelected: (isSelected) {
@@ -228,7 +239,8 @@ class _NewsPageState extends State<NewsPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => NewsDetailPage(article: article, user: widget.user),
+        builder: (context) =>
+            NewsDetailPage(article: article, user: widget.user),
       ),
     );
   }
