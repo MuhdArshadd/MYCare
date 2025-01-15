@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'medicalService.dart'; // Import the MedicalService page
-import 'appBar.dart'; // Import the Custom AppBar
 import 'bottomNavigationBar.dart';
 import '../model/userModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,22 +14,25 @@ class CategoryMedicalService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        user: user,
-        leading: IconButton(  // Add the back button here in CustomAppBar
-          icon: Icon(Icons.arrow_back),
+      appBar: AppBar(
+        backgroundColor: Colors.blue, // Blue background for the AppBar
+        title: Text(
+          'Medical Services', // Title of the AppBar
+          style: TextStyle(color: Colors.white), // White text color for the title
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // White back button
           onPressed: () {
-            // Navigate to SupportServicePage when back button is pressed
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => SupportServicePage(user: user),
+                builder: (context) => SupportServicePage(user: user), // Navigate back to SupportServicePage
               ),
             );
           },
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper( // Custom BottomNavigationBar
+      bottomNavigationBar: BottomNavWrapper(
         currentIndex: 2, // Set the index for "Support Service"
         user: user, // Pass the User object
       ),
@@ -39,14 +41,7 @@ class CategoryMedicalService extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Medical Service Category',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 20.0),
+            SizedBox(height: 20.0), // Add some spacing below AppBar
             Expanded(
               child: ListView(
                 children: [

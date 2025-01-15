@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../model/userModel.dart';
-import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'clinicDetailPage.dart';
 import '../controller/medicalservicesController.dart';
@@ -17,20 +16,33 @@ class MedicalService extends StatefulWidget {
 }
 
 class _MedicalServiceState extends State<MedicalService> {
-  bool isLoading = true; // Loading state
   final MedicalServices _medicalServices = MedicalServices();
   late Future<List<Map<String, dynamic>>> futureClinics;
 
   @override
   void initState() {
     super.initState();
-    futureClinics = _medicalServices.fetchNearbyMedicalServices(widget.currentLocation!.latitude, widget.currentLocation!.longitude, widget.category);
+    futureClinics = _medicalServices.fetchNearbyMedicalServices(
+      widget.currentLocation!.latitude,
+      widget.currentLocation!.longitude,
+      widget.category,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(user: widget.user),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: Text(
+          'Medical Services',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: futureClinics,
         builder: (context, snapshot) {
@@ -46,7 +58,6 @@ class _MedicalServiceState extends State<MedicalService> {
               itemCount: clinics.length,
               itemBuilder: (context, index) {
                 final clinic = clinics[index];
-                //To pass all the fetched data into the Card, which is for onTap specific clinic
                 return buildClinicCard(
                   context,
                   clinic['id'],
@@ -69,6 +80,7 @@ class _MedicalServiceState extends State<MedicalService> {
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
+
   Widget buildClinicCard(
       BuildContext context,
       String id,
@@ -95,7 +107,7 @@ class _MedicalServiceState extends State<MedicalService> {
                 id: id,
                 name: name,
                 contact: contact.isNotEmpty ? contact : 'Not available',
-                imagePath: imageUrl,  // Corrected to imageUrl
+                imagePath: imageUrl,
                 address: address,
                 operationHours: operatingHours.isNotEmpty ? operatingHours : 'Not available',
                 serviceDescription: serviceDescription.isNotEmpty ? serviceDescription : 'Not available',
@@ -108,7 +120,7 @@ class _MedicalServiceState extends State<MedicalService> {
           );
         },
         child: ListTile(
-          leading: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),  // Corrected to imageUrl
+          leading: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),
           title: Text(name),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +130,13 @@ class _MedicalServiceState extends State<MedicalService> {
               SizedBox(height: 4),
               Text(distance, style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
-              Text(status, style: TextStyle(color: status == 'Open Now' ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
+              Text(
+                status,
+                style: TextStyle(
+                  color: status == 'Open Now' ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           isThreeLine: true,

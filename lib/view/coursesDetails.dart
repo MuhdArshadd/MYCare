@@ -108,7 +108,7 @@ class _CourseDetailsState extends State<CourseDetails> {
                   ),
                   buildDetailCard(
                     icon: Icons.attach_money,
-                    title: "Price Info",
+                    title: "Requirement",
                     description: widget.priceInfo,
                   ),
                   SizedBox(height: 24),
