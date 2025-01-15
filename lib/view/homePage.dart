@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/controller/newsController.dart';
 import '../model/userModel.dart';
+import 'chatbotAI.dart';
 import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
@@ -203,6 +204,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 0, user: widget.user),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Icon(Icons.chat),
+        tooltip: 'Open Chatbot',
+      ),
     );
   }
 

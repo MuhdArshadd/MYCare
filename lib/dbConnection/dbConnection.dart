@@ -26,3 +26,5 @@ class DatabaseConnection {
     connection.close();
   }
 }
+
+String openAIkey = "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";
