@@ -263,7 +263,7 @@ class ForumController {
         if (selection == 1) {
           updateQuery = '''
         UPDATE FEED_FORUM
-        SET total_like = total_like - 1,
+        SET total_like = total_like + 1,
             user_interactions = @userInteractions
         WHERE feedforum_ID = @feedforumID
         ''';
@@ -401,7 +401,32 @@ class ForumController {
     }
   }
 
+  Future<String> deletePost(String feedForumID,String noIc) async {
+    await dbConnection.connectToDatabase();
+
+    try {
+      await dbConnection.connection.query(
+          '''
+    DELETE FROM FEED_FORUM
+    WHERE feedforum_ID = @feedforumID AND user_ic = @user_ic
+    ''',
+          substitutionValues: {
+            'feedforumID': feedForumID,
+            'user_ic': noIc,
+          }
+      );
+
+      return "Post deleted successfully.";
+    } catch (e) {
+      return "Error deleting post: $e";
+    } finally {
+      dbConnection.closeConnection();
+    }
+  }
+
 }
+
+
 
 extension on PostgreSQLResult {
   get affectedRows => null;

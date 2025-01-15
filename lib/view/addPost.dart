@@ -3,11 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart'; // Add file_picker package
 import 'package:workshop2dev/controller/forumController.dart';
+import 'forumPage.dart';
+import '../model/userModel.dart';
+import 'appBar.dart';
+import 'forumPage.dart';
 
 class AddPostPage extends StatefulWidget {
   final String noIc;
+  final User user;
 
-  const AddPostPage({super.key, required this.noIc});
+  const AddPostPage({super.key, required this.noIc,required this.user});
 
   @override
   State<AddPostPage> createState() => _AddPostPageState();
@@ -77,7 +82,7 @@ class _AddPostPageState extends State<AddPostPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Post submitted successfully!')),
         );
-        Navigator.pop(context); // Navigate back after submission
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForumPage (user : widget.user)));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $result')),
@@ -97,56 +102,26 @@ class _AddPostPageState extends State<AddPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: () {
-                Scaffold.of(context).openDrawer(); // Open the drawer
-              },
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              "MyCare",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              onTap: () {
-                // Add navigation or functionality here
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                // Add navigation or functionality here
-              },
-            ),
-          ],
-        ),
-      ),
+     appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView( // Wrap the body in a SingleChildScrollView
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ForumPage(
+                      user: widget.user,
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.arrow_back),
+
+            ),
             const Text(
               "Create a New Forum Post",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -219,3 +194,5 @@ class _AddPostPageState extends State<AddPostPage> {
     );
   }
 }
+
+

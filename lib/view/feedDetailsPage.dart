@@ -40,8 +40,8 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
 
   int totalLikes = 0;
   int totalDislikes = 0;
-  int? userSelection;
-  int totalComments = 0; // 1 for like, 2 for dislike, null for no selection
+  int? userSelection; // 1 for like, 2 for dislike, null for no selection
+  int totalComments = 0;
 
   @override
   void initState() {
@@ -53,6 +53,16 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
   }
 
   Future<void> _updateLikes(int selection) async {
+    // Prevent further action if the user has already made a selection
+    if (userSelection != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("You have already ${userSelection == 1 ? 'liked' : 'disliked'} this post")),
+      );
+      return;
+
+
+    }
+
     try {
       final response = await forumController.updateFeedLikes(
         selection,
@@ -70,10 +80,8 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
       setState(() {
         if (selection == 1) {
           totalLikes++;
-          if (userSelection == 2) totalDislikes--;
         } else if (selection == 2) {
           totalDislikes++;
-          if (userSelection == 1) totalLikes--;
         }
         userSelection = selection; // Update user's current selection
       });
@@ -129,7 +137,6 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back Button below AppBar
               Row(
                 children: [
                   IconButton(
@@ -138,14 +145,13 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ForumPage(user: widget.user), // Navigate to a details page
+                          builder: (context) => ForumPage(user: widget.user),
                         ),
-                      ); // Go back to the previous screen
+                      );
                     },
                   ),
                 ],
               ),
-              // User Profile Section
               Row(
                 children: [
                   CircleAvatar(
@@ -174,7 +180,6 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                 ],
               ),
               const Divider(),
-              // Feed Details
               Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -226,8 +231,15 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                                   Icons.thumb_up,
                                   color: userSelection == 1 ? Colors.blue : Colors.grey,
                                 ),
-                                label: Text("$totalLikes"),
+                                label: Text(
+                                  "$totalLikes",
+                                  style: TextStyle(
+                                    color: userSelection == 1 ? Colors.blue : Colors.black,
+                                    fontWeight: userSelection == 1 ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
                                 onPressed: () => _updateLikes(1),
+                                backgroundColor: userSelection == 1 ? Colors.blue[50] : Colors.grey[200],
                               ),
                               const SizedBox(width: 10),
                               ActionChip(
@@ -235,8 +247,15 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                                   Icons.thumb_down,
                                   color: userSelection == 2 ? Colors.red : Colors.grey,
                                 ),
-                                label: Text("$totalDislikes"),
+                                label: Text(
+                                  "$totalDislikes",
+                                  style: TextStyle(
+                                    color: userSelection == 2 ? Colors.red : Colors.black,
+                                    fontWeight: userSelection == 2 ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
                                 onPressed: () => _updateLikes(2),
+                                backgroundColor: userSelection == 2 ? Colors.red[50] : Colors.grey[200],
                               ),
                             ],
                           ),
@@ -247,7 +266,6 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                 ),
               ),
               const Divider(),
-              // Comments Section
               FutureBuilder<List<Map<String, dynamic>>>(
                 future: _commentsFuture,
                 builder: (context, snapshot) {
@@ -271,17 +289,14 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],  // Background color for the comment box
+                            color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.grey[400]!,  // Border color for the comment box
-                              width: 1,
-                            ),
+                            border: Border.all(color: Colors.grey[400]!, width: 1),
                           ),
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor: theme.primaryColor,
                                 child: Text(
                                   comment['comment_author'][0].toUpperCase(),
                                   style: const TextStyle(color: Colors.white),
@@ -294,12 +309,12 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                                   children: [
                                     Text(
                                       comment['comment'],
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      style: theme.textTheme.bodyMedium,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       "By ${comment['comment_author']} on ${comment['comment_dateTime']}",
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                      style: theme.textTheme.bodySmall,
                                     ),
                                   ],
                                 ),
@@ -313,7 +328,6 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                 },
               ),
               const Divider(),
-              // Add Comment
               Row(
                 children: [
                   Expanded(
