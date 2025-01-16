@@ -204,16 +204,25 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 0, user: widget.user),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ChatScreen()),
-          );
-        },
-        child: Icon(Icons.chat),
-        tooltip: 'Open Chatbot',
+      floatingActionButton: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.2, // Adjust width as needed
+        height: MediaQuery.of(context).size.width * 0.2, // Adjust height as needed
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatScreen()),
+            );
+          },
+          child: Image.asset(
+            'assets/icon_chatbot.png',
+            width: MediaQuery.of(context).size.width * 0.3,  // 10% of screen width
+            height: MediaQuery.of(context).size.width * 0.3, // 10% of screen width
+          ),
+          tooltip: 'Open Chatbot',
+        ),
       ),
+
     );
   }
 
