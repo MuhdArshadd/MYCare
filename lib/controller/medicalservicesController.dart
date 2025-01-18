@@ -15,39 +15,40 @@ class MedicalServices {
       // Query to fetch nearby medical services and their operating hours status
       var results = await dbConnection.connection.query('''
         SELECT 
-          id, 
-          clinic_name, 
-          address, 
-          contact,
-          operating_hours,
-          service_description,
-          latitude,
-          longitude,
-          image_url, 
-          (6371 * acos(
+        id, 
+        clinic_name, 
+        address, 
+        contact,
+        operating_hours,
+        service_description,
+        latitude,
+        longitude,
+        image_url, 
+        (6371 * acos(
             cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
             sin(radians($userLatitude)) * sin(radians(latitude))
-          )) AS distance,
-          CASE
+        )) AS distance,
+        CASE
             WHEN (
-              SELECT COUNT(*) 
-              FROM jsonb_each_text(operating_hours) AS h(day, hours)
-              WHERE TRIM(day) = TRIM(to_char(now(), 'FMDay')) -- Match current day without extra padding
-              AND hours IS NOT NULL -- Ensure hours are present
-              AND hours != 'Closed' -- Exclude closed days
-              AND EXISTS (
-                SELECT 1
-                FROM regexp_split_to_table(hours, ',') AS shift
-                WHERE (
-                  trim(split_part(shift, '-', 1))::time <= CURRENT_TIME -- Start time (24-hour)
-                  AND trim(split_part(shift, '-', 2))::time >= CURRENT_TIME -- End time (24-hour)
+                SELECT COUNT(*) 
+                FROM jsonb_each_text(operating_hours) AS h(day, hours)
+                WHERE TRIM(day) = TRIM(to_char((now() AT TIME ZONE 'Asia/Kuala_Lumpur'), 'FMDay')) -- Match current day in the correct timezone
+                AND hours IS NOT NULL -- Ensure hours are present
+                AND hours != 'Closed' -- Exclude closed days
+                AND EXISTS (
+                    SELECT 1
+                    FROM regexp_split_to_table(hours, ',') AS shift
+                    WHERE (
+                        -- Extract start and end times, handle midnight shifts correctly
+                        trim(split_part(shift, '-', 1))::time <= (now() AT TIME ZONE 'Asia/Kuala_Lumpur')::time
+                        AND trim(split_part(shift, '-', 2))::time >= (now() AT TIME ZONE 'Asia/Kuala_Lumpur')::time
+                    )
                 )
-              )
             ) > 0 THEN TRUE ELSE FALSE 
-          END AS is_open
-        FROM clinics_services
-        WHERE clinic_category = '$category'  -- Fixed query for filtering by category
-        ORDER BY distance ASC
+        END AS is_open
+    FROM clinics_services
+    WHERE clinic_category = '$category' -- Filter by category if needed
+    ORDER BY distance ASC;
       ''');
 
       // Processing results and adding to nearbyMedical list

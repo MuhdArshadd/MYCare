@@ -53,14 +53,14 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
   }
 
   Future<void> _updateLikes(int selection) async {
-    // Prevent further action if the user has already made a selection
     if (userSelection != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("You have already ${userSelection == 1 ? 'liked' : 'disliked'} this post")),
+        SnackBar(
+          content: Text(
+              "You have already ${userSelection == 1 ? 'liked' : 'disliked'} this post"),
+        ),
       );
       return;
-
-
     }
 
     try {
@@ -83,7 +83,7 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
         } else if (selection == 2) {
           totalDislikes++;
         }
-        userSelection = selection; // Update user's current selection
+        userSelection = selection;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,26 +163,32 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.user_name,
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "Posted on: ${widget.creation_dateTime}",
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.user_name,
+                          style: theme.textTheme.titleMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "Posted on: ${widget.creation_dateTime}",
+                          style: theme.textTheme.bodyMedium,
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
               const Divider(),
               Card(
                 elevation: 5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -229,33 +235,49 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                               ActionChip(
                                 avatar: Icon(
                                   Icons.thumb_up,
-                                  color: userSelection == 1 ? Colors.blue : Colors.grey,
+                                  color: userSelection == 1
+                                      ? Colors.blue
+                                      : Colors.grey,
                                 ),
                                 label: Text(
                                   "$totalLikes",
                                   style: TextStyle(
-                                    color: userSelection == 1 ? Colors.blue : Colors.black,
-                                    fontWeight: userSelection == 1 ? FontWeight.bold : FontWeight.normal,
+                                    color: userSelection == 1
+                                        ? Colors.blue
+                                        : Colors.black,
+                                    fontWeight: userSelection == 1
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                                 ),
                                 onPressed: () => _updateLikes(1),
-                                backgroundColor: userSelection == 1 ? Colors.blue[50] : Colors.grey[200],
+                                backgroundColor: userSelection == 1
+                                    ? Colors.blue[50]
+                                    : Colors.grey[200],
                               ),
                               const SizedBox(width: 10),
                               ActionChip(
                                 avatar: Icon(
                                   Icons.thumb_down,
-                                  color: userSelection == 2 ? Colors.red : Colors.grey,
+                                  color: userSelection == 2
+                                      ? Colors.red
+                                      : Colors.grey,
                                 ),
                                 label: Text(
                                   "$totalDislikes",
                                   style: TextStyle(
-                                    color: userSelection == 2 ? Colors.red : Colors.black,
-                                    fontWeight: userSelection == 2 ? FontWeight.bold : FontWeight.normal,
+                                    color: userSelection == 2
+                                        ? Colors.red
+                                        : Colors.black,
+                                    fontWeight: userSelection == 2
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                                 ),
                                 onPressed: () => _updateLikes(2),
-                                backgroundColor: userSelection == 2 ? Colors.red[50] : Colors.grey[200],
+                                backgroundColor: userSelection == 2
+                                    ? Colors.red[50]
+                                    : Colors.grey[200],
                               ),
                             ],
                           ),
@@ -291,7 +313,8 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey[400]!, width: 1),
+                            border:
+                            Border.all(color: Colors.grey[400]!, width: 1),
                           ),
                           child: Row(
                             children: [
