@@ -131,9 +131,9 @@ class OpenAIService {
             return availableFunctions[functionName]!(functionArguments['content']);
           }
         }
-
         // Default response if no function call
-        return "Sorry, I couldn't understand your request. Please try rephrasing.";
+        return "I'm sorry, I can only assist with questions related to the app's features, functionalities, or data.";
+
       } else {
         // Handle HTTP errors
         return "Error: ${response.statusCode} - ${response.reasonPhrase}";
@@ -147,8 +147,12 @@ class OpenAIService {
   // Function to handle general questions
   Future<String> handleGeneralQuestion(String content) async {
     String prompt = """
+    You are a helpful assistant specifically designed to answer questions about this app.
     The user asked: "$content"
-    You are a helpful assistant. Please provide a concise and accurate response about this app.
+    
+    - Determine whether the question is related to the app's features, functionalities, or database.
+    - If the question is related to the app, provide a concise and accurate response specific to the app.
+    - If the question is unrelated to the app, respond only with: "Sorry, I only answer questions related to the app."
     """;
 
     final response = await http.post(
