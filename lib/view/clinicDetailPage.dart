@@ -1,7 +1,6 @@
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../model/userModel.dart';
-import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 
 class ClinicDetailsPage extends StatefulWidget {
@@ -70,7 +69,15 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(user: widget.user),
+      appBar: AppBar(
+        title: Text(
+          'Clinic Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
+        iconTheme: IconThemeData(color: Colors.white), // Back button color
+        centerTitle: false, // Align title to the left
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -91,7 +98,7 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
             // Clinic Name
             Text(
               widget.name,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: 16),
 
