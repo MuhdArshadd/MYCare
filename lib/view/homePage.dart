@@ -11,6 +11,7 @@ import 'package:workshop2dev/controller/skillsController.dart';
 import 'coursesDetails.dart';
 import 'newsDetailPage.dart';
 
+
 class HomePage extends StatefulWidget {
   final User user;
   const HomePage({Key? key, required this.user}) : super(key: key);

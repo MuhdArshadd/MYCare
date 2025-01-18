@@ -3,6 +3,8 @@ import 'package:workshop2dev/view/profilePage.dart';
 import '../model/userModel.dart';
 import 'loginPage.dart';
 import 'bottomNavigationBar.dart';
+import '../controller/userController.dart';
+
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final User user;
@@ -18,6 +20,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  final UserController _userController = UserController();
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -123,8 +126,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       label: 'Log Out',
                       iconColor: Colors.red,
                       textColor: Colors.red,
-                      onTap: () {
+                      onTap: () async {
                         Navigator.pop(context); // Close popup
+                        await _userController.logout();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const LoginPage()),

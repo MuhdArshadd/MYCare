@@ -5,6 +5,7 @@ import 'bottomNavigationBar.dart';
 import 'signUpPage.dart';
 import 'homePage.dart';
 import 'resetPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,13 +21,58 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _rememberMe = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+    _loadSavedCredentials();
+  }
+
+  void _checkLoginStatus() async {
+    User? loggedInUser = await _userController.getLoggedInUser();
+    if (loggedInUser != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(user: loggedInUser)), // Pass User object
+      );
+    }
+  }
+
+  // Load saved credentials if "Remember Me" was previously checked
+  void _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedNoIc = prefs.getString('user_ic');
+    String? savedPassword = prefs.getString('password');
+
+    if (savedNoIc != null && savedPassword != null) {
+      _noIcController.text = savedNoIc;
+      _passwordController.text= savedPassword;
+      setState(() {
+        _rememberMe = true; // Assume the user wants to remember this
+      });
+    }
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
 
-// Function to handle user login
+  // Update shared preferences with IC when logging in
+  Future<void> _saveCredentials() async {
+    if (_rememberMe) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_ic', _noIcController.text);
+      await prefs.setString('password', _passwordController.text);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user_ic');
+      await prefs.remove('password');// Clear saved IC
+    }
+  }
+
+  // Function to handle user login
   void _login() async {
     final noIc = _noIcController.text; // Get IC input
     final password = _passwordController.text; // Get password input
@@ -40,29 +86,25 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true); // Show loading indicator
 
     try {
-      // Attempt login and fetch user data
       User? loggedInUser = await _userController.login(noIc, password);
 
       if (loggedInUser != null) {
-        // Login successful, navigate to HomePage with User object
+        await _saveCredentials(); // Save credentials if "Remember Me" is checked
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage( user: loggedInUser), // Pass user model and direct to homepage
+            builder: (context) => HomePage(user: loggedInUser),
           ),
         );
       } else {
-        // Login failed
         _showSnackBar('Invalid IC or password');
       }
     } catch (e) {
-      // Handle unexpected errors
       _showSnackBar('An error occurred. Please try again.');
     } finally {
       setState(() => _isLoading = false); // Stop loading indicator
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
             top: 0,
             left: 0,
             right: 0,
-            height: 590.0, // Set custom height for the background image
+            height: 590.0,
             child: Image.asset(
               'assets/background.png',
               fit: BoxFit.cover,
@@ -125,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 40.0),
-                    // Username Field
+                    // No IC Field
                     TextField(
                       controller: _noIcController,
                       decoration: InputDecoration(
@@ -154,24 +196,24 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Row(
-                        //   children: [
-                        //     Checkbox(
-                        //       value: _rememberMe,
-                        //       onChanged: (bool? value) {
-                        //         setState(() {
-                        //           _rememberMe = value ?? false;
-                        //         });
-                        //       },
-                        //     ),
-                        //     const Text('Remember Me'),
-                        //   ],
-                        // ),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _rememberMe = value ?? false;
+                                });
+                              },
+                            ),
+                            const Text('Remember Me'),
+                          ],
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const ResetPage()), // Navigates to SignUp page
+                              MaterialPageRoute(builder: (context) => const ResetPage()),
                             );
                           },
                           child: const Text(
@@ -207,7 +249,7 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignUpPage()), // Navigates to SignUp page
+                          MaterialPageRoute(builder: (context) => const SignUpPage()),
                         );
                       },
                       child: RichText(

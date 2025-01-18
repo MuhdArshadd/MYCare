@@ -1,5 +1,6 @@
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
 import '../model/userModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserController {
   final DatabaseConnection dbConnection = DatabaseConnection();
@@ -111,6 +112,12 @@ class UserController {
           password: row[9] as String,
         );
 
+        // Store login status in SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('is_logged_in', true); // Set login status to true
+        await prefs.setString('user_ic', user.userIC); // Optionally store user ID or token
+        await prefs.setString('password', user.password);
+
         print("Mapped User Model: ${user.toString()}"); // Debug: Show mapped user model
         return user; // Return the populated User object
       } else {
@@ -122,6 +129,53 @@ class UserController {
     } finally {
       dbConnection.closeConnection(); // Close database connection
     }
+  }
+  Future<User?> getLoggedInUser() async {
+    await dbConnection.connectToDatabase(); // Ensure connection is established
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userIc = prefs.getString('user_ic');
+
+    if (userIc != null) {
+      // Query the database to fetch the user details by user IC
+      String query = '''
+    SELECT * FROM users WHERE user_ic = @user_ic
+    ''';
+
+      var results = await dbConnection.connection!.query( // Use the null check operator
+        query,
+        substitutionValues: {'user_ic': userIc},
+      );
+
+      if (results.isNotEmpty) {
+        var row = results[0];
+        return User(
+          userIC: row[0] as String,
+          fullname: row[1] as String,
+          age: int.parse(row[2].toString()),
+          email: row[3] as String,
+          phoneNumber: row[4] as String,
+          address: row[5] as String,
+          userCategory: row[6] as String,
+          incomeRange: row[7].toString(),
+          marriageStatus: row[8].toString(),
+          password: row[9].toString(), // Assuming you want to retrieve the password too
+        );
+      }
+    }
+    return null; // Return null if no user found
+  }
+
+
+  Future<bool> isLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('is_logged_in') ?? false; // Return login status
+  }
+
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_logged_in', false); // Set login status to false
+    await prefs.remove('user_ic'); // Optionally clear user ID or token
+    await prefs.remove('password');
   }
 
   Future<String> resetPass(String email, String newPassword) async {
