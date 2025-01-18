@@ -44,6 +44,7 @@ dependencies:
   location: ^7.0.1
   file_picker: ^5.0.0
   http: ^1.2.2
+  flutter_dotenv: ^5.2.1
 
 
 
@@ -75,6 +76,7 @@ flutter:
   assets:
     - assets/
     - assets/logo.png
+    - .env
 
   fonts:
     - family: CustomFontName  # You can name it anything

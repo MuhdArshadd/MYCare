@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-// Import login page
-// Import sign-up page
+import 'package:flutter_dotenv/flutter_dotenv.dart';  // Import dotenv package
 import 'package:workshop2dev/view/splash_screen.dart';  // Import home page after successful login
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-
-      home: MySplashScreen(), // Start with the Sign Up page
+      home: MySplashScreen(), // Start with the splash screen
       routes: {
         // '/login': (context) => LoginPage(), // Route to login page
         // '/home': (context) => HomePage(),   // Route to home page after successful login
@@ -25,4 +21,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
