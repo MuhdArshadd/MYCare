@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _controller.clear();
 
       try {
-        String response = await openAIService.processUserQuery(message);
+        String response = await openAIService.runConversation(message);
         setState(() {
           _messages.add({'role': 'system', 'content': response});
           isLoading = false; // Stop typing animation
