@@ -6,6 +6,7 @@ import '../controller/foodbankController.dart';
 import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'appBar.dart';
+import 'chatbotAI.dart';
 import 'foodbankDetail.dart';
 import 'supportServicePage.dart';
 
@@ -228,27 +229,17 @@ class _FoodbankPageState extends State<FoodbankPage> {
               },
             ),
           ),
-          // See All Button
-          // Center(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          //     child: TextButton(
-          //       onPressed: () {
-          //         Navigator.push(
-          //           context,
-          //           MaterialPageRoute(builder: (context) => const FoodbankDetailPage()),
-          //         );
-          //       },
-          //       child: const Text(
-          //         'See All',
-          //         style: TextStyle(
-          //           color: Colors.blue,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );

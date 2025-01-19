@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
+import 'chatbotAI.dart';
 import 'foodbankPage.dart';
 import 'categoryMedicalService.dart';
 import 'categorySkillBuilding.dart';
@@ -115,6 +116,16 @@ class _SupportServicePageState extends State<SupportServicePage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );

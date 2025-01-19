@@ -86,14 +86,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     TextSpan(
-                      text: "!\nCheck out below",
+                      text: "\nDo check out below!",
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
                     ),
                   ],
                 ),
               ),
             ),
-
+            // Skills Courses Highlights Section
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "Skills Courses Highlights",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+            ),
             // Sliding Bootcamp Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -135,8 +142,14 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 20),
-
-            // Navigation Buttons
+            // Navigation Buttons Section
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Text(
+                "Navigate through our sections:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -180,7 +193,7 @@ class _HomePageState extends State<HomePage> {
 
             // News Highlights Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -220,22 +233,61 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            // Chatbot Section
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "Need Assistance?",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                "Chat with our friendly chatbot to get assistance and support!",
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity, // Makes the button span edge-to-edge
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatScreen()),
+                    );
+                  },
+                  icon: Image.asset(
+                    'assets/icon_chatbot.png', // Path to your asset
+                    height: 50, // Icon height
+                    width: 50, // Icon width
+                  ),
+                  label: const Text(
+                    "Go to Chatbot",
+                    style: TextStyle(
+                      color: Colors.black, // Clear black text
+                      fontSize: 16, // Adjust font size
+                      fontWeight: FontWeight.bold, // Make it bold for clarity
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade100, // Light blue button background
+                    padding: const EdgeInsets.symmetric(vertical: 0), // Adjust vertical padding
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), // Rounded corners
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavWrapper(currentIndex: 0, user: widget.user),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ChatScreen()),
-          );
-        },
-        child: Image.asset('assets/icon_chatbot.png'),
-        tooltip: 'Open Chatbot',
-      ),
     );
-
   }
 
   Widget _buildNavButton({required IconData icon, required String label, required VoidCallback onTap}) {

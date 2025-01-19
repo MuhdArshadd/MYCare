@@ -2,6 +2,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
+import 'chatbotAI.dart';
 
 class ClinicDetailsPage extends StatefulWidget {
   final User user;
@@ -212,6 +213,16 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
             SizedBox(height: 16),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );

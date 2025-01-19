@@ -3,6 +3,7 @@ import 'package:workshop2dev/view/appBar.dart';
 import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/newsController.dart';
+import 'chatbotAI.dart';
 import 'newsDetailPage.dart';
 import 'homePage.dart';
 
@@ -133,8 +134,17 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      bottomNavigationBar:
-      BottomNavWrapper(currentIndex: 1, user: widget.user),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
+      ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 1, user: widget.user),
     );
   }
 

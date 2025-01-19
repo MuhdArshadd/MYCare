@@ -7,6 +7,7 @@ import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'chatbotAI.dart';
 import 'foodbankPage.dart';
 
 //Foodbank Page detail update
@@ -220,6 +221,16 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );

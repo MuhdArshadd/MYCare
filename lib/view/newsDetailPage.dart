@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import '../model/userModel.dart';
 import 'appBar.dart';
-import 'bottomNavigationBar.dart'; // Import the BottomNavWrapper widget
+import 'bottomNavigationBar.dart';
+import 'chatbotAI.dart'; // Import the BottomNavWrapper widget
 
 class NewsDetailPage extends StatefulWidget {
   final User user;
@@ -85,6 +86,16 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(
         currentIndex: 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'chatbotAI.dart';
 import 'medicalService.dart'; // Import the MedicalService page
 import 'bottomNavigationBar.dart';
 import '../model/userModel.dart';
@@ -31,6 +32,16 @@ class CategoryMedicalService extends StatelessWidget {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
+        },
+        child: Image.asset('assets/icon_chatbot.png'),
+        tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(
         currentIndex: 2, // Set the index for "Support Service"
