@@ -56,14 +56,24 @@ class _MySplashScreenState extends State<MySplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedSplashScreen(
-        duration: 3000,
-        splash: 'assets/myCareWhite.png', // Path to your splash screen image
-        nextScreen: const LoginPage(), // This will be skipped based on the logic in initState
-        splashTransition: SplashTransition.fadeTransition,
-        backgroundColor: Colors.blue,
-        splashIconSize: 200.0, // Set the size of the splash image
+      body: Container(
+        color: Colors.blue, // Set background color
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/myCareWhite.png', // Path to your splash screen image
+                width: 200.0, // Set the size of the splash image
+                height: 200.0,
+              ),
+              const SizedBox(height: 20),
+
+            ],
+          ),
+        ),
       ),
     );
   }
+
 }
