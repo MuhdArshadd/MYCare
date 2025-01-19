@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'appBar.dart';
+import '../model/userModel.dart';
 
 class CourseDetails extends StatefulWidget {
   final String courseTitle;
@@ -9,6 +11,7 @@ class CourseDetails extends StatefulWidget {
   final String priceInfo;
   final String? imageUrl; // Add this property for the course image URL
   final String courseEducator;
+  final User user;
 
   const CourseDetails({
     required this.courseTitle,
@@ -16,7 +19,8 @@ class CourseDetails extends StatefulWidget {
     required this.coursePlatform,
     required this.deliveryMode,
     required this.priceInfo,
-    this.imageUrl, required this.courseEducator, // Accept image URL as an optional parameter
+    this.imageUrl, required this.courseEducator,
+    required this.user,// Accept image URL as an optional parameter
   });
 
   @override
@@ -29,18 +33,25 @@ class _CourseDetailsState extends State<CourseDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.courseTitle),
-        backgroundColor: Colors.blue.shade800,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.arrow_back, size: 24),
+                  SizedBox(width: 5),
+                  SizedBox(height: 5,),
+                ],
+              ),
+            ),
             // Top banner with dynamic image or default gradient
             Container(
               height: 200,
@@ -107,32 +118,35 @@ class _CourseDetailsState extends State<CourseDetails> {
                     description: widget.deliveryMode,
                   ),
                   buildDetailCard(
-                    icon: Icons.attach_money,
+                    icon: Icons.checklist,
                     title: "Requirement",
                     description: widget.priceInfo,
                   ),
                   SizedBox(height: 24),
                   // Enroll Now button
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade800,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade800,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                  ),
                     onPressed: () => _launchURL(context, widget.courseUrl),
                     child: Text(
                       "Enroll Now",
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
+              )
                 ],
               ),
             ),
           ],
         ),
       ),
+
     );
   }
 

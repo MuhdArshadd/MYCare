@@ -5,6 +5,7 @@ import 'bottomNavigationBar.dart';
 import '../model/userModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'supportServicePage.dart'; // Import the SupportServicePage
+import 'appBar.dart';
 
 class CategoryMedicalService extends StatelessWidget {
   final User user; // Pass the User object
@@ -15,24 +16,7 @@ class CategoryMedicalService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue, // Blue background for the AppBar
-        title: Text(
-          'Medical Services', // Title of the AppBar
-          style: TextStyle(color: Colors.white), // White text color for the title
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // White back button
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SupportServicePage(user: user), // Navigate back to SupportServicePage
-              ),
-            );
-          },
-        ),
-      ),
+      appBar: CustomAppBar(user: user),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -48,14 +32,33 @@ class CategoryMedicalService extends StatelessWidget {
         user: user, // Pass the User object
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20.0), // Add some spacing below AppBar
+            SizedBox(height: 0.0), // Add some spacing below AppBar
             Expanded(
               child: ListView(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SupportServicePage(user: user)));
+                          },
+                          child: const Icon(Icons.arrow_back, size: 20),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Medical Service',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildCategoryCard(
                     context,
                     title: 'NGO',

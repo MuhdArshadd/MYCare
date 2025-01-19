@@ -61,12 +61,6 @@ class _NewsPageState extends State<NewsPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: widget.user)));
-                          },
-                          child: const Icon(Icons.arrow_back, size: 20),
-                        ),
                         const SizedBox(width: 8),
                         const Text(
                           'News',
@@ -75,25 +69,6 @@ class _NewsPageState extends State<NewsPage> {
                         ),
                       ],
                     ),
-                  ),
-                  DropdownButton<String>(
-                    value: _selectedFilter,
-                    items: const [
-                      DropdownMenuItem(
-                        value: "latest",
-                        child: Text("Latest"),
-                      ),
-                      DropdownMenuItem(
-                        value: "popular",
-                        child: Text("Popular"),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedFilter = value;
-                      });
-                    },
-                    hint: const Text("Filter by"),
                   ),
                 ],
               ),

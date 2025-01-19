@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/controller/skillsController.dart';
 import 'coursesDetails.dart';
+import 'appBar.dart';
+import '../model/userModel.dart';
+import 'onlineCourses.dart';
+import 'bottomNavigationBar.dart';
 
 class BusinessCourses extends StatefulWidget {
+  final User user;
+  const BusinessCourses({Key? key, required this.user}) : super(key: key);
+
   @override
   _BusinessCoursesState createState() => _BusinessCoursesState();
 }
@@ -25,17 +32,22 @@ class _BusinessCoursesState extends State<BusinessCourses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text('Business Courses', style: TextStyle(color: Colors.white)),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OnlineCoursesPage(user: widget.user)));
+            },
+            child: Row(
+              children: const [
+                Icon(Icons.arrow_back, size: 24),
+                SizedBox(width: 8),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -75,7 +87,7 @@ class _BusinessCoursesState extends State<BusinessCourses> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CourseDetails(
+                              builder: (context) => CourseDetails(user: widget.user,
                                 courseTitle: course['name'],  // Updated to match data
                                 courseUrl: course['link'],  // Updated to match data
                                 coursePlatform: course['organizer'],  // Updated to match data
@@ -99,6 +111,7 @@ class _BusinessCoursesState extends State<BusinessCourses> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

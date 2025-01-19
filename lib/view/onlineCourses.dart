@@ -3,8 +3,16 @@ import 'BusinessCourses.dart';
 import 'informationtechnology.dart';
 import 'computersciencecourses.dart';
 import 'personaldevelopment.dart';
+import 'appBar.dart';
+import '../model/userModel.dart';
+import 'categorySkillBuilding.dart';
+import 'bottomNavigationBar.dart';
 
 class OnlineCoursesPage extends StatefulWidget {
+  final User user;
+
+  const OnlineCoursesPage({Key? key, required this.user}) : super(key: key);
+
   @override
   _OnlineCoursesPageState createState() => _OnlineCoursesPageState();
 }
@@ -13,23 +21,24 @@ class _OnlineCoursesPageState extends State<OnlineCoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text(
-          'Online Courses',
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header for "Courses provided by Coursera"
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CategorySkillBuilding(user: widget.user)));
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.arrow_back, size: 24),
+                  SizedBox(width: 8),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             Center(
               child: Text(
                 'Courses provided by Coursera',
@@ -40,31 +49,33 @@ class _OnlineCoursesPageState extends State<OnlineCoursesPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            // Categories heading
+            const SizedBox(height: 20),
             Text(
               'Categories',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
                 children: [
                   _buildCategoryCard(
-                      context, 'Business', 'assets/business icon.png', BusinessCourses()),
+                      context, 'Business', 'assets/business icon.png', BusinessCourses(user: widget.user,)),
                   _buildCategoryCard(
-                      context, 'Computer Science', 'assets/computer_science.png', ComputerScienceCourses()),
+                      context, 'Computer Science', 'assets/computer_science.png', ComputerScienceCourses(user:widget.user,)),
                   _buildCategoryCard(
-                      context, 'Information Technology', 'assets/information_technology.png', InformationTechnology()),
+                      context, 'Information Technology', 'assets/information_technology.png', InformationTechnology(user: widget.user,)),
                   _buildCategoryCard(
-                      context, 'Personal Development', 'assets/personal_development.png', PersonalDevelopment()),
+                      context, 'Personal Development', 'assets/personal_development.png', PersonalDevelopment(user: widget.user,)),
                 ],
               ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user:widget.user ),
     );
   }
 
@@ -83,10 +94,10 @@ class _OnlineCoursesPageState extends State<OnlineCoursesPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(assetPath, height: 80),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

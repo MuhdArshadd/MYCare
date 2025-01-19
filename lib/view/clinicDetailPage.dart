@@ -1,8 +1,11 @@
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import '../model/userModel.dart';
 import 'bottomNavigationBar.dart';
 import 'chatbotAI.dart';
+import 'appBar.dart';
+import 'medicalService.dart';
 
 class ClinicDetailsPage extends StatefulWidget {
   final User user;
@@ -17,6 +20,7 @@ class ClinicDetailsPage extends StatefulWidget {
   final double longitude;
   final String distance;
   final String status;
+  final LatLng? currentLocation;
 
   ClinicDetailsPage({
     required this.user,
@@ -31,6 +35,7 @@ class ClinicDetailsPage extends StatefulWidget {
     required this.longitude,
     required this.distance,
     required this.status,
+    this.currentLocation,
   });
 
   @override
@@ -70,20 +75,24 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Clinic Details',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blue,
-        iconTheme: IconThemeData(color: Colors.white), // Back button color
-        centerTitle: false, // Align title to the left
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MedicalService(user: widget.user,category: '',currentLocation: widget.currentLocation,)));
+              },
+              child: const Icon(Icons.arrow_back, size: 20),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Medical Service',
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             // Clinic Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),

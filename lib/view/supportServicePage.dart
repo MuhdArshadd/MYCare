@@ -62,56 +62,62 @@ class _SupportServicePageState extends State<SupportServicePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Support service',
+            const Text(
+              'Support Services',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SupportServiceCard(
-                  image: 'assets/foodbank.png',
-                  label: 'Foodbank',
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FoodbankPage(
-                          currentLocation: currentLocation,
-                          user: widget.user,
+            const SizedBox(height: 20),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2, // Number of columns
+                crossAxisSpacing: 16, // Spacing between columns
+                mainAxisSpacing: 16, // Spacing between rows
+                children: [
+                  SupportServiceCard(
+                    image: 'assets/foodbank.png',
+                    label: 'Foodbank',
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FoodbankPage(
+                            currentLocation: currentLocation,
+                            user: widget.user,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                SupportServiceCard(
-                  image: 'assets/medical.png',
-                  label: 'Medical service',
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CategoryMedicalService(user: widget.user, currentLocation: currentLocation),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: SupportServiceCard(
-                image: 'assets/skill.png',
-                label: 'Skill Building Programme',
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CategorySkillBuilding(user: widget.user),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                  SupportServiceCard(
+                    image: 'assets/medical.png',
+                    label: 'Medical Service',
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryMedicalService(
+                            user: widget.user,
+                            currentLocation: currentLocation,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  SupportServiceCard(
+                    image: 'assets/skill.png',
+                    label: 'Skill Building',
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategorySkillBuilding(
+                            user: widget.user,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],
@@ -153,21 +159,23 @@ class SupportServiceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 120, // Fixed width for consistency
-              height: 120, // Fixed height for consistency
+              width: 80, // Set a consistent width
+              height: 80, // Set a consistent height
               child: Image.asset(
                 image,
                 fit: BoxFit.cover,
               ),
             ),
+            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 label,
-                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
             ),
           ],

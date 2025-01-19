@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import '../controller/skillsController.dart';
 import 'coursesDetails.dart'; // Ensure this file exists
+import '../model/userModel.dart';
+import 'appBar.dart';
+import 'bottomNavigationBar.dart';
 
 class TechnologyCourses extends StatefulWidget {
+  final User user;
+
+  const TechnologyCourses({Key? key, required this.user}) : super(key: key);
   @override
   _TechnologyCoursesState createState() => _TechnologyCoursesState();
 }
@@ -25,17 +31,25 @@ class _TechnologyCoursesState extends State<TechnologyCourses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text('INFORMATION TECHNOLOGY Courses', style: TextStyle(color: Colors.white)),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: CustomAppBar(user: widget.user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Add padding or space between arrow back and app bar
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.arrow_back, size: 24),
+                  SizedBox(width: 8), // Space between the icon and text (if any)
+                ],
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -75,7 +89,7 @@ class _TechnologyCoursesState extends State<TechnologyCourses> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CourseDetails(
+                              builder: (context) => CourseDetails(user: widget.user,
                                   courseTitle: course['name'],  // Updated to match data
                                   courseUrl: course['link'],  // Updated to match data
                                   coursePlatform: course['organizer'],  // Updated to match data
@@ -99,6 +113,7 @@ class _TechnologyCoursesState extends State<TechnologyCourses> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

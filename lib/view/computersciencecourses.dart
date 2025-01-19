@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../controller/skillsController.dart';
 import 'coursesDetails.dart';
-import 'coursecard.dart';
+import 'bottomNavigationBar.dart';
+import '../model/userModel.dart';
+import 'appBar.dart';
+import 'onlineCourses.dart';
 
 class ComputerScienceCourses extends StatefulWidget {
+  final User user;
+
+  const ComputerScienceCourses({Key? key, required this.user}) : super(key: key);
   @override
   _ComputerScienceCoursesState createState() => _ComputerScienceCoursesState();
 }
@@ -26,17 +32,22 @@ class _ComputerScienceCoursesState extends State<ComputerScienceCourses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text('Computer Science Courses', style: TextStyle(color: Colors.white)),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+     appBar: CustomAppBar(user: widget.user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OnlineCoursesPage(user: widget.user)));
+            },
+            child: Row(
+              children: const [
+                Icon(Icons.arrow_back, size: 24),
+                SizedBox(width: 8),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -76,7 +87,7 @@ class _ComputerScienceCoursesState extends State<ComputerScienceCourses> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CourseDetails(
+                              builder: (context) => CourseDetails(user: widget.user,
                                   courseTitle: course['name'],  // Updated to match data
                                   courseUrl: course['link'],  // Updated to match data
                                   coursePlatform: course['organizer'],  // Updated to match data
@@ -100,6 +111,7 @@ class _ComputerScienceCoursesState extends State<ComputerScienceCourses> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

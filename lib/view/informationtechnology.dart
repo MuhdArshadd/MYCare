@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../controller/skillsController.dart';
 import 'coursesDetails.dart';
-import 'coursecard.dart';
+import 'bottomNavigationBar.dart';
+import '../model/userModel.dart';
+import 'onlineCourses.dart';
+import 'appBar.dart';
 
 class InformationTechnology extends StatefulWidget {
+  final User user;
+
+  const InformationTechnology({Key? key, required this.user}) : super(key: key);
   @override
   _InformationTechnologyState createState() => _InformationTechnologyState();
 }
@@ -27,17 +33,22 @@ class _InformationTechnologyState  extends State<InformationTechnology> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text('Information Technology Courses', style: TextStyle(color: Colors.white)),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+     appBar: CustomAppBar(user: widget.user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => OnlineCoursesPage(user: widget.user)));
+            },
+            child: Row(
+              children: const [
+                Icon(Icons.arrow_back, size: 24),
+                SizedBox(width: 8),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -77,7 +88,7 @@ class _InformationTechnologyState  extends State<InformationTechnology> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CourseDetails(
+                              builder: (context) => CourseDetails(user: widget.user,
                                   courseTitle: course['name'],  // Updated to match data
                                   courseUrl: course['link'],  // Updated to match data
                                   coursePlatform: course['organizer'],  // Updated to match data
@@ -101,6 +112,7 @@ class _InformationTechnologyState  extends State<InformationTechnology> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
 }

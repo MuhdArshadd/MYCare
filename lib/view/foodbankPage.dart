@@ -125,23 +125,10 @@ class _FoodbankPageState extends State<FoodbankPage> {
                 ),
                 const SizedBox(width: 8),
                 const Text(
-                  'Foodbank',
+                  'Nearby Foodbanks',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
-            ),
-          ),
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
             ),
           ),
           const SizedBox(height: 8.0),
@@ -173,11 +160,17 @@ class _FoodbankPageState extends State<FoodbankPage> {
           // Nearby Foodbanks Section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: const Text(
-              'Nearby Foodbanks',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+          ),
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
             ),
           ),

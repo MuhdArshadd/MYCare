@@ -67,32 +67,73 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Welcome Section
+            // Welcome Section
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: "Welcome, ",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
-                    ),
-                    TextSpan(
-                      text: widget.user.fullname,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                        shadows: [Shadow(blurRadius: 2.0, color: Colors.grey, offset: Offset(1.0, 1.0))],
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                color: Colors.blue.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      // Icon or Avatar Section
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [Colors.blueAccent, Colors.lightBlue.shade200],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: const Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: "\nDo check out below!",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
-                    ),
-                  ],
+                      const SizedBox(width: 16),
+                      // Greeting Text
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hello, ${widget.user.fullname}!",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade900,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 1.0,
+                                    color: Colors.black26,
+                                    offset: Offset(1.0, 1.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "We’re excited to see you back! 🚀",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blueGrey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
+
             // Skills Courses Highlights Section
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -122,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CourseDetails(
+                              builder: (context) => CourseDetails(user: widget.user,
                                   courseTitle: skillsOnline['name'],
                                   courseUrl: skillsOnline['link'],
                                   coursePlatform: skillsOnline['organizer'],
