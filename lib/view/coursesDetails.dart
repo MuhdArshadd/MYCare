@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'appBar.dart';
 import '../model/userModel.dart';
+import 'bottomNavigationBar.dart';
 
 class CourseDetails extends StatefulWidget {
   final String courseTitle;
@@ -146,6 +147,7 @@ class _CourseDetailsState extends State<CourseDetails> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
 
     );
   }

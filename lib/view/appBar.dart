@@ -95,33 +95,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     _buildMenuItem(
                       context,
-                      icon: Icons.settings,
-                      label: 'Settings',
-                      onTap: () {
-                        Navigator.pop(context); // Close popup
-                        print('Settings selected');
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.email,
-                      label: 'Email',
-                      onTap: () {
-                        Navigator.pop(context); // Close popup
-                        print('Email selected');
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.help,
-                      label: 'Help & Support',
-                      onTap: () {
-                        Navigator.pop(context); // Close popup
-                        print('Help & Support selected');
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
                       icon: Icons.logout,
                       label: 'Log Out',
                       iconColor: Colors.red,
