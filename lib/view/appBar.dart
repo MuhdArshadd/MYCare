@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/view/profilePage.dart';
 import '../model/userModel.dart';
+import 'homePage.dart';
 import 'loginPage.dart';
 import 'bottomNavigationBar.dart';
 import '../controller/userController.dart';
@@ -28,7 +29,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       leading: widget.leading ?? IconButton(  // Use the leading widget passed in or default to menu icon
         icon: const Icon(Icons.menu, color: Colors.white, size: 28),
         onPressed: () {
-          _showSlidingPopupMenu(context);
+          _showSlidingPopupMenu(context, widget.user);
         },
       ),
       title: Row(
@@ -49,7 +50,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   /// Function to Show Sliding Popup Menu
-  void _showSlidingPopupMenu(BuildContext context) {
+  void _showSlidingPopupMenu(BuildContext context, User user) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -79,12 +80,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 50),
-                    const CircleAvatar(
-                      backgroundImage: AssetImage('assets/myCare.png'),
-                      radius: 40,
+                    // Center the CircleAvatar
+                    Center(
+                      child: const CircleAvatar(
+                        backgroundImage: AssetImage('assets/myCareWhite.png'),
+                        radius: 40,
+                        backgroundColor: Colors.blue,  // Change this to any color you prefer
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const Divider(),
+                    // Add Homepage menu item
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.home,
+                      label: 'Homepage',
+                      onTap: () {
+                        // Navigate to your homepage widget
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage(user: widget.user)), // Replace with your actual homepage widget
+                        );
+                      },
+                    ),
                     _buildMenuItem(
                       context,
                       icon: Icons.person,
@@ -140,4 +158,5 @@ class _CustomAppBarState extends State<CustomAppBar> {
       onTap: onTap,
     );
   }
+
 }

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import '../dbConnection/dbConnection.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
 
 
 class OpenAIService {
@@ -56,7 +58,7 @@ class OpenAIService {
       {
         "name": "handle_general_question",
         "description":
-        "Answer general expressions and interactions related to the app, such as greetings (e.g., 'Hello!', 'Thank you!') or inquiries about the app's purpose, features, or functionality. This function will not respond to irrelevant or nonsensical queries (e.g., mathematical questions like '1+1=?' or anything unrelated to the app).",
+        "Handle general conversational questions and interactions about the app. This includes: Greetings (e.g., 'Hello!', 'Thank you!'). Questions about the app's purpose, features (non-data specific), or functionality. Do not use this function for questions requiring database retrieval or factual, structured information",
         "parameters": {
           "type": "object",
           "properties": {
@@ -71,7 +73,7 @@ class OpenAIService {
       {
         "name": "handle_data_question",
         "description":
-        "Retrieve relevant data from the app's database in response to user queries. This function is specifically for questions that require fetching structured information stored in the database, such as skill-building courses, clinic services, foodbanks, or news. Use this function when the question involves specific topics or needs up-to-date, factual information from the app.",
+        "Retrieve specific, factual data from the app's database. Use this function ONLY for questions that: Mention specific topics like skill-building courses, clinic, foodbanks, or news. Require up-to-date, structured information stored in the app's database. Do not use this function for general conversational inquiries or questions unrelated to database content.",
         "parameters": {
           "type": "object",
           "properties": {
@@ -86,10 +88,25 @@ class OpenAIService {
       }
     ];
 
+    // System prompt to guide function usage
+    const String systemPrompt = """
+    You are a chatbot for the MYCare mobile app, designed to provide structured information about clinics, skill-building, foodbanks, and news.
+    
+    Follow these rules:
+    1. Use the 'handle_general_question' function for general app-related queries, greetings, or casual interactions about the app's purpose and features.
+    2. Use the 'handle_data_question' function ONLY for database-related queries requiring factual or structured information (e.g., clinics, skill-building programs, foodbanks, or news).
+    3. Ensure the user's question aligns with the function arguments before calling the function.
+    4. If the question is ambiguous or doesn't clearly match a function, prioritize user clarity over function calls, and ask for clarification if needed.
+    5. Do not mix up function names or arguments. Be strict in differentiating between general and database-specific queries.
+    """;
+
+
     // Prepare the request payload for OpenAI API
     final Map<String, dynamic> payload = {
+
       'model': 'ft:gpt-4o-mini-2024-07-18:personal:intromycare:Akp8wm4b',
       "messages": [
+        {"role": "system", "content": systemPrompt},
         {"role": "user", "content": content}
       ],
       "functions": tools,
@@ -148,11 +165,9 @@ class OpenAIService {
   Future<String> handleGeneralQuestion(String content) async {
     String prompt = """
     You are a helpful assistant specifically designed to answer questions about this MYCare app.
-    The user asked: "$content"
-    
-    - Determine whether the question is related to the app's features, functionalities, or database.
     - If the question is related to the app, provide a concise and accurate response specific to the app.
-    - If the question is unrelated to the app, respond only with: "Sorry, I only answer questions related to the app."
+        
+    The user asked: "$content"
     """;
 
     final response = await http.post(
@@ -187,7 +202,7 @@ class OpenAIService {
     
     Please return only the SQL query in plain text, without any Markdown formatting or additional explanation. The query should be written specifically for Azure PostgreSQL, ensuring compatibility with its syntax.
     
-    - If the user's question involves operation hours or date, generate a query that retrieves all relevant data from the table where the values are not null. This approach ensures the data is fetched for further analysis, leaving it up you to analyze and interpret the dynamic or frequently changing data.
+    - If the user's question involves operation hours or date (especially related to news or clinic), generate a query that retrieves all relevant data from the table where the values are not null only. This approach ensures the data is fetched for further analysis, leaving it up you to analyze and interpret the dynamic or frequently changing data.
     
     - For other types of questions, include appropriate WHERE clauses to filter the data based on the user's request, ensuring that the conditions are relevant and accurate.
     
@@ -217,11 +232,17 @@ class OpenAIService {
       // Fetch data based on the generated SQL query
       List<List> data = await fetchData(sqlQuery);
 
+      // Fetching the current date and time
+      DateTime now = DateTime.now();
+      String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+
       String finalPrompt = """
       You are a chatbot for a MYCare mobile app designed to provide users with information from its database. 
       
       The following data has been retrieved from the app's database: $data
       
+      User's current date and time: $formattedDateTime
       User's question: "$content"
 
       Using ONLY this data, respond conversationally to the user's question. Summarize and describe the most relevant information in a friendly and engaging manner. You may use bullet points to respond in a more structured manner. Do not add any information that is not present in the provided data. Respond in very short sentences.
