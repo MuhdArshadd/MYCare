@@ -11,14 +11,14 @@ class OpenAIService {
     // Skills Building Table
     "skills_building": {
       "skillstype": {"description": "The mode of delivery for the skill (Online or Physical only)"},
-      "skillscategory": {"description": "The domain or area of the skill (e.g., Business, Computer Science, Personal Development)"},
+      "skillscategory": {"description": "The domain or area of the skill, where for Online mode are Business, Computer Science, Personal Development, Information Technology only. While Physical mode are skill, SPEED, and information technology only.)"},
       "skillsname": {"description": "The specific name of the skill or course (e.g., Python, Data Science, Project Management)"},
       "sourceslink": {"description": "The URL or link to the source or website offering the course"},
       "skillseducator": {"description": "The instructor, platform, or organization delivering the course (e.g., Udemy, Coursera)"},
       "skillvenueaddress": {"description": "The physical location or address where the course is conducted, if applicable"},
       "skillsorganizer": {"description": "The organization or entity responsible for organizing the course (Coursera and FMSDC only)"},
       "skillscriteria": {"description": "The prerequisites or qualifications required to enroll in the course (e.g., basic programming knowledge)"},
-      "skilllevel": {"description": "The complexity or difficulty level of the course (e.g., Beginner, Intermediate, Advanced)"},
+      "skilllevel": {"description": "The complexity or difficulty level of the course (Online mode only have Beginner level, while Physical mode only have Professional level)"},
       "skillduration": {"description": "The total duration of the course or program (e.g., 3 months, 1 year)"},
     },
     // News Table
@@ -26,7 +26,7 @@ class OpenAIService {
       "title": {"description": "The headline or title of the news article"},
       "author": {"description": "The person or entity that authored the news article"},
       "description": {"description": "A brief summary or overview of the news content"},
-      "date": {"description": "The publication date of the news article"},
+      "date": {"description": "The date and time the news article was published, expressed in Malaysian time zone (e.g., 18/10/2024 18:20 MYT)."},
       "type": {"description": "The category or genre of the news article (e.g., Politics, Technology, Sports)"},
     },
     // Clinic Services Table
@@ -44,7 +44,7 @@ class OpenAIService {
       "address": {"description": "The physical address of the foodbank"},
       "contactno": {"description": "The contact number for the foodbank for inquiries"},
       "typeoffood": {"description": "The types of food items offered by the foodbank"},
-      "foodbankstatus": {"description": "The current operational status of the foodbank (e.g., Aktif, Tidak Aktif)"},
+      "foodbankstatus": {"description": "Indicates whether the foodbank is currently operational, with possible values: 'Aktif' (Active) or 'Tidak Aktif' (Inactive) only."}
     },
   };
 
@@ -56,13 +56,13 @@ class OpenAIService {
       {
         "name": "handle_general_question",
         "description":
-        "Answer general questions about the app, such as its purpose, features, or how it works.",
+        "Answer general expressions and interactions related to the app, such as greetings (e.g., 'Hello!', 'Thank you!') or inquiries about the app's purpose, features, or functionality. This function will not respond to irrelevant or nonsensical queries (e.g., mathematical questions like '1+1=?' or anything unrelated to the app).",
         "parameters": {
           "type": "object",
           "properties": {
             "content": {
               "type": "string",
-              "description": "The user's question."
+              "description": "The user's question or interaction."
             }
           },
           "required": ["content"]
@@ -132,7 +132,7 @@ class OpenAIService {
           }
         }
         // Default response if no function call
-        return "I'm sorry, I can only assist with questions related to the app's features, functionalities, or data.";
+        return "I'm sorry, I can only assist with questions related to the app's features and functionalities only.";
 
       } else {
         // Handle HTTP errors
@@ -147,7 +147,7 @@ class OpenAIService {
   // Function to handle general questions
   Future<String> handleGeneralQuestion(String content) async {
     String prompt = """
-    You are a helpful assistant specifically designed to answer questions about this app.
+    You are a helpful assistant specifically designed to answer questions about this MYCare app.
     The user asked: "$content"
     
     - Determine whether the question is related to the app's features, functionalities, or database.
@@ -187,12 +187,14 @@ class OpenAIService {
     
     Please return only the SQL query in plain text, without any Markdown formatting or additional explanation. The query should be written specifically for Azure PostgreSQL, ensuring compatibility with its syntax.
     
-    - If the user's question involves operation hours or date, generate a query that retrieves all relevant data from the table without using WHERE clauses. This approach allows for analyzing the data programmatically, ensuring accuracy when the data is dynamic or frequently changing.
+    - If the user's question involves operation hours or date, generate a query that retrieves all relevant data from the table where the values are not null. This approach ensures the data is fetched for further analysis, leaving it up you to analyze and interpret the dynamic or frequently changing data.
     
-    - For other types of questions, include appropriate WHERE clauses to filter the data as per the user's request, ensuring the conditions are relevant and accurate.
+    - For other types of questions, include appropriate WHERE clauses to filter the data based on the user's request, ensuring that the conditions are relevant and accurate.
     
-    Limit the results to a maximum of 2 entries, unless the nature of the question specifically requires a broader dataset.
+    - Always limit the results to a maximum of 8 entries to avoid excessive token consumption.
+    
     """;
+
 
 
     final response = await http.post(
@@ -216,10 +218,19 @@ class OpenAIService {
       List<List> data = await fetchData(sqlQuery);
 
       String finalPrompt = """
-      You are a chatbot for a mobile app designed to provide users with information from its database. 
+      You are a chatbot for a MYCare mobile app designed to provide users with information from its database. 
+      
       The following data has been retrieved from the app's database: $data
+      
+      User's question: "$content"
 
-      Using ONLY this data, respond conversationally to the user's request. Summarize and describe the most relevant information in a friendly and engaging manner. Do not add any information that is not present in the provided data. Respond in very short sentences.
+      Using ONLY this data, respond conversationally to the user's question. Summarize and describe the most relevant information in a friendly and engaging manner. You may use bullet points to respond in a more structured manner. Do not add any information that is not present in the provided data. Respond in very short sentences.
+      
+      If the data is empty, respond with something like:
+      - "Please check for updates!"
+      - "We're sorry, no information available at the moment. Please try again later."
+      - "We’re still waiting for the latest data to be updated."
+
       """;
 
 
