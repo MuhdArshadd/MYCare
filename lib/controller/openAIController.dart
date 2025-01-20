@@ -104,7 +104,7 @@ class OpenAIService {
     // Prepare the request payload for OpenAI API
     final Map<String, dynamic> payload = {
 
-      'model': 'ft:gpt-4o-mini-2024-07-18:personal:intromycare:Akp8wm4b',
+      'model': 'ft:gpt-4o-mini-2024-07-18:personal:mycareai:ArVY69nU',
       "messages": [
         {"role": "system", "content": systemPrompt},
         {"role": "user", "content": content}
@@ -166,6 +166,7 @@ class OpenAIService {
     String prompt = """
     You are a helpful assistant specifically designed to answer questions about this MYCare app.
     - If the question is related to the app, provide a concise and accurate response specific to the app.
+    - If the question is not related to the app, provide a polite and general response, redirecting the user to ask questions specific to the MYCare app.
         
     The user asked: "$content"
     """;
@@ -219,7 +220,7 @@ class OpenAIService {
         HttpHeaders.authorizationHeader: 'Bearer $openaiApiKey',
       },
       body: json.encode({
-        'model': 'ft:gpt-4o-mini-2024-07-18:personal:intromycare:Akp8wm4b',
+        'model': 'ft:gpt-4o-mini-2024-07-18:personal:mycareai:ArVY69nU',
         'messages': [{'role': 'system', 'content': prompt}],
       }),
     );
@@ -245,7 +246,9 @@ class OpenAIService {
       User's current date and time: $formattedDateTime
       User's question: "$content"
 
-      Using ONLY this data, respond conversationally to the user's question. Summarize and describe the most relevant information in a friendly and engaging manner. You may use bullet points to respond in a more structured manner. Do not add any information that is not present in the provided data. Respond in very short sentences.
+      Using ONLY this data, respond conversationally to the user's question. Summarize and describe the most relevant information in a friendly and engaging manner. You must use bullet points to respond in a more structured manner. 
+      DO NOT add any information that is not present in the provided data. 
+      Respond in very short sentences.
       
       If the data is empty, respond with something like:
       - "Please check for updates!"
@@ -263,7 +266,7 @@ class OpenAIService {
           HttpHeaders.authorizationHeader: 'Bearer $openaiApiKey',
         },
         body: json.encode({
-          'model': 'ft:gpt-4o-mini-2024-07-18:personal:intromycare:Akp8wm4b',
+          'model': 'ft:gpt-4o-mini-2024-07-18:personal:mycareai:ArVY69nU',
           'messages': [{'role': 'user', 'content': finalPrompt}],
         }),
       );
