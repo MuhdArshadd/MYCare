@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
-import 'chatbotAI.dart'; // Import the BottomNavWrapper widget
+import 'chatbotAI.dart';
+import 'newsPage.dart'; // Import the NewsPage for navigation
 
 class NewsDetailPage extends StatefulWidget {
   final User user;
@@ -26,6 +27,19 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Back Button Below the AppBar
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewsPage(user: widget.user),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
               // Display image based on its type (Uint8List or URL)
               widget.article['image_url'] != null
                   ? widget.article['image_url'] is Uint8List

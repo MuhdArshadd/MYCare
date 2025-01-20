@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -10,13 +9,17 @@ import 'package:url_launcher/url_launcher.dart';
 import 'chatbotAI.dart';
 import 'foodbankPage.dart';
 
-//Foodbank Page detail update
 class FoodbankDetailPage extends StatefulWidget {
   final User user;
   final String foodbankID;
   final LatLng? currentLocation;
 
-  const FoodbankDetailPage({super.key, required this.foodbankID, required this.currentLocation, required this.user});
+  const FoodbankDetailPage({
+    super.key,
+    required this.foodbankID,
+    required this.currentLocation,
+    required this.user,
+  });
 
   @override
   State<FoodbankDetailPage> createState() => _FoodbankDetailPageState();
@@ -25,14 +28,11 @@ class FoodbankDetailPage extends StatefulWidget {
 class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
   LatLng? currentLocation;
   final Location _locationController = Location();
-  // Loading state for page
   bool isLoading = true;
 
-  // Fetch specific data
   final FoodBank foodbankController = FoodBank();
   late Future<Map<String, dynamic>> foodbankDetails;
 
-  // Function to load foodbank details
   Future<void> _loadFoodbankDetails() async {
     final details = await foodbankController.fetchFoodbankDetails(widget.foodbankID);
     setState(() {
@@ -40,10 +40,8 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     });
   }
 
-  // Function to open Google Maps
   Future<void> openGoogleMaps(double latitude, double longitude) async {
-    final Uri googleMapsUri = Uri.parse('geo:$latitude,$longitude?q=$latitude,$longitude'); // Google Maps URL format
-
+    final Uri googleMapsUri = Uri.parse('geo:$latitude,$longitude?q=$latitude,$longitude');
     if (await canLaunch(googleMapsUri.toString())) {
       await launch(googleMapsUri.toString());
     } else {
@@ -51,7 +49,6 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     }
   }
 
-  // Launch phone dialer
   Future<void> _launchDialer(String phoneNumber) async {
     final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(uri)) {
@@ -66,7 +63,7 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     super.initState();
     _loadFoodbankDetails().then((_) {
       setState(() {
-        isLoading = false; // Stop loading once data is fetched
+        isLoading = false;
       });
     });
     _getCurrentLocation();
@@ -103,120 +100,125 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     return Scaffold(
       appBar: CustomAppBar(user: widget.user),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // Display loading animation
+          ? const Center(child: CircularProgressIndicator())
           : FutureBuilder<Map<String, dynamic>>(
         future: foodbankDetails,
         builder: (context, snapshot) {
-          // Loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-          // Error state
-          else if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          // No data found state
-          else if (!snapshot.hasData || snapshot.data == null) {
+          } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: Text('No data found.'));
-          }
-          // Success state - data is available
-          else {
+          } else {
             final foodbankData = snapshot.data!;
-            final double latitude = foodbankData['latitude'];  // Retrieve latitude
-            final double longitude = foodbankData['longitude']; // Retrieve longitude
+            final double latitude = foodbankData['latitude'];
+            final double longitude = foodbankData['longitude'];
 
             return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Column(
+                children: [
+                  // Header Section with Back Button and Text in Black
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            // Navigate to FoodbankPage
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => FoodbankPage(
-                                  currentLocation: currentLocation,
-                                  user: widget.user,
-                                ),
-                              ),
+                              MaterialPageRoute(builder: (context) => FoodbankPage(user: widget.user)),
                             );
                           },
-                          child: const Icon(Icons.arrow_back),
                         ),
                         const SizedBox(width: 8),
                         const Text(
-                          'Foodbank',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          'Foodbank Details',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.black, // Text color changed to black
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: foodbankData['image_url'] != null
-                          ? Image.network(
-                        foodbankData['image_url'],
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.broken_image,
-                            size: 200,
-                            color: Colors.grey,
-                          );
-                        },
-                      )
-                          : const Icon(
-                        Icons.broken_image,
-                        size: 200,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSection(
-                      context,
-                      title: 'Foodbank location name',
-                      content: foodbankData['foodbankname'],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSection(
-                      context,
-                      title: 'Address',
-                      content: foodbankData['address'],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSection(
-                      context,
-                      title: 'Type of food donated',
-                      content: foodbankData['typeoffood'],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSection(
-                      context,
-                      title: 'Contact No',
-                      content: foodbankData['contactno'],
-                      icon: Icons.phone,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSection(
-                      context,
-                      title: 'Foodbank Status',
-                      content: foodbankData['foodbankstatus'],
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        openGoogleMaps(latitude, longitude); // Open location in Google Maps
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Image Section
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: foodbankData['image_url'] != null
+                        ? Image.network(
+                      foodbankData['image_url'],
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          size: 200,
+                          color: Colors.grey,
+                        );
                       },
-                      child: const Text('Open in Google Maps'),
+                    )
+                        : const Icon(
+                      Icons.broken_image,
+                      size: 200,
+                      color: Colors.grey,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Content Section with Black Text and Icons
+                  _buildSection(
+                    context,
+                    title: 'Foodbank Location Name',
+                    content: foodbankData['foodbankname'],
+                    icon: Icons.location_on, // Location icon
+                  ),
+                  _buildSection(
+                    context,
+                    title: 'Address',
+                    content: foodbankData['address'],
+                    icon: Icons.map, // Map icon
+                  ),
+                  _buildSection(
+                    context,
+                    title: 'Type of Food Donated',
+                    content: foodbankData['typeoffood'],
+                    icon: Icons.fastfood, // Fast food icon
+                  ),
+                  _buildSection(
+                    context,
+                    title: 'Foodbank Status',
+                    content: foodbankData['foodbankstatus'],
+                    icon: Icons.storefront, // Storefront icon for status
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Google Maps Button
+                  ElevatedButton(
+                    onPressed: () {
+                      openGoogleMaps(latitude, longitude);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    ),
+                    child: const Text(
+                      'Open in Google Maps',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             );
           }
@@ -236,56 +238,52 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
     );
   }
 
-  Widget _buildSection(BuildContext context, {
-    required String title,
-    required String content,
-    IconData? icon }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            title,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSection(
+      BuildContext context, {
+        required String title,
+        required String content,
+        IconData? icon,
+      }) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 20, color: Colors.black),
-              const SizedBox(width: 8),
+              Icon(icon, size: 28, color: Colors.blueAccent),
+              const SizedBox(width: 12),
             ],
             Expanded(
-              child: title == 'Contact No'
-                  ? InkWell(
-                onTap: () {
-                  _launchDialer(content); // Launch dialer for contact number
-                },
-                child: Text(
-                  content,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline, // Link-like appearance
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black, // Text color changed to black
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              )
-                  : Text(
-                content,
-                style: const TextStyle(fontSize: 16),
+                  const SizedBox(height: 8),
+                  Text(
+                    content,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black, // Text color changed to black
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ],
+      ),
     );
   }
-
 }
