@@ -1,15 +1,18 @@
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'dart:math'; // Random key generator
-import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class ResetPassword {
   bool _isSending = false;
 
   Future<int> sendEmail(String email) async {
-    // Replace with your email credentials
-    String username = 'arshadmuhd50@gmail.com'; // Sender username
-    String password = 'fjqsxpcbbfubxtzy'; // Sender App Password
+    await dotenv.load();  // Ensure .env is loaded
+
+    String username = dotenv.get('USERNAME_GMAIL');
+    String password = dotenv.get('PASSWORD_GMAIL');
+
 
     final smtpServer = gmail(username, password);
 
@@ -17,7 +20,7 @@ class ResetPassword {
 
     final message = Message()
       ..from = Address(username, 'MYCare') // Replace with your app name
-      ..recipients.add('muhddarshad@gmail.com') // Recipient email
+      ..recipients.add(email) // Recipient email
       ..subject = '(MYCare) Your Verification Code - ${DateTime.now().toLocal()}'
       ..html = """
         <div style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.5;">
