@@ -6,7 +6,6 @@ import 'newsPage.dart';
 import 'supportServicePage.dart';
 import 'forumPage.dart';
 import 'appBar.dart';
-import 'bottomNavigationBar.dart';
 import 'package:workshop2dev/controller/skillsController.dart';
 import 'coursesDetails.dart';
 import 'newsDetailPage.dart';
@@ -88,8 +87,16 @@ class _HomePageState extends State<HomePage> {
                             end: Alignment.bottomRight,
                           ),
                         ),
-                        padding: const EdgeInsets.all(10),
-                        child: const Icon(
+                        child: widget.user.profileImage != null
+                            ? ClipOval(
+                          child: Image.memory(
+                            widget.user.profileImage!,
+                            width: 80, // Increased size to fit the container
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                            : const Icon(
                           Icons.person,
                           size: 40,
                           color: Colors.white,
