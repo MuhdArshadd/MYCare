@@ -8,30 +8,58 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserController {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  Future<String> signUp(String noIc, String fullname, String age,String email,String phoneNumber,String address,String userCategory,String incomeRange,String marriageStatus,String password) async {
+  Future<String> signUp(String noIc, String fullname, String age,String email,String phoneNumber,String address,String userCategory,String incomeRange,String marriageStatus,String password, Uint8List? profileImage) async {
     await dbConnection.connectToDatabase();
 
     try {
-      // Insert new user into the 'register' table
-      String query =
-          'INSERT INTO users (user_ic,fullname,age,email,phonenumber, address,user_category,income_range,marriage_status,password) '
-          'VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password)';
+      if (profileImage != null) {
+        // Convert image bytes to base64 string
+        final base64Image = base64Encode(profileImage);
 
-      await dbConnection.connection.query(
-        query,
-        substitutionValues: {
-          'user_ic': noIc,
-          'fullname': fullname,
-          'age': age,
-          'email': email,
-          'phonenumber': phoneNumber,
-          'address': address,
-          'user_category': userCategory ?? 'general',
-          'income_range': incomeRange ?? 0.0,
-          'marriage_status': marriageStatus ?? 'unknown',
-          'password':password
-        },
-      );
+        // Perform the insert operation with image
+        await dbConnection.connection.query(
+          '''
+        INSERT INTO users (user_ic,fullname,age,email,phonenumber, address,user_category,income_range,marriage_status,password, profile_image) 
+        VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password, decode(@profile_image, 'base64'))
+
+        ''',
+          substitutionValues: {
+            'user_ic': noIc,
+            'fullname': fullname,
+            'age': age,
+            'email': email,
+            'phonenumber': phoneNumber,
+            'address': address,
+            'user_category': userCategory ?? 'general',
+            'income_range': incomeRange ?? 0.0,
+            'marriage_status': marriageStatus ?? 'unknown',
+            'password':password,
+            'profile_image':base64Image
+          },
+        );
+      } else {
+        // Perform the insert operation with image
+        await dbConnection.connection.query(
+            '''
+        INSERT INTO users (user_ic,fullname,age,email,phonenumber, address,user_category,income_range,marriage_status,password) 
+        VALUES (@user_ic, @fullname, @age,@email,@phonenumber,@address,@user_category,@income_range,@marriage_status,@password)
+
+        ''',
+            substitutionValues: {
+              'user_ic': noIc,
+              'fullname': fullname,
+              'age': age,
+              'email': email,
+              'phonenumber': phoneNumber,
+              'address': address,
+              'user_category': userCategory ?? 'general',
+              'income_range': incomeRange ?? 0.0,
+              'marriage_status': marriageStatus ?? 'unknown',
+              'password':password
+            },
+        );
+      }
+
       return "Sign up successful";
     } catch (e) {
       return "Error signing up: $e";

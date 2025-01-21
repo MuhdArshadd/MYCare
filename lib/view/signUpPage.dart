@@ -1,6 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:workshop2dev/controller/userController.dart';
 import 'package:workshop2dev/view/loginPage.dart';
+import 'dart:io'; // For File type
+import 'package:file_picker/file_picker.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -20,10 +23,31 @@ class _SignUpPageState extends State<SignUpPage> {
   final _confirmpasswordController = TextEditingController();
   final UserController _userController = UserController();
 
-  bool _acceptTerm = false;
   String? _selectedPosition;
   String? _selectedIncomeRange;
   String? _selectedMarriedStatus;
+  Uint8List? imageBytes;
+  String status = "";
+
+  // Pick image from the file system
+  Future<void> _pickImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (result != null) {
+      String? filePath = result.files.single.path;
+      if (filePath != null) {
+        final File file = File(filePath);
+        final Uint8List imageBytess = await file.readAsBytes();
+        setState(() {
+          imageBytes = imageBytess;
+        });
+      }
+    } else {
+      setState(() {
+        status = "No image selected.";
+      });
+    }
+  }
 
   // Function to Register
   void _signUp() async {
@@ -56,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    String response = await _userController.signUp(noIc, fullname, age, email, phoneNumber, address, userCategory, incomeRange, marriageStatus, password);
+    String response = await _userController.signUp(noIc, fullname, age, email, phoneNumber, address, userCategory, incomeRange, marriageStatus, password, imageBytes);
 
     if (response == "Sign up successful") {
       showDialog(
@@ -122,31 +146,50 @@ class _SignUpPageState extends State<SignUpPage> {
               'assets/background.png',
               fit: BoxFit.cover,
             ),
-
             // Sign Up Form Fields
           ),
           Positioned(
-            top: 0,
+            top: 50.0, // Adjust vertical position
             left: 0,
             right: 0,
-            height: 250.0, // Set custom height for the background image
-            child: Image.asset(
-              'assets/myCareWhite.png',
-            ),
-          ),
-          const Positioned(
-            top: 200.0, // Adjust vertical position to avoid overlap with logo
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text(
-                'My Care',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // Adjust color if needed
+            height: 250.0, // Set custom height for the section
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 65,
+                      backgroundImage: imageBytes != null
+                          ? MemoryImage(imageBytes!) // Display the selected image
+                          : AssetImage('assets/myCareWhite.png') as ImageProvider,
+                      // Default image
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: Colors.blue,
+                          size: 36.0, // Adjust size as needed
+                        ),
+                        onPressed: _pickImage, // Trigger image picker
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 15.0),
+                const Text(
+                  'Upload Profile Picture',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
             ),
           ),
           // Content slightly below the top
