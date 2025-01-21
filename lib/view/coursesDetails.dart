@@ -114,7 +114,7 @@ class _CourseDetailsState extends State<CourseDetails> {
                     description: widget.courseEducator,
                   ),
                   buildDetailCard(
-                    icon: Icons.delivery_dining,
+                    icon: Icons.computer,
                     title: "Delivery Mode",
                     description: widget.deliveryMode,
                   ),

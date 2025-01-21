@@ -130,15 +130,15 @@ class _FoodbankDetailPageState extends State<FoodbankDetailPage> {
                             // Navigate to FoodbankPage
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => FoodbankPage(user: widget.user)),
+                              MaterialPageRoute(builder: (context) => FoodbankPage(user: widget.user,currentLocation: currentLocation,)),
                             );
                           },
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 4),
                         const Text(
                           'Foodbank Details',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             color: Colors.black, // Text color changed to black
                             fontWeight: FontWeight.bold,
                           ),

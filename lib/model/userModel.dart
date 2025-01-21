@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class User {
   String _userIC;
   String _fullname;
@@ -9,6 +11,7 @@ class User {
   String _incomeRange;
   String _marriageStatus;
   String _password;
+  Uint8List? _profileImage;  // Corrected declaration
 
   // Constructor
   User({
@@ -22,6 +25,7 @@ class User {
     required String incomeRange,
     required String marriageStatus,
     required String password,
+    Uint8List? profileImage, // Make nullable and optional in parameters
   })  : _userIC = userIC,
         _fullname = fullname,
         _age = age,
@@ -31,10 +35,12 @@ class User {
         _userCategory = userCategory,
         _incomeRange = incomeRange,
         _marriageStatus = marriageStatus,
-        _password = password;
+        _password = password,
+        _profileImage = profileImage; // Corrected placement in constructor
 
   // Getters and setters
   String get userIC => _userIC;
+
   String get fullname => _fullname;
   set fullname(String value) => _fullname = value;
 
@@ -62,6 +68,9 @@ class User {
   String get password => _password;
   set password(String value) => _password = value;
 
+  Uint8List? get profileImage => _profileImage;  // Fixed getter reference
+  set profileImage(Uint8List? value) => _profileImage = value;
+
   // Override toString method for debugging
   @override
   String toString() {
@@ -76,7 +85,8 @@ User {
   userCategory: $userCategory,
   incomeRange: $incomeRange,
   marriageStatus: $marriageStatus,
-  password: $password
+  password: $password,
+  profileImage: {$profileImage != null ? 'Available' : 'Not Set'}
 }''';
   }
 }

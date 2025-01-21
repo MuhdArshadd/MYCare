@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:workshop2dev/dbConnection/dbConnection.dart';
 import '../model/userModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +54,7 @@ class UserController {
           user_category = @user_category,
           income_range = @income_range,
           marriage_status = @marriage_status
+          profileImage = @profileImage
       WHERE user_ic = @user_ic
       ''';
 
@@ -66,6 +70,7 @@ class UserController {
           'user_category': user.userCategory,
           'income_range': user.incomeRange,
           'marriage_status': user.marriageStatus,
+          'profileImage' : user.profileImage,
         },
       );
 
@@ -76,6 +81,62 @@ class UserController {
       dbConnection.closeConnection();
     }
   }
+
+  Future<String> insertOrUpdateProfile(String userIc, Uint8List? imageBytes) async {
+    await dbConnection.connectToDatabase();
+
+    try {
+      if (imageBytes == null) {
+        return "No image provided.";
+      }
+
+      // Convert image bytes to base64 string
+      final base64Image = base64Encode(imageBytes);
+
+      // Check if the user exists
+      var result = await dbConnection.connection.query(
+        'SELECT COUNT(*) FROM users WHERE user_ic = @user_ic',
+        substitutionValues: {'user_ic': userIc},
+      );
+
+      int count = result[0][0];
+
+      if (count > 0) {
+        // User exists, update the profile image
+        await dbConnection.connection.query(
+          '''
+        UPDATE users 
+        SET profile_image = decode(@profile_image, 'base64') 
+        WHERE user_ic = @user_ic
+        ''',
+          substitutionValues: {
+            'user_ic': userIc,
+            'profile_image': base64Image,
+          },
+        );
+        return "Profile image updated successfully.";
+      } else {
+        // User does not exist, insert new record
+        await dbConnection.connection.query(
+          '''
+        INSERT INTO users (user_ic, profile_image) 
+        VALUES (@user_ic, decode(@profile_image, 'base64'))
+        ''',
+          substitutionValues: {
+            'user_ic': userIc,
+            'profile_image': base64Image,
+          },
+        );
+        return "Profile image added successfully.";
+      }
+    } catch (e) {
+      return "Error in insertOrUpdateProfile: $e";
+    } finally {
+      dbConnection.closeConnection();
+    }
+  }
+
+
 
 
   Future<User?> login(String noIc, String password) async {
