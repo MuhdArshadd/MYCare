@@ -93,7 +93,7 @@ class _CourseDetailsState extends State<CourseDetails> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade800,
+                      color: Colors.black87,
                     ),
                   ),
                   SizedBox(height: 16),

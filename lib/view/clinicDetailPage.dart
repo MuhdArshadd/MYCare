@@ -43,17 +43,9 @@ class ClinicDetailsPage extends StatefulWidget {
 }
 
 class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  // Function to open Google Maps
   Future<void> openGoogleMaps(double latitude, double longitude) async {
-    final Uri googleMapsUri = Uri.parse('geo:$latitude,$longitude?q=$latitude,$longitude'); // Google Maps URL format
+    final Uri googleMapsUri =
+    Uri.parse('geo:$latitude,$longitude?q=$latitude,$longitude');
 
     if (await canLaunch(googleMapsUri.toString())) {
       await launch(googleMapsUri.toString());
@@ -62,7 +54,6 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
     }
   }
 
-  // Launch phone dialer
   Future<void> _launchDialer(String phoneNumber) async {
     final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(uri)) {
@@ -77,25 +68,33 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
     return Scaffold(
       appBar: CustomAppBar(user: widget.user),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 12),
+            // Back button styled like in CourseDetails
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MedicalService(user: widget.user,category: '',currentLocation: widget.currentLocation,)));
+                Navigator.pop(context);
               },
-              child: const Icon(Icons.arrow_back, size: 20),
+              child: Row(
+                children: const [
+                  SizedBox(width: 12), // Padding to the left of the button
+                  Icon(Icons.arrow_back, size: 24),
+                  SizedBox(width: 5),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            const Text(
-              'Medical Service',
-              style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            // Clinic Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
+            // Top banner with clinic image
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade800, Colors.blue.shade400],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
               child: Image.network(
                 widget.imagePath,
                 width: double.infinity,
@@ -103,123 +102,90 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 16),
-
-            // Clinic Name
-            Text(
-              widget.name,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            SizedBox(height: 16),
-
-            // Contact Information with clickable link
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.contact_phone, color: Colors.blue),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      // Call the _launchDialer function with the dynamic number
-                      _launchDialer(widget.contact);
-                    },
-                    child: Text(
-                      widget.contact,
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline, // Underline for link appearance
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 16),
-
-            // Address
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.location_on, color: Colors.blue),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    widget.address,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // Operation Hours
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.access_time, color: Colors.blue),
-                SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    widget.operationHours,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // Service Description
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.description, color: Colors.blue),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    widget.serviceDescription,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // Distance
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.location_searching, color: Colors.blue),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    widget.distance,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // Button to launch Google Maps with Latitude and Longitude
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                openGoogleMaps(widget.latitude, widget.longitude); // Open location in Google Maps
-              },
-              child: const Text('Open in Google Maps'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Background color
-                foregroundColor: Colors.white, // Text color
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            // Clinic name display
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                widget.name,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            // Clinic Details Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildInfoCard(
+                    icon: Icons.contact_phone,
+                    title: 'Contact',
+                    content: InkWell(
+                      onTap: () {
+                        _launchDialer(widget.contact);
+                      },
+                      child: Text(
+                        widget.contact,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  buildInfoCard(
+                    icon: Icons.location_on,
+                    title: 'Address',
+                    content: Text(widget.address),
+                  ),
+                  const SizedBox(height: 16),
+                  buildInfoCard(
+                    icon: Icons.access_time,
+                    title: 'Operation Hours',
+                    content: Text(widget.operationHours),
+                  ),
+                  const SizedBox(height: 16),
+                  buildInfoCard(
+                    icon: Icons.description,
+                    title: 'Service Description',
+                    content: Text(widget.serviceDescription),
+                  ),
+                  const SizedBox(height: 16),
+                  buildInfoCard(
+                    icon: Icons.location_searching,
+                    title: 'Distance',
+                    content: Text(widget.distance),
+                  ),
+                  const SizedBox(height: 24),
+                  // Open Google Maps Button
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        openGoogleMaps(widget.latitude, widget.longitude);
+                      },
+                      child: const Text('Open in Google Maps'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue, // Button background
+                        foregroundColor: Colors.white, // Button text color
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 20.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -234,6 +200,46 @@ class _ClinicDetailsPageState extends State<ClinicDetailsPage> {
         tooltip: 'Open Chatbot',
       ),
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
+    );
+  }
+
+  Widget buildInfoCard({
+    required IconData icon,
+    required String title,
+    required Widget content,
+  }) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: Colors.blue, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  content,
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
