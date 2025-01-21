@@ -171,6 +171,7 @@ class UserController {
           incomeRange: row[7] as String,
           marriageStatus: row[8] as String,
           password: row[9] as String,
+          profileImage: row[10] != null ? row[10] as Uint8List : Uint8List(0),
         );
 
         // Store login status in SharedPreferences
@@ -219,7 +220,8 @@ class UserController {
           userCategory: row[6] as String,
           incomeRange: row[7].toString(),
           marriageStatus: row[8].toString(),
-          password: row[9].toString(), // Assuming you want to retrieve the password too
+          password: row[9].toString(),
+          profileImage: row[10] != null ? row[10] as Uint8List : Uint8List(0),// Assuming you want to retrieve the password too
         );
       }
     }

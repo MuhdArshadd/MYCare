@@ -86,7 +86,7 @@ User {
   incomeRange: $incomeRange,
   marriageStatus: $marriageStatus,
   password: $password,
-  profileImage: {$profileImage != null ? 'Available' : 'Not Set'}
+  profileImage: $profileImage
 }''';
   }
 }
