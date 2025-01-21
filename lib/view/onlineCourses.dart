@@ -39,17 +39,6 @@ class _OnlineCoursesPageState extends State<OnlineCoursesPage> {
               ),
             ),
             const SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Courses provided by Coursera',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
             Text(
               'Categories',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
