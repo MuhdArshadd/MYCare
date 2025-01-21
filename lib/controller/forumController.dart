@@ -26,6 +26,7 @@ class ForumController {
           f.total_like, 
           f.total_dislike, 
           u.fullname, 
+          u.profile_image,
           f.images,
           COALESCE(c.total_comments, 0) AS total_comments
         FROM FEED_FORUM f
@@ -47,6 +48,7 @@ class ForumController {
           f.total_like, 
           f.total_dislike, 
           u.fullname, 
+          u.profile_image,
           f.images,
           COALESCE(c.total_comments, 0) AS total_comments
         FROM FEED_FORUM f
@@ -67,7 +69,8 @@ class ForumController {
           f.creation_dateTime, 
           f.total_like, 
           f.total_dislike, 
-          u.fullname, 
+          u.fullname,
+          u.profile_image,
           f.images,
           COALESCE(c.total_comments, 0) AS total_comments
         FROM FEED_FORUM f
@@ -96,8 +99,9 @@ class ForumController {
           'total_like': row[3] as int,
           'total_dislike': row[4] as int,
           'user_name': row[5] as String,
-          'images': row[6] != null ? row[6] as Uint8List : Uint8List(0),
-          'total_comments': row[7] as int, // Total number of comments
+          'profileImage' : row[6] != null ? row[6] as Uint8List : Uint8List(0),
+          'images': row[7] != null ? row[7] as Uint8List : Uint8List(0),
+          'total_comments': row[8] as int, // Total number of comments
         });
       }
     } catch (e) {
@@ -122,23 +126,20 @@ class ForumController {
       // Define the SQL query
       String query = '''
     SELECT 
-        fc.comment,
-        fc.comment_dateTime,
-        u.fullname AS comment_author
-    FROM 
-        FEED_FORUM ff
-    LEFT JOIN 
-        FEED_COMMENT fc
-    ON 
-        ff.feedforum_ID = fc.feedforum_ID
-    LEFT JOIN 
-        USERS u
-    ON 
-        fc.user_IC = u.user_IC
-    WHERE 
-        ff.feedforum_ID = @feedForumID
-    ORDER BY 
-        fc.comment_ID ASC;
+    fc.comment,
+    fc.comment_dateTime,
+    u.fullname AS comment_author,
+    u.profile_image AS comment_profile
+FROM 
+    FEED_FORUM ff
+LEFT JOIN 
+    FEED_COMMENT fc ON ff.feedforum_ID = fc.feedforum_ID
+LEFT JOIN 
+    USERS u ON fc.user_IC = u.user_IC
+WHERE 
+    ff.feedforum_ID = @feedForumID
+ORDER BY 
+    fc.comment_ID ASC;
     ''';
 
       // Execute the query and pass parameters
@@ -152,6 +153,7 @@ class ForumController {
           'comment': row[0] as String,
           'comment_dateTime': row[1].toString(),
           'comment_author': row[2] as String,
+          'comment_profile': row[3] != null ? row[3] as Uint8List : Uint8List(0),
         });
       }
     } catch (e) {

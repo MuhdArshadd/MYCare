@@ -12,7 +12,8 @@ class FeedDetailsPage extends StatefulWidget {
   final int total_like;
   final int total_dislikes;
   final String user_name;
-  final Uint8List? images; // Nullable to handle feeds without images
+  final Uint8List? images;
+  final Uint8List? profileImage; // Nullable to handle feeds without images
   final int total_comments;
   final User user;
 
@@ -25,7 +26,8 @@ class FeedDetailsPage extends StatefulWidget {
     required this.total_like,
     required this.total_dislikes,
     required this.user_name,
-    this.images, // Nullable images
+    this.images,
+    this.profileImage,// Nullable images
     required this.total_comments,
   });
 
@@ -157,11 +159,26 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: theme.primaryColor,
-                    child: Text(
-                      widget.user_name[0].toUpperCase(),
-                      style: const TextStyle(color: Colors.white),
+                    child: widget.profileImage == null || widget.profileImage!.isEmpty
+                        ? const Text(
+                      'L',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,  // Adjust the size as necessary
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                        : ClipOval(
+                      child: Image.memory(
+                        widget.profileImage!,
+                        fit: BoxFit.cover,  // Ensures the image fits within the circle
+                        width: 60,  // Adjust the width and height to match the CircleAvatar radius
+                        height: 60,
+                      ),
                     ),
                   ),
+
+
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -319,12 +336,28 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                           child: Row(
                             children: [
                               CircleAvatar(
+                                radius: 30,
                                 backgroundColor: theme.primaryColor,
-                                child: Text(
-                                  comment['comment_author'][0].toUpperCase(),
-                                  style: const TextStyle(color: Colors.white),
+                                child: comment['comment_profile'] == null || (comment['comment_profile'] as Uint8List).isEmpty
+                                    ? const Text(
+                                  'L',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,  // Adjust the size as necessary
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                                    : ClipOval(
+                                  child: Image.memory(
+                                    comment['comment_profile'],
+                                    fit: BoxFit.cover,
+                                    width: 60,
+                                    height: 60,
+                                  ),
                                 ),
                               ),
+
+
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Column(

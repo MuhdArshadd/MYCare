@@ -134,6 +134,7 @@ class _ForumPageState extends State<ForumPage> {
                                 total_like: feed['total_like'],
                                 total_dislikes: feed['total_dislike'],
                                 user_name: feed['user_name'],
+                                profileImage: feed['profileImage'],
                                 images: feed['images'],
                                 total_comments: feed['total_comments'],
                                 user: widget.user,
