@@ -35,6 +35,33 @@ class _FoodbankPageState extends State<FoodbankPage> {
   // For markers
   Set<Marker> _foodbankMarkers = {}; // Set to store markers
 
+  // State dropdown options
+  final List<String> states = ['All', 'Johor', 'Melaka'];
+  String selectedState = 'All';
+
+  void _fetchFoodbanks(String state) {
+    if (widget.currentLocation != null) {
+      // Ensure nearbyFoodbank is assigned a proper Future
+      nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(widget.currentLocation!.latitude, widget.currentLocation!.longitude, state).then((value) {
+        setState(() {
+          isLoading = false; // Stop loading once the data is fetched
+          _addMarkers(value); // Add markers to the map
+        });
+        return value; // Return the fetched data
+      }).catchError((error) {
+        // Handle potential errors here and return an empty list
+        print('Error fetching foodbanks: $error');
+        return <Map<String, dynamic>>[];
+      });
+    } else {
+      // Assign a default empty list if location is null
+      nearbyFoodbank = Future.value(<Map<String, dynamic>>[]);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   // Add markers to the map
   void _addMarkers(List<Map<String, dynamic>> foodbanks) {
     Set<Marker> newMarkers = {};
@@ -73,33 +100,14 @@ class _FoodbankPageState extends State<FoodbankPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.currentLocation != null) {
-      // Ensure nearbyFoodbank is assigned a proper Future
-      nearbyFoodbank = foodbankController.fetchNearbyFoodbanks(widget.currentLocation!.latitude, widget.currentLocation!.longitude).then((value) {
-        setState(() {
-          isLoading = false; // Stop loading once the data is fetched
-          _addMarkers(value); // Add markers to the map
-        });
-        return value; // Return the fetched data
-      }).catchError((error) {
-        // Handle potential errors here and return an empty list
-        print('Error fetching foodbanks: $error');
-        return <Map<String, dynamic>>[];
-      });
-    } else {
-      // Assign a default empty list if location is null
-      nearbyFoodbank = Future.value(<Map<String, dynamic>>[]);
-      setState(() {
-        isLoading = false;
-      });
-    }
+    _fetchFoodbanks(selectedState);
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  CustomAppBar(user: widget.user),
+      appBar: CustomAppBar(user: widget.user),
       body: isLoading
           ? const Center(child: CircularProgressIndicator()) // Display loading animation
           : Column(
@@ -108,25 +116,37 @@ class _FoodbankPageState extends State<FoodbankPage> {
           // Title Row
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SupportServicePage(
-                          user: widget.user,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Icon(Icons.arrow_back),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SupportServicePage(
+                              user: widget.user,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Icon(Icons.arrow_back),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Nearby Foodbanks',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 4),
                 const Text(
-                  'Nearby Foodbanks',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  'Tap the red mark to view nearby foodbanks.',
+                  style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -146,7 +166,7 @@ class _FoodbankPageState extends State<FoodbankPage> {
                   : GoogleMap(
                 initialCameraPosition: CameraPosition(
                   target: widget.currentLocation!,
-                  zoom: 15,
+                  zoom: 11,
                 ),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
@@ -161,19 +181,38 @@ class _FoodbankPageState extends State<FoodbankPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
           ),
-          // Search Bar
+          // State Selection Section
+          // State Dropdown Section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select State:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              ),
+                const SizedBox(height: 8.0),
+                DropdownButton<String>(
+                  value: selectedState,
+                  isExpanded: true,
+                  items: states.map((String state) {
+                    return DropdownMenuItem<String>(
+                      value: state,
+                      child: Text(state),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    if (newValue != null) {
+                      setState(() => selectedState = newValue);
+                      _fetchFoodbanks(newValue);
+                    }
+                  },
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 8.0),
           Expanded(
             flex: 3,
             child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -237,6 +276,19 @@ class _FoodbankPageState extends State<FoodbankPage> {
       bottomNavigationBar: BottomNavWrapper(currentIndex: 2, user: widget.user),
     );
   }
+
+  Widget _buildCategoryChip(String label, Color color) {
+    return GestureDetector(
+      onTap: () {
+        // Handle filter action
+      },
+      child: Chip(
+        label: Text(label, style: const TextStyle(color: Colors.white)),
+        backgroundColor: color,
+      ),
+    );
+  }
+}
 
   Widget _buildFoodbankCard(BuildContext context, {
     required String imagePath,
@@ -315,5 +367,3 @@ class _FoodbankPageState extends State<FoodbankPage> {
       ),
     );
   }
-
-}

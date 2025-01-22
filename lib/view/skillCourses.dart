@@ -4,6 +4,7 @@ import 'coursesDetails.dart'; // Ensure this file exists
 import '../model/userModel.dart';
 import 'appBar.dart';
 import 'bottomNavigationBar.dart';
+import 'categorySkillBuilding.dart';
 
 class SkillCourses extends StatefulWidget {
   final User user;

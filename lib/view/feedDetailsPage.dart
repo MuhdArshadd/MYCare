@@ -340,7 +340,7 @@ class _FeedDetailsPageState extends State<FeedDetailsPage> {
                                 backgroundColor: theme.primaryColor,
                                 child: comment['comment_profile'] == null || (comment['comment_profile'] as Uint8List).isEmpty
                                     ? const Text(
-                                  'L',
+                                  'P',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,  // Adjust the size as necessary

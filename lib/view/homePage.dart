@@ -9,6 +9,7 @@ import 'appBar.dart';
 import 'package:workshop2dev/controller/skillsController.dart';
 import 'coursesDetails.dart';
 import 'newsDetailPage.dart';
+import 'categorySkillBuilding.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -87,19 +88,20 @@ class _HomePageState extends State<HomePage> {
                             end: Alignment.bottomRight,
                           ),
                         ),
-                        child: widget.user.profileImage != null
-                            ? ClipOval(
-                          child: Image.memory(
+                        child: ClipOval(
+                          child: widget.user.profileImage != null && widget.user.profileImage!.isNotEmpty
+                              ? Image.memory(
                             widget.user.profileImage!,
                             width: 80, // Increased size to fit the container
                             height: 80,
                             fit: BoxFit.cover,
+                          )
+                              : Image.asset(
+                            'assets/myCareWhite.png', // Default image
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
                           ),
-                        )
-                            : const Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -164,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                       child: SkillsHighlightCard(
                         imagePath: skillsOnline['image'] ?? '',
                         skillName: skillsOnline['name'] ?? '',
-                        organizer: skillsOnline['educator'] ?? 'No Organizer',
+                        organizer: skillsOnline['organizer'] ?? 'No educator',
                         criteria: skillsOnline['criteria'] ?? 'No Criteria',
                         onTap: () {
                           Navigator.push(
@@ -204,8 +206,18 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildNavButton(
+                    icon: Icons.lightbulb,
+                    label: "Skill\n",
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => CategorySkillBuilding(user: widget.user)),
+                      );
+                    },
+                  ),
+                  _buildNavButton(
                     icon: Icons.article,
-                    label: "News",
+                    label: "News\n",
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -215,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildNavButton(
                     icon: Icons.support_agent,
-                    label: "Support Service",
+                    label: "Support\nService",
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -225,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildNavButton(
                     icon: Icons.forum,
-                    label: "Forum",
+                    label: "Forum\n",
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -237,7 +249,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 6),
 
             // News Highlights Section
             Padding(
@@ -445,7 +457,7 @@ class SkillsHighlightCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(4.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

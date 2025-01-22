@@ -93,20 +93,38 @@ class SkillsController {
 
       // SQL Query to fetch and filter skills based on User model criteria
       var results = await dbConnection.connection.query('''
-       SELECT
-          skills_id,
-          skillsname,
-          sourceslink,
-          image,
-          skillseducator,
-          skillvenueaddress,
-          skillsorganizer,
-          skillscriteria,
-          skilllevel,
-          skillduration
-        FROM skills_building
-        WHERE skillstype = 'Online'
-      ''');         // Dynamically passed category (e.g., 'Business')
+       (SELECT
+        skills_id,
+        skillsname,
+        sourceslink,
+        image,
+        skillseducator,
+        skillvenueaddress,
+        skillsorganizer,
+        skillscriteria,
+        skilllevel,
+        skillduration
+      FROM skills_building
+      WHERE skillstype = 'Online' AND skillsorganizer = 'Harvard'
+      LIMIT 3)
+
+      UNION
+
+      (SELECT
+        skills_id,
+        skillsname,
+        sourceslink,
+        image,
+        skillseducator,
+        skillvenueaddress,
+        skillsorganizer,
+        skillscriteria,
+        skilllevel,
+        skillduration
+      FROM skills_building
+      WHERE skillstype = 'Online' AND skillsorganizer = 'Coursera'
+      LIMIT 2);
+    ''');  // Dynamically passed category (e.g., 'Business')
 
 
       // Process results

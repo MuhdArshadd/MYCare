@@ -5,8 +5,8 @@ import 'package:workshop2dev/dbConnection/dbConnection.dart';
 class FoodBank {
   final DatabaseConnection dbConnection = DatabaseConnection();
 
-  // Fetch nearby foodbanks based on user's latitude and longitude
-  Future<List<Map<String, dynamic>>> fetchNearbyFoodbanks(double userLatitude, double userLongitude) async {
+  // Fetch nearby foodbanks based on user's latitude and longitude and state
+  Future<List<Map<String, dynamic>>> fetchNearbyFoodbanks(double userLatitude, double userLongitude, String state) async {
     // Store into a list
     List<Map<String, dynamic>> nearbyFoodbanks = [];
 
@@ -14,41 +14,83 @@ class FoodBank {
       // Ensure the database connection is open
       await dbConnection.connectToDatabase();
 
-      // Query to fetch nearby foodbanks
-      var results = await dbConnection.connection.query('''
-        SELECT 
-          id, 
-          foodbankname, 
-          address,
-          contactno,
-          typeoffood,
-          foodbankstatus,
-          image_url, 
-          latitude, 
-          longitude, 
-          (6371 * acos(
-            cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
-            sin(radians($userLatitude)) * sin(radians(latitude))
-          )) AS distance
-        FROM foodbanks_new
-        WHERE foodbankstatus = 'Aktif' 
-        ORDER BY distance
-      ''');
+      if (state == "All")
+        {
+            // Query to fetch nearby foodbanks
+            var results = await dbConnection.connection.query('''
+            SELECT 
+              id, 
+              foodbankname, 
+              address,
+              contactno,
+              typeoffood,
+              foodbankstatus,
+              image_url, 
+              latitude, 
+              longitude, 
+              (6371 * acos(
+                cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
+                sin(radians($userLatitude)) * sin(radians(latitude))
+              )) AS distance
+            FROM foodbanks_new
+            WHERE foodbankstatus = 'Aktif'
+            ORDER BY distance
+          ''');
 
-      for (var row in results) {
-        nearbyFoodbanks.add({
-          'id': row[0].toString(), // Integer to string conversion
-          'foodbankname': row[1] as String,
-          'address': row[2] as String,
-          'contactno':row[3] as String,
-          'typeoffood':row[4] as String,
-          'foodbankstatus':row[5] as String,
-          'image_url': row[6] as String,
-          'latitude': row[7] as double,
-          'longitude': row[8] as double,
-          'distance': '${row[9].toStringAsFixed(2)} KM away', // Calculated distance
-        });
-        print(nearbyFoodbanks);
+            for (var row in results) {
+              nearbyFoodbanks.add({
+                'id': row[0].toString(), // Integer to string conversion
+                'foodbankname': row[1] as String,
+                'address': row[2] as String,
+                'contactno':row[3] as String,
+                'typeoffood':row[4] as String,
+                'foodbankstatus':row[5] as String,
+                'image_url': row[6] as String,
+                'latitude': row[7] as double,
+                'longitude': row[8] as double,
+                'distance': '${row[9].toStringAsFixed(2)} KM away', // Calculated distance
+              });
+              print(nearbyFoodbanks);
+            }
+        } else {
+        // Query to fetch nearby foodbanks
+        var results = await dbConnection.connection.query('''
+            SELECT 
+              id, 
+              foodbankname, 
+              address,
+              contactno,
+              typeoffood,
+              foodbankstatus,
+              image_url, 
+              latitude, 
+              longitude, 
+              (6371 * acos(
+                cos(radians($userLatitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians($userLongitude)) +
+                sin(radians($userLatitude)) * sin(radians(latitude))
+              )) AS distance
+            FROM foodbanks_new
+            WHERE foodbankstatus = 'Aktif' AND foodbankstate = '$state'
+            ORDER BY distance
+          ''');
+
+        for (var row in results) {
+          nearbyFoodbanks.add({
+            'id': row[0].toString(),
+            // Integer to string conversion
+            'foodbankname': row[1] as String,
+            'address': row[2] as String,
+            'contactno': row[3] as String,
+            'typeoffood': row[4] as String,
+            'foodbankstatus': row[5] as String,
+            'image_url': row[6] as String,
+            'latitude': row[7] as double,
+            'longitude': row[8] as double,
+            'distance': '${row[9].toStringAsFixed(2)} KM away',
+            // Calculated distance
+          });
+          print(nearbyFoodbanks);
+        }
       }
     } catch (e) {
       print('Error fetching foodbanks: $e');

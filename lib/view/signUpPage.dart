@@ -29,6 +29,9 @@ class _SignUpPageState extends State<SignUpPage> {
   Uint8List? imageBytes;
   String status = "";
 
+  // Error handling flags
+  String? noIcError, fullnameError, ageError, emailError, phoneError, addressError, positionError, incomeRangeError, maritalStatusError, passwordError, confirmPasswordError;
+
   // Pick image from the file system
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
@@ -51,6 +54,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
   // Function to Register
   void _signUp() async {
+    // Clear previous errors
+    setState(() {
+      noIcError = fullnameError = ageError = emailError = phoneError = addressError = positionError = incomeRangeError = maritalStatusError = passwordError = confirmPasswordError = null;
+    });
+
     final noIc = _noIcController.text;
     final fullname = _fullnameController.text;
     final age = _ageController.text;
@@ -63,21 +71,78 @@ class _SignUpPageState extends State<SignUpPage> {
     final password = _passwordController.text;
     final confirmPass = _confirmpasswordController.text;
 
-    if (noIc.isEmpty || fullname.isEmpty || age.isEmpty || email.isEmpty ||
-        phoneNumber.isEmpty || address.isEmpty || userCategory.isEmpty ||
-        incomeRange.isEmpty || marriageStatus.isEmpty || password.isEmpty ||
-        confirmPass.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
-      return;
+    bool isValid = true;
+
+    // Validate inputs
+    if (noIc.isEmpty) {
+      setState(() {
+        noIcError = "IC number is required.";
+      });
+      isValid = false;
+    }
+    if (fullname.isEmpty) {
+      setState(() {
+        fullnameError = "Full name is required.";
+      });
+      isValid = false;
+    }
+    if (age.isEmpty || int.tryParse(age) == null) {
+      setState(() {
+        ageError = "Valid age is required.";
+      });
+      isValid = false;
+    }
+    if (email.isEmpty || !RegExp(r"^[a-zA-Z0-9]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$").hasMatch(email)) {
+      setState(() {
+        emailError = "Valid email is required.";
+      });
+      isValid = false;
+    }
+    if (phoneNumber.isEmpty || phoneNumber.length < 10) {
+      setState(() {
+        phoneError = "Valid phone number is required.";
+      });
+      isValid = false;
+    }
+    if (address.isEmpty) {
+      setState(() {
+        addressError = "Address is required.";
+      });
+      isValid = false;
+    }
+    if (userCategory.isEmpty) {
+      setState(() {
+        positionError = "Position is required.";
+      });
+      isValid = false;
+    }
+    if (incomeRange.isEmpty) {
+      setState(() {
+        incomeRangeError = "Income range is required.";
+      });
+      isValid = false;
+    }
+    if (marriageStatus.isEmpty) {
+      setState(() {
+        maritalStatusError = "Marital status is required.";
+      });
+      isValid = false;
+    }
+    if (password.isEmpty) {
+      setState(() {
+        passwordError = "Password is required.";
+      });
+      isValid = false;
+    }
+    if (confirmPass != password) {
+      setState(() {
+        confirmPasswordError = "Passwords do not match.";
+      });
+      isValid = false;
     }
 
-    if (password != confirmPass) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
+    if (!isValid) {
+      return; // Exit if any validation fails
     }
 
     String response = await _userController.signUp(noIc, fullname, age, email, phoneNumber, address, userCategory, incomeRange, marriageStatus, password, imageBytes);
@@ -204,163 +269,49 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Back Button at the top
-
                     // Sign Up Form Fields
-                    TextField(
-                      controller: _noIcController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.card_membership),
-                        hintText: 'No IC ',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
+                    _buildTextField(_noIcController, 'No IC', Icons.card_membership, noIcError),
+                    const SizedBox(height: 20.0),
+                    _buildTextField(_fullnameController, 'Full Name', Icons.person, fullnameError),
+                    const SizedBox(height: 20.0),
+                    _buildTextField(_ageController, 'Age', Icons.confirmation_number, ageError),
+                    const SizedBox(height: 20.0),
+                    _buildTextField(_emailController, 'Email', Icons.email, emailError),
+                    const SizedBox(height: 20.0),
+                    _buildTextField(_nophoneController, 'No. Phone', Icons.phone, phoneError),
+                    const SizedBox(height: 20.0),
+                    _buildTextField(_addressController, 'Address', Icons.home, addressError),
+                    const SizedBox(height: 20.0),
+                    _buildDropdown(_selectedPosition, 'Select Position', Icons.category, positionError,
+                        ['Student', 'Employee', 'Self-employed', 'Unemployed', 'Other'],
+                            (selected) {
+                          setState(() {
+                            _selectedPosition = selected;
+                          });
+                        }
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _fullnameController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person),
-                        hintText: 'Fullname ',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
+                    _buildDropdown(_selectedIncomeRange, 'Select Salary', Icons.money, incomeRangeError,
+                        ['RM0-RM1500', 'RM1500-RM3000', 'RM3000-RM5000', '>RM5000'],
+                            (selected) {
+                          setState(() {
+                            _selectedIncomeRange = selected;
+                          });
+                        }
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _ageController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.confirmation_number),
-                        hintText: 'Age ',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
+                    _buildDropdown(_selectedMarriedStatus, 'Marital Status', Icons.manage_accounts_rounded, maritalStatusError,
+                        ['Single', 'Married'],
+                            (selected) {
+                          setState(() {
+                            _selectedMarriedStatus = selected;
+                          });
+                        }
                     ),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.email),
-                        hintText: 'Email',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
+                    _buildTextField(_passwordController, 'Password', Icons.lock, passwordError, obscureText: true),
                     const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _nophoneController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.phone),
-                        hintText: 'No.Phone',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _addressController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.home),
-                        hintText: 'Address',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    DropdownButtonFormField<String>(
-                      value: _selectedPosition,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.category),
-                        hintText: 'Select Position',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'Student', child: Text('Student')),
-                        DropdownMenuItem(value: 'Employee', child: Text('Employee')),
-                        DropdownMenuItem(value: 'Self-employed', child: Text('Self-employed')),
-                        DropdownMenuItem(value: 'Unemployed', child: Text('Unemployed')),
-                        DropdownMenuItem(value: 'Other', child: Text('Other')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPosition = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20.0),
-                    DropdownButtonFormField<String>(
-                      value: _selectedIncomeRange,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.money),
-                        hintText: 'Select Salary ',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'RM0-RM1500', child: Text('RM0-RM1500')),
-                        DropdownMenuItem(value: 'RM1500-RM3000', child: Text('RM1500-RM3000')),
-                        DropdownMenuItem(value: 'RM3000-RM5000', child: Text('RM3000-RM5000')),
-                        DropdownMenuItem(value: '>RM5000', child: Text('>RM5000')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedIncomeRange = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20.0),
-                    DropdownButtonFormField<String>(
-                      value: _selectedMarriedStatus,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.manage_accounts_rounded),
-                        hintText: 'Marital Status',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'Single', child: Text('Single')),
-                        DropdownMenuItem(value: 'Married', child: Text('Married')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedMarriedStatus = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        hintText: 'Password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _confirmpasswordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        hintText: 'Confirm Password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
+                    _buildTextField(_confirmpasswordController, 'Confirm Password', Icons.lock, confirmPasswordError, obscureText: true),
                     const SizedBox(height: 10.0),
                     ElevatedButton(
                       onPressed: _signUp,
@@ -412,4 +363,40 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
+  Widget _buildTextField(TextEditingController controller, String hintText, IconData icon, String? errorText, {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        errorText: errorText,
+      ),
+    );
+  }
+
+  Widget _buildDropdown(String? currentValue, String hintText, IconData icon, String? errorText, List<String> items, Function(String?) onChanged) {
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        errorText: errorText,
+      ),
+      items: items.map((item) {
+        return DropdownMenuItem(value: item, child: Text(item));
+      }).toList(),
+      onChanged: (selected) {
+        onChanged(selected);
+      },
+    );
+  }
+
 }

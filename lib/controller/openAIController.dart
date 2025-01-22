@@ -246,15 +246,14 @@ class OpenAIService {
       User's current date and time: $formattedDateTime
       User's question: "$content"
 
-      Using ONLY this data, respond conversationally to the user's question. Summarize and describe the most relevant information in a friendly and engaging manner. You must use bullet points to respond in a more structured manner. 
-      DO NOT add any information that is not present in the provided data. 
+      Using ONLY this data, respond conversationally to the user's question. DO NOT add any information that is not present in the provided data. 
+      Summarize and describe the most relevant information in a friendly and engaging manner. You must use bullet points to respond in a more structured manner. 
       Respond in very short sentences.
       
+      If the data contains a link, do not provide the link.
+      
       If the data is empty, respond with something like:
-      - "Please check for updates!"
       - "We're sorry, no information available at the moment. Please try again later."
-      - "We’re still waiting for the latest data to be updated."
-
       """;
 
 
