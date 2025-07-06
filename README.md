@@ -49,7 +49,7 @@ As part of my coursework at UTeM, I led the development of **MYCare**, a mobile 
 
 * **Frontend:** Flutter (cross-platform mobile app development)
 * **Backend:** Azure PostgreSQL (cloud-hosted database)
-* **Automation:** Python web scraping + task scheduler for real-time data refresh
+* **Automation:** Python web scraping (ChromeDriver, Selenium & BeautifulSoup) + task scheduler for real-time data refresh
 * **APIs Used:**
 
   * OpenAI API (chatbot functionality)
